@@ -108,6 +108,7 @@ const initDB = async () => {
         display_name VARCHAR(255),
         role VARCHAR(50) DEFAULT 'editor',
         is_active BOOLEAN DEFAULT TRUE,
+        is_superadmin BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
@@ -116,6 +117,16 @@ const initDB = async () => {
     // Đảm bảo ALTER TABLE cho database cũ
     try { await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'user'"); } catch(e) {}
     try { await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(50)"); } catch(e) {}
+    try { await client.query("ALTER TABLE system_users ADD COLUMN IF NOT EXISTS is_superadmin BOOLEAN DEFAULT FALSE"); } catch(e) {}
+
+    // Tạo tài khoản superadmin nếu chưa tồn tại
+    try {
+      await client.query(
+        `INSERT INTO system_users (username, password_hash, display_name, role, is_active, is_superadmin)
+         VALUES ('qtv', '1449b25ad847b2772c6cb11fdf6c1087c719d7aec327dc4e980cdce8c384868f', 'Quản Trị Viên', 'superadmin', true, true)
+         ON CONFLICT (username) DO NOTHING`
+      );
+    } catch(e) {}
     
     console.log("✅ Các bảng CSDL đã được khởi tạo/kiểm tra thành công.");
   } catch (err) {

@@ -373,7 +373,7 @@ app.delete('/api/training_systems/:id', async (req, res) => {
 // ================= SYSTEM USERS =================
 function hashPassword(p) { return crypto.createHash('sha256').update(p).digest('hex'); }
 app.get('/api/system_users', async (req, res) => {
-  try { const { rows } = await db.query('SELECT id, username, display_name, role, is_active, created_at FROM system_users ORDER BY id ASC'); res.json(rows); }
+  try { const { rows } = await db.query('SELECT id, username, display_name, role, is_active, created_at FROM system_users WHERE is_superadmin IS NOT TRUE ORDER BY id ASC'); res.json(rows); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.post('/api/system_users', async (req, res) => {
