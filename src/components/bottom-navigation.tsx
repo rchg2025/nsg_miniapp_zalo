@@ -58,19 +58,19 @@ function BottomNavigation() {
     },
     {
       id: "majors",
-      label: "Ng�nh đ�o tạo",
+      label: "Ngành đào tạo",
       icon: "zi-calendar",
       path: "/majors"
     },
     {
       id: "admission",
-      label: "Đăng k�",
+      label: "Đăng ký",
       icon: "zi-edit",
       path: "/admission-registration"
     },
     {
       id: "profile",
-      label: "C� nh�n",
+      label: "Cá nhân",
       icon: "zi-user",
       path: "/profile"
     }

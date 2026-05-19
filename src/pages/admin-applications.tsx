@@ -67,7 +67,7 @@ function AdminApplicationsPage() {
   };
 
   const handleDeleteApplication = (id: string) => {
-    if (confirm('Bạn c� chắc chắn muốn x�a đơn tuyển sinh n�y?')) {
+    if (confirm('Bạn có chắc chắn muốn xóa đơn tuyển sinh này?')) {
       const updatedApplications = applicationsList.filter(app => app.id !== id);
       DataManager.saveApplications(updatedApplications);
       setApplicationsList(updatedApplications);
@@ -76,10 +76,10 @@ function AdminApplicationsPage() {
 
   const getStatusName = (status: string) => {
     const statuses = {
-      'pending': 'Chờ x�t duyệt',
-      'approved': 'Đ� duyệt',
+      'pending': 'Chờ xét duyệt',
+      'approved': 'Đã duyệt',
       'rejected': 'Từ chối',
-      'contacted': 'Đ� li�n hệ'
+      'contacted': 'Đã liên hệ'
     };
     return statuses[status] || status;
   };
@@ -97,7 +97,7 @@ function AdminApplicationsPage() {
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
     
-    // Nếu đ� l� định dạng dd/mm/yyyy th� giữ nguy�n
+    // Nếu đã là định dạng dd/mm/yyyy thì giữ nguyên
     if (dateString.includes('/')) {
       return dateString;
     }
@@ -120,7 +120,7 @@ function AdminApplicationsPage() {
     const today = new Date();
     let birth: Date;
     
-    // Xử l� định dạng dd/mm/yyyy
+    // Xử lý định dạng dd/mm/yyyy
     if (birthDate.includes('/')) {
       const parts = birthDate.split('/');
       if (parts.length === 3) {
@@ -168,7 +168,7 @@ function AdminApplicationsPage() {
   return (
     <Page className="page-with-header bg-gray-50">
       <Header 
-        title="Quản l� đơn tuyển sinh" 
+        title="Quản lý đơn tuyển sinh" 
         showBackIcon={true}
         className="bg-blue-600 text-white"
       />
@@ -189,7 +189,7 @@ function AdminApplicationsPage() {
         {/* Search & Filter */}
         <Box className="mb-4 space-y-3">
           <Input
-            placeholder="T�m kiếm theo t�n, số điện thoại, ng�nh học..."
+            placeholder="Tìm kiếm theo tên, số điện thoại, ngành học..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -221,7 +221,7 @@ function AdminApplicationsPage() {
           </Box>
           <Box className="bg-white p-3 rounded text-center">
             <Text className="text-lg font-bold text-green-600">{stats.approved}</Text>
-            <Text className="text-xs text-gray-500">Đ� duyệt</Text>
+            <Text className="text-xs text-gray-500">Đã duyệt</Text>
           </Box>
         </Box>
 
@@ -238,7 +238,7 @@ function AdminApplicationsPage() {
             <List.Item
               key={application.id}
               title={application.studentName}
-              subTitle={`${application.majorName} � ${application.phone} � ${getStatusName(application.status)} � ${formatDate(application.submittedAt)}`}
+              subTitle={`${application.majorName} • ${application.phone} • ${getStatusName(application.status)} • ${formatDate(application.submittedAt)}`}
               prefix={
                 <Box className={`w-3 h-3 rounded-full ${
                   application.status === 'approved' ? 'bg-green-500' :
@@ -269,7 +269,7 @@ function AdminApplicationsPage() {
                       <Button 
                         size="small" 
                         variant="tertiary"
-                        onClick={() => handleUpdateStatus(application.id, 'rejected', 'Kh�ng đủ điều kiện')}
+                        onClick={() => handleUpdateStatus(application.id, 'rejected', 'Không đủ điều kiện')}
                         className="text-red-600"
                       >
                         Từ chối
@@ -282,7 +282,7 @@ function AdminApplicationsPage() {
                     onClick={() => handleDeleteApplication(application.id)}
                     className="text-red-600"
                   >
-                    X�a
+                    Xóa
                   </Button>
                 </Box>
               }
@@ -292,7 +292,7 @@ function AdminApplicationsPage() {
 
         {filteredApplications.length === 0 && (
           <Box className="text-center py-8">
-            <Text className="text-gray-500">Kh�ng t�m thấy đơn tuyển sinh n�o</Text>
+            <Text className="text-gray-500">Không tìm thấy đơn tuyển sinh nào</Text>
           </Box>
         )}
       </Box>
@@ -307,7 +307,7 @@ function AdminApplicationsPage() {
         }}
         actions={[
           {
-            text: "Đ�ng",
+            text: "Đóng",
             close: true,
           },
           ...(selectedApplication?.status === 'pending' ? [
@@ -328,10 +328,10 @@ function AdminApplicationsPage() {
           <Box className="space-y-4 max-h-96 overflow-y-auto">
             {/* Basic Info */}
             <Box className="bg-gray-50 p-4 rounded">
-              <Text className="font-medium mb-3">Th�ng tin c� nh�n</Text>
+              <Text className="font-medium mb-3">Thông tin cá nhân</Text>
               <Box className="space-y-2">
                 <Box className="flex justify-between">
-                  <Text className="text-gray-600">Họ v� t�n:</Text>
+                  <Text className="text-gray-600">Họ và tên:</Text>
                   <Text className="font-medium">{selectedApplication.studentName}</Text>
                 </Box>
                 <Box className="flex justify-between">
@@ -345,7 +345,7 @@ function AdminApplicationsPage() {
                   </Box>
                 )}
                 <Box className="flex justify-between">
-                  <Text className="text-gray-600">Ng�y sinh:</Text>
+                  <Text className="text-gray-600">Ngày sinh:</Text>
                   <Text className="font-medium">{formatDate(selectedApplication.birthDate)} ({calculateAge(selectedApplication.birthDate)} tuổi)</Text>
                 </Box>
                 <Box className="flex justify-between">
@@ -357,10 +357,10 @@ function AdminApplicationsPage() {
 
             {/* Academic Info */}
             <Box className="bg-gray-50 p-4 rounded">
-              <Text className="font-medium mb-3">Th�ng tin học tập</Text>
+              <Text className="font-medium mb-3">Thông tin học tập</Text>
               <Box className="space-y-2">
                 <Box className="flex justify-between">
-                  <Text className="text-gray-600">Ng�nh đăng k�:</Text>
+                  <Text className="text-gray-600">Ngành đăng ký:</Text>
                   <Text className="font-medium">{selectedApplication.majorName}</Text>
                 </Box>
                 <Box className="flex justify-between">
@@ -376,33 +376,33 @@ function AdminApplicationsPage() {
 
             {/* Status Info */}
             <Box className="bg-gray-50 p-4 rounded">
-              <Text className="font-medium mb-3">Trạng th�i x�t duyệt</Text>
+              <Text className="font-medium mb-3">Trạng thái xét duyệt</Text>
               <Box className="space-y-2">
                 <Box className="flex justify-between">
-                  <Text className="text-gray-600">Trạng th�i:</Text>
+                  <Text className="text-gray-600">Trạng thái:</Text>
                   <Text className={`font-medium ${getStatusColor(selectedApplication.status)}`}>
                     {getStatusName(selectedApplication.status)}
                   </Text>
                 </Box>
                 <Box className="flex justify-between">
-                  <Text className="text-gray-600">Ng�y nộp:</Text>
+                  <Text className="text-gray-600">Ngày nộp:</Text>
                   <Text className="font-medium">{formatDate(selectedApplication.submittedAt)}</Text>
                 </Box>
                 {selectedApplication.reviewedAt && (
                   <Box className="flex justify-between">
-                    <Text className="text-gray-600">Ng�y x�t duyệt:</Text>
+                    <Text className="text-gray-600">Ngày xét duyệt:</Text>
                     <Text className="font-medium">{formatDate(selectedApplication.reviewedAt)}</Text>
                   </Box>
                 )}
                 {selectedApplication.reviewedBy && (
                   <Box className="flex justify-between">
-                    <Text className="text-gray-600">Người x�t duyệt:</Text>
+                    <Text className="text-gray-600">Người xét duyệt:</Text>
                     <Text className="font-medium">{selectedApplication.reviewedBy}</Text>
                   </Box>
                 )}
                 {selectedApplication.notes && (
                   <Box>
-                    <Text className="text-gray-600 mb-1">Ghi ch�:</Text>
+                    <Text className="text-gray-600 mb-1">Ghi chú:</Text>
                     <Text className="font-medium bg-white p-2 rounded text-sm">{selectedApplication.notes}</Text>
                   </Box>
                 )}

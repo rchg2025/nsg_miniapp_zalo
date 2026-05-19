@@ -20,7 +20,7 @@ function NewsCard({ title, summary, image, category, date, isHot, isSaved, onCli
     return date.toLocaleDateString('vi-VN');
   };
 
-  // H�m tạo ảnh No Image mặc định
+  // Hàm tạo ảnh No Image mặc định
   const getDefaultImage = () => {
     return `data:image/svg+xml;base64,${btoa(`
       <svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
@@ -49,7 +49,7 @@ function NewsCard({ title, summary, image, category, date, isHot, isSaved, onCli
       }`}
       onClick={onClick}
     >
-      {/* Ảnh đại diện ở tr�n */}
+      {/* Ảnh đại diện ở trên */}
       <Box className="relative w-full h-48 bg-gray-100 overflow-hidden">
         <img 
           src={image || getDefaultImage()} 
@@ -60,7 +60,7 @@ function NewsCard({ title, summary, image, category, date, isHot, isSaved, onCli
           }}
         />
         
-        {/* Overlay với c�c badge */}
+        {/* Overlay với các badge */}
         <Box className="absolute top-3 left-3 flex gap-2">
           {isHot && (
             <Box className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs px-2 py-1 rounded-full shadow-lg animate-pulse">

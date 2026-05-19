@@ -55,7 +55,7 @@ function ProfilePage() {
           // Load majors count từ dữ liệu thực tế trong app
           const majorsData = JSON.parse(localStorage.getItem('app_majors_data') || '[]');
           const adminMajors = JSON.parse(localStorage.getItem('adminMajorsList') || '[]');
-          const totalMajors = Math.max(majorsData.length, adminMajors.length, 6); // Tối thiểu 6 ng�nh
+          const totalMajors = Math.max(majorsData.length, adminMajors.length, 6); // Tối thiểu 6 ngành
           setInterestedMajorsCount(totalMajors);
         } catch (error) {
           console.error('Error loading stats:', error);
@@ -73,7 +73,7 @@ function ProfilePage() {
       window.addEventListener('notifications-updated', handleNotificationUpdate);
       window.addEventListener('storage', handleNotificationUpdate);
 
-      // Đồng bộ t�n hiển thị nếu c� thay đổi ở localStorage
+      // Đồng bộ tên hiển thị nếu có thay đổi ở localStorage
       const syncDisplayName = () => {
         try {
           const displayName = localStorage.getItem('displayName');
@@ -120,8 +120,8 @@ function ProfilePage() {
       // Get user info after authorization
       const user = await getUserInfo({});
       if (user.userInfo) {
-        // Role sẽ được x�c định từ user context dựa tr�n Zalo ID
-        // Kh�ng cần mock role ở đ�y nữa
+        // Role sẽ được xác định từ user context dựa trên Zalo ID
+        // Không cần mock role ở đây nữa
         setUserInfo({
           id: user.userInfo.id,
           name: user.userInfo.name,
@@ -130,7 +130,7 @@ function ProfilePage() {
           permissions: [] // Sẽ được cập nhật bởi context
         });
 
-        // Kiểm tra xem đ� follow OA chưa
+        // Kiểm tra xem đã follow OA chưa
         const followStatus = ZaloOAService.isOAFollowed();
         if (!followStatus) {
           setShowOACheck(true);
@@ -176,12 +176,12 @@ function ProfilePage() {
       const hoursDiff = (now - loginTimestamp) / (1000 * 60 * 60);
       
       if (hoursDiff < 24) {
-        // Session c�n hạn, v�o admin ngay
+        // Session còn hạn, vào admin ngay
         console.log('✅ Valid session, navigating to admin...');
         navigate("/admin");
         return;
       } else {
-        // Session hết hạn, x�a v� y�u cầu đăng nhập lại
+        // Session hết hạn, xóa và yêu cầu đăng nhập lại
         console.log('⏰ Session expired, clearing...');
         localStorage.removeItem("admin_logged_in");
         localStorage.removeItem("admin_login_time");
@@ -204,9 +204,9 @@ function ProfilePage() {
   const getRoleDisplay = (role: UserRole) => {
     switch (role) {
       case UserRole.ADMIN:
-        return "Quản trị vi�n";
+        return "Quản trị viên";
       case UserRole.TEACHER:
-        return "Gi�o vi�n";
+        return "Giáo viên";
       case UserRole.STUDENT:
         return "";
       default:
@@ -227,7 +227,7 @@ function ProfilePage() {
     }
   };
 
-  // H�m xử l� quan t�m Zalo OA
+  // Hàm xử lý quan tâm Zalo OA
   const handleFollowOA = async () => {
     try {
       console.log('🔗 [PROFILE] Attempting to follow OA...');
@@ -241,11 +241,11 @@ function ProfilePage() {
       }
     } catch (error) {
       console.error("Follow OA unexpected error:", error);
-      alert("❌ Đ� xảy ra lỗi kh�ng mong muốn. Vui l�ng thử lại!");
+      alert("❌ Đã xảy ra lỗi không mong muốn. Vui lòng thử lại!");
     }
   };
 
-  // H�m xử l� hỗ trợ qua chat
+  // Hàm xử lý hỗ trợ qua chat
   const handleSupport = async () => {
     try {
       console.log('💬 [PROFILE] Attempting to open support chat...');
@@ -254,28 +254,28 @@ function ProfilePage() {
       if (!result.success) {
         alert(result.message);
       }
-      // Kh�ng hiển thị th�ng b�o th�nh c�ng v� chat sẽ tự mở
+      // Không hiển thị thông báo thành công vì chat sẽ tự mở
     } catch (error) {
       console.error("Open chat unexpected error:", error);
-      alert("❌ Đ� xảy ra lỗi kh�ng mong muốn. Vui l�ng thử lại!");
+      alert("❌ Đã xảy ra lỗi không mong muốn. Vui lòng thử lại!");
     }
   };
 
-  // Tạo menu items dựa tr�n trạng th�i đăng nhập v� vai tr�
+  // Tạo menu items dựa trên trạng thái đăng nhập và vai trò
   const getMenuItems = () => {
     const baseItems = [
       {
         icon: "zi-bookmark",
-        title: "Tin tức đ� lưu",
-        subtitle: `${savedNewsCount} tin tức đ� lưu`,
+        title: "Tin tức đã lưu",
+        subtitle: `${savedNewsCount} tin tức đã lưu`,
         action: () => navigate('/news?category=saved'),
         color: "text-blue-600",
         show: true
       },
       {
         icon: "zi-chat",
-        title: "Th�ng b�o",
-        subtitle: `${newNotificationsCount} th�ng b�o chưa đọc`,
+        title: "Thông báo",
+        subtitle: `${newNotificationsCount} thông báo chưa đọc`,
         action: () => {
           // markAllNotificationsAsRead(); // Simplified - commented out
           setNewNotificationsCount(0);
@@ -286,16 +286,16 @@ function ProfilePage() {
       },
       {
         icon: "zi-heart",
-        title: isOAFollowed ? "Đ� quan t�m OA" : "Quan t�m Zalo OA",
-        subtitle: isOAFollowed ? "Đ� theo d�i th�ng tin từ trường" : "Nhận th�ng tin mới nhất từ trường",
-        action: isOAFollowed ? () => alert("✅ Bạn đ� quan t�m Zalo OA!") : handleFollowOA,
+        title: isOAFollowed ? "Đã quan tâm OA" : "Quan tâm Zalo OA",
+        subtitle: isOAFollowed ? "Đã theo dõi thông tin từ trường" : "Nhận thông tin mới nhất từ trường",
+        action: isOAFollowed ? () => alert("✅ Bạn đã quan tâm Zalo OA!") : handleFollowOA,
         color: isOAFollowed ? "text-green-600" : "text-red-600",
         show: true
       },
       {
         icon: "zi-call",
         title: "Hỗ trợ trực tuyến",
-        subtitle: "Chat trực tiếp với nh� trường",
+        subtitle: "Chat trực tiếp với nhà trường",
         action: handleSupport,
         color: "text-purple-600",
         show: true
@@ -306,15 +306,15 @@ function ProfilePage() {
         subtitle: "Truy cập trang quản trị hệ thống",
         action: handleAdminAccess,
         color: "text-red-600",
-        show: true // Lu�n hiển thị để c� thể đăng nhập admin
+        show: true // Luôn hiển thị để có thể đăng nhập admin
       },
       {
         icon: "zi-setting",
-        title: "C�i đặt",
-        subtitle: "Th�ng tin c� nh�n v� ứng dụng",
+        title: "Cài đặt",
+        subtitle: "Thông tin cá nhân và ứng dụng",
         action: () => navigate('/settings'),
         color: "text-gray-600",
-        show: userInfo !== null // Chỉ hiển thị khi đ� đăng nhập
+        show: userInfo !== null // Chỉ hiển thị khi đã đăng nhập
       }
     ];
 
@@ -328,12 +328,12 @@ function ProfilePage() {
     return (
       <Page className="page-with-header bg-gray-50">
         <Header 
-          title="C� nh�n"
+          title="Cá nhân"
           showBackIcon={false}
           className="bg-blue-600 text-white"
         />
         <Box className="p-4 text-center">
-          <Text className="text-red-600 mb-4">❌ Đ� xảy ra lỗi khi tải trang</Text>
+          <Text className="text-red-600 mb-4">❌ Đã xảy ra lỗi khi tải trang</Text>
           <Button 
             onClick={() => {
               setHasError(false);
@@ -350,7 +350,7 @@ function ProfilePage() {
   return (
     <Page className="page-with-header bg-gray-50">
       <Header 
-        title="C� nh�n"
+        title="Cá nhân"
         showBackIcon={false}
         className="bg-blue-600 text-white"
       />
@@ -395,7 +395,7 @@ function ProfilePage() {
           ) : zaloError ? (
             // Error state
             <Box className="text-center">
-              <Text className="text-red-200 mb-2">❌ Kh�ng thể lấy th�ng tin Zalo</Text>
+              <Text className="text-red-200 mb-2">❌ Không thể lấy thông tin Zalo</Text>
               <Text className="text-blue-200 text-sm">{zaloError}</Text>
             </Box>
           ) : zaloUserInfo ? (
@@ -411,10 +411,10 @@ function ProfilePage() {
                   {zaloUserInfo.name}
                 </Text.Title>
                 <Text className="text-blue-200 text-sm mb-1">
-                  👤 Người d�ng Zalo
+                  👤 Người dùng Zalo
                 </Text>
                 <Text className="text-blue-100 text-sm mb-3">
-                  Trường Cao đẳng B�ch khoa Nam S�i G�n � ID: {zaloUserInfo.id.substring(0, 8)}...
+                  Trường Cao đẳng Bách khoa Nam Sài Gòn • ID: {zaloUserInfo.id.substring(0, 8)}...
                 </Text>
               </Box>
             </Box>
@@ -438,7 +438,7 @@ function ProfilePage() {
                   {getRoleDisplay(userInfo.role)}
                 </Text>
                 <Text className="text-blue-100 text-sm mb-3">
-                  Trường Cao đẳng B�ch khoa Nam S�i G�n � ID: {userInfo.id}
+                  Trường Cao đẳng Bách khoa Nam Sài Gòn • ID: {userInfo.id}
                 </Text>
                 <Box className="flex space-x-2">
                   {(isAdmin || isTeacher) && (
@@ -449,7 +449,7 @@ function ProfilePage() {
                       onClick={() => window.location.href = "/news-editor"}
                     >
                       <Icon icon="zi-edit" className="mr-1" />
-                      Viết b�i
+                      Viết bài
                     </Button>
                   )}
                   <Button
@@ -470,13 +470,13 @@ function ProfilePage() {
                 <Icon icon="zi-user" className="text-white text-4xl" />
               </Box>
               <Text.Title className="text-white text-xl font-bold mb-2">
-                Ch�o mừng đến với Trường Cao đẳng B�ch khoa Nam S�i G�n
+                Chào mừng đến với Trường Cao đẳng Bách khoa Nam Sài Gòn
               </Text.Title>
               <Text className="text-blue-100 mb-2 text-sm">
-                Đăng nhập để trải nghiệm đầy đủ t�nh năng
+                Đăng nhập để trải nghiệm đầy đủ tính năng
               </Text>
               <Text className="text-blue-200 text-xs px-4">
-                🎓 Đ�o tạo chất lượng cao � 📚 6 ng�nh đ�o tạo hot � 🌟 M�i trường học tập hiện đại
+                🎓 Đào tạo chất lượng cao • 📚 6 ngành đào tạo hot • 🌟 Môi trường học tập hiện đại
               </Text>
               <Button
                 variant="secondary"
@@ -498,15 +498,15 @@ function ProfilePage() {
           <Box className="grid grid-cols-3 divide-x divide-gray-200">
             <Box className="text-center py-4">
               <Text.Title className="text-2xl font-bold text-blue-600">{savedNewsCount}</Text.Title>
-              <Text className="text-gray-500 text-sm">Tin đ� lưu</Text>
+              <Text className="text-gray-500 text-sm">Tin đã lưu</Text>
             </Box>
             <Box className="text-center py-4">
               <Text.Title className="text-2xl font-bold text-green-600">{newNotificationsCount}</Text.Title>
-              <Text className="text-gray-500 text-sm">Th�ng b�o mới</Text>
+              <Text className="text-gray-500 text-sm">Thông báo mới</Text>
             </Box>
             <Box className="text-center py-4">
               <Text.Title className="text-2xl font-bold text-orange-600">{interestedMajorsCount}</Text.Title>
-              <Text className="text-gray-500 text-sm">Ng�nh đ�o tạo</Text>
+              <Text className="text-gray-500 text-sm">Ngành đào tạo</Text>
             </Box>
           </Box>
         </Box>
@@ -532,7 +532,7 @@ function ProfilePage() {
       {/* Admin Quick Actions */}
       {userInfo && isAdmin && (
         <Box className="mx-4 mt-4 bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow-md p-4">
-          <Text.Title className="text-white mb-3">Quản trị vi�n</Text.Title>
+          <Text.Title className="text-white mb-3">Quản trị viên</Text.Title>
           <Box className="space-y-2">
             <Button
               fullWidth
@@ -588,15 +588,15 @@ function ProfilePage() {
               <Icon icon="zi-home" className="text-white text-xl" />
             </Box>
             <Box>
-              <Text.Title className="text-gray-800">Trường Cao đẳng B�ch khoa Nam S�i G�n</Text.Title>
-              <Text className="text-gray-500 text-sm">Trường Cao đẳng C�ng lập</Text>
+              <Text.Title className="text-gray-800">Trường Cao đẳng Bách khoa Nam Sài Gòn</Text.Title>
+              <Text className="text-gray-500 text-sm">Trường Cao đẳng Công lập</Text>
             </Box>
           </Box>
           
           <Box className="space-y-2">
             <Box className="flex items-center">
               <Icon icon="zi-location" className="text-gray-400 mr-2" />
-              <Text className="text-gray-600 text-sm">47 Cao Lỗ, Phường Ch�nh Hưng, TP. Hồ Ch� Minh</Text>
+              <Text className="text-gray-600 text-sm">47 Cao Lỗ, Phường Chánh Hưng, TP. Hồ Chí Minh</Text>
             </Box>
             <Box className="flex items-center">
               <Icon icon="zi-call" className="text-gray-400 mr-2" />
@@ -618,7 +618,7 @@ function ProfilePage() {
       {/* Version Info */}
       <Box className="p-4 pb-20">
         <Text className="text-center text-gray-400 text-xs">
-          Phi�n bản 1.0.0 � � 2025 Trường Cao đẳng B�ch khoa Nam S�i G�n
+          Phiên bản 1.0.0 • © 2025 Trường Cao đẳng Bách khoa Nam Sài Gòn
         </Text>
         
         {/* Debug Admin Access - Click version 5 times to show */}

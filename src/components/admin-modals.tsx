@@ -69,7 +69,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
 
   const handleSave = () => {
     if (!formData.title.trim() || !formData.summary.trim()) {
-      alert('Vui l�ng nhập đầy đủ ti�u đề v� t�m tắt!');
+      alert('Vui lòng nhập đầy đủ tiêu đề và tóm tắt!');
       return;
     }
 
@@ -86,7 +86,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
 
   const categoryOptions = [
     { value: 'news', title: 'Tin tức' },
-    { value: 'announcement', title: 'Th�ng b�o' },
+    { value: 'announcement', title: 'Thông báo' },
     { value: 'admission', title: 'Tuyển sinh' }
   ];
 
@@ -94,23 +94,23 @@ export const NewsModal: React.FC<NewsModalProps> = ({
     <Sheet visible={isVisible} onClose={onClose} autoHeight>
       <Box className="p-4">
         <Text.Title className="mb-4 text-center">
-          {editingItem ? 'Sửa tin tức' : 'Th�m tin tức mới'}
+          {editingItem ? 'Sửa tin tức' : 'Thêm tin tức mới'}
         </Text.Title>
 
         <Box className="space-y-4">
           <Box>
-            <Text className="font-medium mb-2">Ti�u đề *</Text>
+            <Text className="font-medium mb-2">Tiêu đề *</Text>
             <Input
-              placeholder="Nhập ti�u đề tin tức"
+              placeholder="Nhập tiêu đề tin tức"
               value={formData.title}
               onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
             />
           </Box>
 
           <Box>
-            <Text className="font-medium mb-2">T�m tắt *</Text>
+            <Text className="font-medium mb-2">Tóm tắt *</Text>
             <Input.TextArea
-              placeholder="Nhập t�m tắt nội dung"
+              placeholder="Nhập tóm tắt nội dung"
               value={formData.summary}
               onChange={(e) => setFormData(prev => ({ ...prev, summary: e.target.value }))}
               rows={3}
@@ -197,7 +197,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
               onClick={handleSave}
               className="bg-blue-600"
             >
-              {editingItem ? 'Cập nhật' : 'Th�m mới'}
+              {editingItem ? 'Cập nhật' : 'Thêm mới'}
             </Button>
           </Box>
         </Box>
@@ -279,7 +279,7 @@ export const MajorModal: React.FC<MajorModalProps> = ({
 
   const handleSave = () => {
     if (!formData.name.trim() || !formData.code.trim()) {
-      alert('Vui l�ng nhập đầy đủ t�n ng�nh v� m� ng�nh!');
+      alert('Vui lòng nhập đầy đủ tên ngành và mã ngành!');
       return;
     }
 
@@ -303,32 +303,32 @@ export const MajorModal: React.FC<MajorModalProps> = ({
     <Sheet visible={isVisible} onClose={onClose} autoHeight>
       <Box className="p-4">
         <Text.Title className="mb-4 text-center">
-          {editingItem ? 'Sửa ng�nh đ�o tạo' : 'Th�m ng�nh đ�o tạo mới'}
+          {editingItem ? 'Sửa ngành đào tạo' : 'Thêm ngành đào tạo mới'}
         </Text.Title>
 
         <Box className="space-y-4">
           <Box>
-            <Text className="font-medium mb-2">T�n ng�nh *</Text>
+            <Text className="font-medium mb-2">Tên ngành *</Text>
             <Input
-              placeholder="V� dụ: C�ng nghệ Th�ng tin"
+              placeholder="Ví dụ: Công nghệ Thông tin"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
             />
           </Box>
 
           <Box>
-            <Text className="font-medium mb-2">M� ng�nh *</Text>
+            <Text className="font-medium mb-2">Mã ngành *</Text>
             <Input
-              placeholder="V� dụ: CNTT"
+              placeholder="Ví dụ: CNTT"
               value={formData.code}
               onChange={(e) => setFormData(prev => ({ ...prev, code: e.target.value.toUpperCase() }))}
             />
           </Box>
 
           <Box>
-            <Text className="font-medium mb-2">M� tả ng�nh</Text>
+            <Text className="font-medium mb-2">Mô tả ngành</Text>
             <Input.TextArea
-              placeholder="M� tả về ng�nh đ�o tạo"
+              placeholder="Mô tả về ngành đào tạo"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               rows={3}
@@ -336,63 +336,63 @@ export const MajorModal: React.FC<MajorModalProps> = ({
           </Box>
 
           <Box>
-            <Text className="font-medium mb-2">Học ph� (VNĐ/năm)</Text>
+            <Text className="font-medium mb-2">Học phí (VNĐ/năm)</Text>
             <Input
               type="number"
-              placeholder="V� dụ: 18000000"
+              placeholder="Ví dụ: 18000000"
               value={formData.tuition}
               onChange={(e) => setFormData(prev => ({ ...prev, tuition: e.target.value }))}
             />
           </Box>
 
           <Box>
-            <Text className="font-medium mb-2">Thời gian đ�o tạo</Text>
+            <Text className="font-medium mb-2">Thời gian đào tạo</Text>
             <Input
-              placeholder="V� dụ: 3 năm"
+              placeholder="Ví dụ: 3 năm"
               value={formData.duration}
               onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
             />
           </Box>
 
           <Box>
-            <Text className="font-medium mb-2">Y�u cầu đầu v�o</Text>
+            <Text className="font-medium mb-2">Yêu cầu đầu vào</Text>
             <Input.TextArea
-              placeholder="Điều kiện, y�u cầu để học ng�nh n�y (mỗi điều kiện một d�ng)"
+              placeholder="Điều kiện, yêu cầu để học ngành này (mỗi điều kiện một dòng)"
               value={formData.requirements}
               onChange={(e) => setFormData(prev => ({ ...prev, requirements: e.target.value }))}
               rows={3}
             />
             <Text className="text-xs text-gray-500 mt-1">
-              Mẹo: Viết mỗi y�u cầu tr�n một d�ng ri�ng
+              Mẹo: Viết mỗi yêu cầu trên một dòng riêng
             </Text>
           </Box>
 
           <Box>
             <Text className="font-medium mb-2">Cơ hội nghề nghiệp</Text>
             <Input.TextArea
-              placeholder="C�c cơ hội nghề nghiệp sau khi tốt nghiệp (mỗi cơ hội một d�ng)"
+              placeholder="Các cơ hội nghề nghiệp sau khi tốt nghiệp (mỗi cơ hội một dòng)"
               value={formData.careerProspects}
               onChange={(e) => setFormData(prev => ({ ...prev, careerProspects: e.target.value }))}
               rows={4}
             />
             <Text className="text-xs text-gray-500 mt-1">
-              Mẹo: Viết mỗi cơ hội nghề nghiệp tr�n một d�ng ri�ng
+              Mẹo: Viết mỗi cơ hội nghề nghiệp trên một dòng riêng
             </Text>
           </Box>
 
           <Box>
-            <Text className="font-medium mb-2">Website li�n quan</Text>
+            <Text className="font-medium mb-2">Website liên quan</Text>
             <Input
-              placeholder="https://example.com (t�y chọn)"
+              placeholder="https://example.com (tùy chọn)"
               value={formData.website}
               onChange={(e) => setFormData(prev => ({ ...prev, website: e.target.value }))}
             />
           </Box>
 
           <Box>
-            <Text className="font-medium mb-2">Th�ng tin li�n hệ</Text>
+            <Text className="font-medium mb-2">Thông tin liên hệ</Text>
             <Input.TextArea
-              placeholder="Th�ng tin li�n hệ tư vấn ng�nh (t�y chọn)"
+              placeholder="Thông tin liên hệ tư vấn ngành (tùy chọn)"
               value={formData.contactInfo}
               onChange={(e) => setFormData(prev => ({ ...prev, contactInfo: e.target.value }))}
               rows={2}
@@ -400,7 +400,7 @@ export const MajorModal: React.FC<MajorModalProps> = ({
           </Box>
 
           <Box>
-            <Text className="font-medium mb-2">Ảnh đại diện ng�nh</Text>
+            <Text className="font-medium mb-2">Ảnh đại diện ngành</Text>
             <Box className="space-y-3">
               <input
                 type="file"
@@ -443,7 +443,7 @@ export const MajorModal: React.FC<MajorModalProps> = ({
               onClick={handleSave}
               className="bg-blue-600"
             >
-              {editingItem ? 'Cập nhật' : 'Th�m mới'}
+              {editingItem ? 'Cập nhật' : 'Thêm mới'}
             </Button>
           </Box>
         </Box>

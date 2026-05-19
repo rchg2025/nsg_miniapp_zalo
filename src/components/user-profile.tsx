@@ -47,7 +47,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onUserInfoUpdate }) =>
   if (loading) {
     return (
       <Box className="flex items-center justify-center p-4">
-        <Text>Đang tải th�ng tin người d�ng...</Text>
+        <Text>Đang tải thông tin người dùng...</Text>
       </Box>
     );
   }
@@ -55,7 +55,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onUserInfoUpdate }) =>
   if (!userInfo) {
     return (
       <Box className="text-center p-4">
-        <Text className="text-gray-500 mb-4">Kh�ng thể lấy th�ng tin người d�ng</Text>
+        <Text className="text-gray-500 mb-4">Không thể lấy thông tin người dùng</Text>
         <Button 
           variant="primary" 
           size="small"
@@ -77,7 +77,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onUserInfoUpdate }) =>
         />
         <Box className="flex-1">
           <Text.Title className="text-lg font-semibold">
-            {userInfo.name || 'Người d�ng Zalo'}
+            {userInfo.name || 'Người dùng Zalo'}
           </Text.Title>
           <Text className="text-gray-500 text-sm">ID: {userInfo.id}</Text>
           
@@ -93,7 +93,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({ onUserInfoUpdate }) =>
                 loading={phoneLoading}
                 onClick={requestPhoneAccess}
               >
-                {phoneLoading ? 'Đang y�u cầu...' : '📞 Lấy số điện thoại'}
+                {phoneLoading ? 'Đang yêu cầu...' : '📞 Lấy số điện thoại'}
               </Button>
             </Box>
           )}

@@ -42,18 +42,18 @@ const ZaloLogin: React.FC<ZaloLoginProps> = ({ onLoginSuccess }) => {
         onLoginSuccess(userInfo.userInfo);
         setIsModalOpen(false);
       } else {
-        throw new Error('Kh�ng thể lấy th�ng tin người d�ng từ Zalo');
+        throw new Error('Không thể lấy thông tin người dùng từ Zalo');
       }
 
     } catch (error: any) {
       console.error('❌ Zalo login error:', error);
       
-      let errorMessage = 'Đ� xảy ra lỗi khi đăng nhập bằng Zalo. Vui l�ng thử lại.';
+      let errorMessage = 'Đã xảy ra lỗi khi đăng nhập bằng Zalo. Vui lòng thử lại.';
       
       if (error.code === 10004) {
-        errorMessage = 'Bạn đ� từ chối cấp quyền. Vui l�ng cấp quyền để sử dụng ứng dụng.';
+        errorMessage = 'Bạn đã từ chối cấp quyền. Vui lòng cấp quyền để sử dụng ứng dụng.';
       } else if (error.code === 10005) {
-        errorMessage = 'Phi�n đăng nhập hết hạn. Vui l�ng thử lại.';
+        errorMessage = 'Phiên đăng nhập hết hạn. Vui lòng thử lại.';
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -118,21 +118,21 @@ const ZaloLogin: React.FC<ZaloLoginProps> = ({ onLoginSuccess }) => {
 
         {/* App Title */}
         <Text.Title className="text-xl font-bold text-gray-800 mb-2">
-          Trường Cao đẳng B�ch khoa Nam S�i G�n
+          Trường Cao đẳng Bách khoa Nam Sài Gòn
         </Text.Title>
         
         <Text className="text-gray-600 mb-6">
-          Ứng dụng tin tức v� th�ng tin tuyển sinh ch�nh thức
+          Ứng dụng tin tức và thông tin tuyển sinh chính thức
         </Text>
 
         {/* Login Requirement Message */}
         <Box className="bg-blue-50 rounded-lg p-4 mb-6">
           <Text className="text-blue-800 font-medium mb-2">
-            🔐 Y�u cầu đăng nhập
+            🔐 Yêu cầu đăng nhập
           </Text>
           <Text className="text-blue-700 text-sm">
-            Để sử dụng ứng dụng, bạn cần đăng nhập bằng t�i khoản Zalo của m�nh. 
-            Th�ng tin của bạn sẽ được bảo mật v� chỉ d�ng để c� nh�n h�a trải nghiệm.
+            Để sử dụng ứng dụng, bạn cần đăng nhập bằng tài khoản Zalo của mình. 
+            Thông tin của bạn sẽ được bảo mật và chỉ dùng để cá nhân hóa trải nghiệm.
           </Text>
         </Box>
 
@@ -145,15 +145,15 @@ const ZaloLogin: React.FC<ZaloLoginProps> = ({ onLoginSuccess }) => {
           </Box>
         )}
 
-          {/* Đ� loại bỏ n�t Đăng nhập bằng Zalo theo y�u cầu kiểm duyệt */}
+          {/* Đã loại bỏ nút Đăng nhập bằng Zalo theo yêu cầu kiểm duyệt */}
 
         {/* Privacy Note */}
         <Text className="text-xs text-gray-500 leading-relaxed">
-          Bằng c�ch đăng nhập, bạn đồng � với{' '}
+          Bằng cách đăng nhập, bạn đồng ý với{' '}
           <Text className="text-blue-600 underline">Điều khoản sử dụng</Text>
-          {' '}v�{' '}
-          <Text className="text-blue-600 underline">Ch�nh s�ch bảo mật</Text>
-          {' '}của ch�ng t�i.
+          {' '}và{' '}
+          <Text className="text-blue-600 underline">Chính sách bảo mật</Text>
+          {' '}của chúng tôi.
         </Text>
       </Box>
     </Modal>

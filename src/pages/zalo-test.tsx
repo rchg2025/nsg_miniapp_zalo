@@ -150,7 +150,7 @@ function ZaloTestPage() {
         <Box className="bg-blue-50 rounded-lg p-4">
           <Text.Title className="mb-2 text-blue-800">💡 Hướng dẫn</Text.Title>
           <Text className="text-blue-700 text-sm">
-            Mở DevTools Console để xem chi tiết logs v� debug information.
+            Mở DevTools Console để xem chi tiết logs và debug information.
           </Text>
         </Box>
       </Box>

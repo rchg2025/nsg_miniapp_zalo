@@ -19,9 +19,9 @@ export function Header({
 
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Ch�o buổi s�ng";
-    if (hour < 18) return "Ch�o buổi chiều";
-    return "Ch�o buổi tối";
+    if (hour < 12) return "Chào buổi sáng";
+    if (hour < 18) return "Chào buổi chiều";
+    return "Chào buổi tối";
   };
 
   return (
@@ -52,14 +52,14 @@ export function Header({
                         {localStorage.getItem('displayName') || userInfo.name}
                       </Text>
                       <Text className="text-white/80 text-xs">
-                        Ch�o mừng bạn đến với Trường Cao đẳng B�ch khoa Nam S�i G�n
+                        Chào mừng bạn đến với Trường Cao đẳng Bách khoa Nam Sài Gòn
                       </Text>
                     </Box>
                   </Box>
                 ) : (
                   <Box>
-                    <Text className="text-white/90">Ch�o mừng đến với</Text>
-                    <Text className="text-white font-bold">Trường Cao đẳng B�ch khoa Nam S�i G�n</Text>
+                    <Text className="text-white/90">Chào mừng đến với</Text>
+                    <Text className="text-white font-bold">Trường Cao đẳng Bách khoa Nam Sài Gòn</Text>
                   </Box>
                 )}
               </Box>

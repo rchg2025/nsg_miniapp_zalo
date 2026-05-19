@@ -39,7 +39,7 @@ function ZaloOATestPage() {
     addLog("🔗 Testing follow OA...");
     try {
       const result = await ZaloOAService.followOA();
-      addLog(result.success ? "✅ Follow th�nh c�ng" : "❌ Follow thất bại");
+      addLog(result.success ? "✅ Follow thành công" : "❌ Follow thất bại");
       if (result.success) {
         setIsFollowed(true);
       }
@@ -53,7 +53,7 @@ function ZaloOATestPage() {
     addLog("💬 Testing open chat...");
     try {
       const result = await ZaloOAService.openSupportChat();
-      addLog(result.success ? "✅ Chat mở th�nh c�ng" : "❌ Chat mở thất bại");
+      addLog(result.success ? "✅ Chat mở thành công" : "❌ Chat mở thất bại");
       console.log("Chat result:", result);
     } catch (error) {
       addLog(`❌ Chat error: ${error}`);
@@ -98,7 +98,7 @@ function ZaloOATestPage() {
               <strong>Website:</strong> {OA_CONFIG.CONTACT_INFO.website}
             </Text>
             <Text className="text-sm">
-              <strong>Followed Status:</strong> {isFollowed ? "✅ Đ� follow" : "❌ Chưa follow"}
+              <strong>Followed Status:</strong> {isFollowed ? "✅ Đã follow" : "❌ Chưa follow"}
             </Text>
           </Box>
         </Box>
@@ -202,7 +202,7 @@ function ZaloOATestPage() {
             2. Bấm "Test Follow OA" để test chức năng follow{'\n'}
             3. Bấm "Test Open Chat" để test chức năng chat{'\n'}
             4. Kiểm tra logs để debug{'\n'}
-            5. Tr�n Zalo thật: C�c API sẽ hoạt động đầy đủ
+            5. Trên Zalo thật: Các API sẽ hoạt động đầy đủ
           </Text>
         </Box>
 

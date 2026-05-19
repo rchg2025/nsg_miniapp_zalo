@@ -21,7 +21,7 @@ export function NewsModal({ isVisible, onClose, onSave, editData }: NewsModalPro
 
   const handleSave = async () => {
     if (!formData.title.trim() || !formData.content.trim()) {
-      alert("Vui l�ng nhập đầy đủ ti�u đề v� nội dung");
+      alert("Vui lòng nhập đầy đủ tiêu đề và nội dung");
       return;
     }
 
@@ -67,7 +67,7 @@ export function NewsModal({ isVisible, onClose, onSave, editData }: NewsModalPro
   return (
     <Modal
       visible={isVisible}
-      title={editData ? "Chỉnh sửa tin tức" : "Th�m tin tức mới"}
+      title={editData ? "Chỉnh sửa tin tức" : "Thêm tin tức mới"}
       actions={[
         {
           text: isLoading ? "Đang lưu..." : "Lưu",
@@ -87,12 +87,12 @@ export function NewsModal({ isVisible, onClose, onSave, editData }: NewsModalPro
         {/* Title */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Ti�u đề: <span className="text-red-500">*</span>
+            Tiêu đề: <span className="text-red-500">*</span>
           </Text>
           <Input
             value={formData.title}
             onChange={(e) => setFormData({...formData, title: e.target.value})}
-            placeholder="Nhập ti�u đề tin tức"
+            placeholder="Nhập tiêu đề tin tức"
             className="w-full"
           />
         </Box>
@@ -107,9 +107,9 @@ export function NewsModal({ isVisible, onClose, onSave, editData }: NewsModalPro
             onChange={(e) => setFormData({...formData, category: e.target.value})}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           >
-            <option value="announcement">Th�ng b�o</option>
+            <option value="announcement">Thông báo</option>
             <option value="news">Tin tức</option>
-            <option value="training">Chương tr�nh đ�o tạo</option>
+            <option value="training">Chương trình đào tạo</option>
             <option value="event">Sự kiện</option>
             <option value="admission">Tuyển sinh</option>
           </select>
@@ -132,7 +132,7 @@ export function NewsModal({ isVisible, onClose, onSave, editData }: NewsModalPro
         {/* Status */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Trạng th�i:
+            Trạng thái:
           </Text>
           <select
             value={formData.status}
@@ -140,7 +140,7 @@ export function NewsModal({ isVisible, onClose, onSave, editData }: NewsModalPro
             className="w-full px-3 py-2 border border-gray-300 rounded-lg"
           >
             <option value="draft">Bản thảo</option>
-            <option value="published">Đ� đăng</option>
+            <option value="published">Đã đăng</option>
             <option value="archived">Lưu trữ</option>
           </select>
         </Box>
@@ -148,19 +148,19 @@ export function NewsModal({ isVisible, onClose, onSave, editData }: NewsModalPro
         {/* Author */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            T�c giả:
+            Tác giả:
           </Text>
           <Input
             value={formData.author}
             onChange={(e) => setFormData({...formData, author: e.target.value})}
-            placeholder="T�n t�c giả"
+            placeholder="Tên tác giả"
             className="w-full"
           />
         </Box>
 
         {isLoading && (
           <Box className="text-center py-2">
-            <Text className="text-blue-600 text-sm">Đang xử l�...</Text>
+            <Text className="text-blue-600 text-sm">Đang xử lý...</Text>
           </Box>
         )}
       </Box>

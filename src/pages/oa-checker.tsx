@@ -167,30 +167,30 @@ const OAChecker: React.FC = () => {
         <Box className="bg-blue-50 rounded-lg p-4 border border-blue-200 mb-4">
           <Text className="font-medium text-blue-800 mb-2">💡 Hướng dẫn:</Text>
           <Text className="text-blue-700 text-sm mb-1">
-            1. Test c�c OA ID phổ biến để t�m ID hợp lệ
+            1. Test các OA ID phổ biến để tìm ID hợp lệ
           </Text>
           <Text className="text-blue-700 text-sm mb-1">
             2. Nếu tất cả đều lỗi "Can not decode id" → Mini App chưa được cấp quyền OA
           </Text>
           <Text className="text-blue-700 text-sm">
-            3. Li�n hệ Zalo để đăng k� OA cho Mini App hoặc d�ng OA test
+            3. Liên hệ Zalo để đăng ký OA cho Mini App hoặc dùng OA test
           </Text>
         </Box>
 
         {/* Current Status */}
         <Box className="bg-green-50 rounded-lg p-4 border border-green-200">
-          <Text className="font-medium text-green-800 mb-2">✅ Trạng th�i hiện tại:</Text>
+          <Text className="font-medium text-green-800 mb-2">✅ Trạng thái hiện tại:</Text>
           <Text className="text-green-700 text-sm mb-1">
-            � OA functions hoạt động b�nh thường! 🎉
+            • OA functions hoạt động bình thường! 🎉
           </Text>
           <Text className="text-green-700 text-sm mb-1">
-            � followOA: SUCCESS ✅
+            • followOA: SUCCESS ✅
           </Text>
           <Text className="text-green-700 text-sm mb-1">
-            � openChat: SUCCESS ✅
+            • openChat: SUCCESS ✅
           </Text>
           <Text className="text-green-700 text-sm">
-            � Profile V2 đ� được restore với đầy đủ t�nh năng OA
+            • Profile V2 đã được restore với đầy đủ tính năng OA
           </Text>
         </Box>
 

@@ -101,7 +101,7 @@ function NotificationsPage() {
   return (
     <Page className="bg-gray-50">
       <Header 
-        title="Th�ng b�o"
+        title="Thông báo"
         showBackIcon={true}
         onBackClick={() => navigate(-1)}
         className="bg-blue-600 text-white"
@@ -111,7 +111,7 @@ function NotificationsPage() {
       <Box className="bg-white p-4 border-b border-gray-200">
         <Box className="flex items-center justify-between mb-3">
           <Text.Title className="text-lg">
-            Th�ng b�o ({notifications.length})
+            Thông báo ({notifications.length})
           </Text.Title>
           {unreadCount > 0 && (
             <Button
@@ -120,7 +120,7 @@ function NotificationsPage() {
               onClick={markAllAsRead}
               className="text-blue-600"
             >
-              Đ�nh dấu tất cả đ� đọc
+              Đánh dấu tất cả đã đọc
             </Button>
           )}
         </Box>
@@ -152,7 +152,7 @@ function NotificationsPage() {
           <Box className="text-center py-8">
             <Icon icon="zi-notif" className="text-gray-400 text-4xl mb-3" />
             <Text className="text-gray-500">
-              {activeTab === 'unread' ? 'Kh�ng c� th�ng b�o chưa đọc' : 'Chưa c� th�ng b�o n�o'}
+              {activeTab === 'unread' ? 'Không có thông báo chưa đọc' : 'Chưa có thông báo nào'}
             </Text>
           </Box>
         ) : (
@@ -191,7 +191,7 @@ function NotificationsPage() {
                       </Text>
                       <Box className="flex items-center justify-between">
                         <Text className="text-xs text-gray-500">
-                          {labelForCategory(notification.type === 'major' ? 'admission' : notification.type)} � {notification.date}
+                          {labelForCategory(notification.type === 'major' ? 'admission' : notification.type)} • {notification.date}
                         </Text>
                         <Box className="flex space-x-2">
                           {!notification.isRead && (
@@ -201,7 +201,7 @@ function NotificationsPage() {
                               onClick={() => markAsRead(notification.id)}
                               className="text-xs"
                             >
-                              Đ�nh dấu đ� đọc
+                              Đánh dấu đã đọc
                             </Button>
                           )}
                           <Button
@@ -210,7 +210,7 @@ function NotificationsPage() {
                             onClick={() => deleteNotification(notification.id)}
                             className="text-xs text-red-600"
                           >
-                            X�a
+                            Xóa
                           </Button>
                         </Box>
                       </Box>
@@ -228,7 +228,7 @@ function NotificationsPage() {
 
       <Modal
         visible={!!openDetail}
-        title={openDetail?.title || 'Th�ng b�o'}
+        title={openDetail?.title || 'Thông báo'}
         onClose={() => setOpenDetail(null)}
         maskClosable
       >
@@ -237,9 +237,9 @@ function NotificationsPage() {
             {openDetail?.message}
           </Text>
           <Text className="text-xs text-gray-500">
-            {openDetail && (labelForCategory(openDetail.type === 'major' ? 'admission' : openDetail.type))} � {openDetail?.date}
+            {openDetail && (labelForCategory(openDetail.type === 'major' ? 'admission' : openDetail.type))} • {openDetail?.date}
           </Text>
-          <Button fullWidth onClick={() => setOpenDetail(null)}>Đ�ng</Button>
+          <Button fullWidth onClick={() => setOpenDetail(null)}>Đóng</Button>
         </Box>
       </Modal>
     </Page>

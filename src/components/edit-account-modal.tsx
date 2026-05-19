@@ -27,7 +27,7 @@ const getAccountDatabase = (): Record<string, AccountInfo> => {
   const defaultAccounts: Record<string, AccountInfo> = {
     "admin": {
       username: "admin",
-      displayName: "Quản trị vi�n ch�nh",
+      displayName: "Quản trị viên chính",
       email: "info@nsg.edu.vn",
       role: "admin",
       status: "active",
@@ -36,7 +36,7 @@ const getAccountDatabase = (): Record<string, AccountInfo> => {
     },
     "admin123": {
       username: "admin123",
-      displayName: "Quản trị vi�n phụ",
+      displayName: "Quản trị viên phụ",
       email: "info@nsg.edu.vn",
       role: "moderator",
       status: "active",
@@ -53,7 +53,7 @@ const getAccountDatabase = (): Record<string, AccountInfo> => {
     },
     "school": {
       username: "school",
-      displayName: "T�i khoản trường",
+      displayName: "Tài khoản trường",
       email: "info@nsg.edu.vn",
       role: "editor",
       status: "active",
@@ -113,14 +113,14 @@ export function EditAccountModal({ isVisible, onClose, username }: EditAccountMo
     setError("");
     
     if (!formData.displayName.trim() || !formData.email.trim()) {
-      setError("Vui l�ng nhập đầy đủ th�ng tin bắt buộc");
+      setError("Vui lòng nhập đầy đủ thông tin bắt buộc");
       return;
     }
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
-      setError("Định dạng email kh�ng hợp lệ");
+      setError("Định dạng email không hợp lệ");
       return;
     }
 
@@ -131,10 +131,10 @@ export function EditAccountModal({ isVisible, onClose, username }: EditAccountMo
 
     try {
       updateAccount(username, formData);
-      alert("Cập nhật th�ng tin t�i khoản th�nh c�ng!");
+      alert("Cập nhật thông tin tài khoản thành công!");
       onClose();
     } catch (error) {
-      setError("C� lỗi xảy ra, vui l�ng thử lại");
+      setError("Có lỗi xảy ra, vui lòng thử lại");
     }
     
     setIsLoading(false);
@@ -146,7 +146,7 @@ export function EditAccountModal({ isVisible, onClose, username }: EditAccountMo
   };
 
   const formatDateTime = (dateString: string) => {
-    if (!dateString) return "Chưa c�";
+    if (!dateString) return "Chưa có";
     
     try {
       const date = new Date(dateString);
@@ -159,7 +159,7 @@ export function EditAccountModal({ isVisible, onClose, username }: EditAccountMo
   return (
     <Modal
       visible={isVisible}
-      title={`Chỉnh sửa t�i khoản: ${username}`}
+      title={`Chỉnh sửa tài khoản: ${username}`}
       actions={[
         {
           text: isLoading ? "Đang lưu..." : "Lưu thay đổi",
@@ -179,12 +179,12 @@ export function EditAccountModal({ isVisible, onClose, username }: EditAccountMo
         {/* Username (readonly) */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            T�n đăng nhập:
+            Tên đăng nhập:
           </Text>
           <Box className="bg-gray-100 rounded-lg p-3">
             <Text className="text-gray-800 font-medium">{formData.username}</Text>
             <Text className="text-xs text-gray-500 mt-1">
-              (Kh�ng thể thay đổi t�n đăng nhập)
+              (Không thể thay đổi tên đăng nhập)
             </Text>
           </Box>
         </Box>
@@ -192,12 +192,12 @@ export function EditAccountModal({ isVisible, onClose, username }: EditAccountMo
         {/* Display Name */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            T�n hiển thị: <span className="text-red-500">*</span>
+            Tên hiển thị: <span className="text-red-500">*</span>
           </Text>
           <Input
             value={formData.displayName}
             onChange={(e) => setFormData({...formData, displayName: e.target.value})}
-            placeholder="Nhập t�n hiển thị"
+            placeholder="Nhập tên hiển thị"
             className="w-full"
           />
         </Box>
@@ -226,9 +226,9 @@ export function EditAccountModal({ isVisible, onClose, username }: EditAccountMo
             onChange={(value) => setFormData({...formData, role: value as string})}
             placeholder="Chọn quyền hạn"
           >
-            <option value="admin">Quản trị vi�n</option>
-            <option value="moderator">Kiểm duyệt vi�n</option>
-            <option value="editor">Bi�n tập vi�n</option>
+            <option value="admin">Quản trị viên</option>
+            <option value="moderator">Kiểm duyệt viên</option>
+            <option value="editor">Biên tập viên</option>
             <option value="viewer">Chỉ xem</option>
           </Select>
         </Box>
@@ -236,25 +236,25 @@ export function EditAccountModal({ isVisible, onClose, username }: EditAccountMo
         {/* Status */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Trạng th�i:
+            Trạng thái:
           </Text>
           <Select
             value={formData.status}
             onChange={(value) => setFormData({...formData, status: value as string})}
-            placeholder="Chọn trạng th�i"
+            placeholder="Chọn trạng thái"
           >
             <option value="active">Hoạt động</option>
-            <option value="inactive">Tạm kh�a</option>
+            <option value="inactive">Tạm khóa</option>
             <option value="suspended">Bị cấm</option>
           </Select>
         </Box>
 
         {/* Account Info */}
         <Box className="bg-gray-50 rounded-lg p-3 space-y-2">
-          <Text className="text-sm font-medium text-gray-700">Th�ng tin t�i khoản:</Text>
+          <Text className="text-sm font-medium text-gray-700">Thông tin tài khoản:</Text>
           
           <Box className="flex justify-between">
-            <Text className="text-sm text-gray-600">Ng�y tạo:</Text>
+            <Text className="text-sm text-gray-600">Ngày tạo:</Text>
             <Text className="text-sm text-gray-800">
               {formatDateTime(formData.created)}
             </Text>
@@ -281,7 +281,7 @@ export function EditAccountModal({ isVisible, onClose, username }: EditAccountMo
         {isLoading && (
           <Box className="text-center">
             <Text className="text-blue-600 text-sm">
-              Đang cập nhật th�ng tin t�i khoản...
+              Đang cập nhật thông tin tài khoản...
             </Text>
           </Box>
         )}
@@ -289,13 +289,13 @@ export function EditAccountModal({ isVisible, onClose, username }: EditAccountMo
         {/* Role descriptions */}
         <Box className="bg-blue-50 border border-blue-200 rounded-lg p-3">
           <Text className="text-blue-800 text-xs mb-2">
-            📋 Ph�n quyền:
+            📋 Phân quyền:
           </Text>
           <Text className="text-blue-700 text-xs space-y-1">
-            � <strong>Quản trị vi�n:</strong> To�n quyền quản l� hệ thống<br/>
-            � <strong>Kiểm duyệt vi�n:</strong> Quản l� nội dung v� người d�ng<br/>
-            � <strong>Bi�n tập vi�n:</strong> Tạo v� chỉnh sửa nội dung<br/>
-            � <strong>Chỉ xem:</strong> Chỉ c� quyền xem th�ng tin
+            • <strong>Quản trị viên:</strong> Toàn quyền quản lý hệ thống<br/>
+            • <strong>Kiểm duyệt viên:</strong> Quản lý nội dung và người dùng<br/>
+            • <strong>Biên tập viên:</strong> Tạo và chỉnh sửa nội dung<br/>
+            • <strong>Chỉ xem:</strong> Chỉ có quyền xem thông tin
           </Text>
         </Box>
       </Box>

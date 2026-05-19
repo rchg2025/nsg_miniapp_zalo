@@ -17,7 +17,7 @@ function SettingsPage() {
   const navigate = useNavigate();
   const { userInfo, setUserInfo } = useUser();
   const [schoolSettings, setSchoolSettings] = useState({
-    address: "47 Cao L�, Ph��ng Ch�nh H�ng, TP. H� Ch� Minh",
+    address: "47 Cao Lỗ, Phường Chánh Hưng, TP. Hồ Chí Minh",
     phone: "0981146179",
     website: "https://namsaigon.edu.vn"
   });
@@ -37,7 +37,7 @@ function SettingsPage() {
 
   const handleSyncWithZalo = async () => {
     try {
-      // S� d�ng ZaloUserService � l�y th�ng tin c� b�n (t�n v� �nh �i di�n)
+      // Sử dụng ZaloUserService để lấy thông tin cơ bản (tên và ảnh đại diện)
       const userInfo = await ZaloUserService.getUserInfo();
       console.log('[ZALO SYNC] userInfo:', userInfo);
 
@@ -45,7 +45,7 @@ function SettingsPage() {
         const updatedProfile = {
           ...profileData,
           name: userInfo.name || profileData.name,
-          // Gi� nguy�n email v� s� i�n tho�i hi�n t�i
+          // Giữ nguyên email và số điện thoại hiện tại
           email: profileData.email,
           phone: profileData.phone
         };
@@ -56,7 +56,7 @@ function SettingsPage() {
 
         // Also update the global user context
         if (setUserInfo) {
-          // Import UserRole enum � d�ng �ng ki�u
+          // Import UserRole enum để dùng đúng kiểu
           const { UserRole } = await import("@/types/index");
           setUserInfo({
             id: userInfo.id,
@@ -67,23 +67,23 @@ function SettingsPage() {
           });
         }
 
-        // L�u user v�o danh s�ch qu�n l� ng��i d�ng (adminUsersList)
+        // Lưu user vào danh sách quản lý người dùng (adminUsersList)
         try {
           const { saveZaloUserLogin } = await import("@/utils/user-management");
           saveZaloUserLogin(userInfo);
-          console.log('[ZALO SYNC] � l�u user v�o adminUsersList:', userInfo);
+          console.log('[ZALO SYNC] Đã lưu user vào adminUsersList:', userInfo);
         } catch (err) {
-          console.error('[ZALO SYNC] L�i khi l�u user v�o adminUsersList:', err);
+          console.error('[ZALO SYNC] Lỗi khi lưu user vào adminUsersList:', err);
         }
 
-        // Th�ng b�o th�nh c�ng
-        alert(` �ng b� th�ng tin v�i Zalo th�nh c�ng!\n\n" T�n: ${userInfo.name}\n" �nh �i di�n: � c�p nh�t\n" Email v� ST: C�n nh�p th� c�ng`);
+        // Thông báo thành công
+        alert(`✅ Đồng bộ thông tin với Zalo thành công!\n\n• Tên: ${userInfo.name}\n• Ảnh đại diện: Đã cập nhật\n• Email và SĐT: Cần nhập thủ công`);
       } else {
-        alert('L Kh�ng th� l�y th�ng tin t� Zalo. Vui l�ng th� l�i.');
+        alert('❌ Không thể lấy thông tin từ Zalo. Vui lòng thử lại.');
       }
     } catch (error) {
-      console.error("L�i khi �ng b� v�i Zalo:", error);
-      alert('L � x�y ra l�i khi c� g�ng �ng b� th�ng tin. Vui l�ng th� l�i.');
+      console.error("Lỗi khi đồng bộ với Zalo:", error);
+      alert('❌ Đã xảy ra lỗi khi cố gắng đồng bộ thông tin. Vui lòng thử lại.');
     }
   };
 
@@ -105,14 +105,14 @@ function SettingsPage() {
       const parsed = JSON.parse(savedSchoolSettings);
       // Update with new values, prioritize new info
       setSchoolSettings({
-        address: "47 Cao L�, Ph��ng Ch�nh H�ng, TP. H� Ch� Minh",
+        address: "47 Cao Lỗ, Phường Chánh Hưng, TP. Hồ Chí Minh",
         phone: "0981146179",
         website: "https://namsaigon.edu.vn"
       });
       // Also update localStorage with new info
       const updatedSettings = {
         ...parsed,
-        address: "47 Cao L�, Ph��ng Ch�nh H�ng, TP. H� Ch� Minh",
+        address: "47 Cao Lỗ, Phường Chánh Hưng, TP. Hồ Chí Minh",
         phone: "0981146179",
         website: "https://namsaigon.edu.vn"
       };
@@ -120,10 +120,10 @@ function SettingsPage() {
     } else {
       // Set new default values
       const newSettings = {
-        address: "47 Cao L�, Ph��ng Ch�nh H�ng, TP. H� Ch� Minh",
+        address: "47 Cao Lỗ, Phường Chánh Hưng, TP. Hồ Chí Minh",
         phone: "0981146179",
         website: "https://namsaigon.edu.vn",
-        schoolName: "Tr��ng Cao �ng Nam S�i G�n"
+        schoolName: "Trường Cao đẳng Nam Sài Gòn"
       };
       setSchoolSettings(newSettings);
       localStorage.setItem('schoolSettings', JSON.stringify(newSettings));
@@ -156,7 +156,7 @@ function SettingsPage() {
   const clearCache = () => {
     localStorage.removeItem('savedNews');
     localStorage.removeItem('lastNewsVisit');
-    alert('� x�a cache th�nh c�ng!');
+    alert('Đã xóa cache thành công!');
   };
 
   const resetSettings = () => {
@@ -169,28 +169,28 @@ function SettingsPage() {
     };
     setSettings(defaultSettings);
     localStorage.setItem('appSettings', JSON.stringify(defaultSettings));
-    alert('� kh�i ph�c c�i �t m�c �nh!');
+    alert('Đã khôi phục cài đặt mặc định!');
   };
 
   const refreshSchoolInfo = () => {
     // Force refresh school information
     const updatedSchoolSettings = {
-      address: "47 Cao L�, Ph��ng Ch�nh H�ng, TP. H� Ch� Minh",
+      address: "47 Cao Lỗ, Phường Chánh Hưng, TP. Hồ Chí Minh",
       phone: "0981146179",
       website: "https://namsaigon.edu.vn",
-      schoolName: "Tr��ng Cao �ng Nam S�i G�n"
+      schoolName: "Trường Cao đẳng Nam Sài Gòn"
     };
     
     setSchoolSettings(updatedSchoolSettings);
     localStorage.setItem('schoolSettings', JSON.stringify(updatedSchoolSettings));
     
-    alert(' � c�p nh�t th�ng tin tr��ng th�nh c�ng!');
+    alert('✅ Đã cập nhật thông tin trường thành công!');
   };
 
   return (
     <Page className="bg-gray-50">
       <Header 
-        title="C�i �t"
+        title="Cài đặt"
         showBackIcon={true}
         onBackClick={() => navigate(-1)}
         className="bg-blue-600 text-white"
@@ -204,7 +204,7 @@ function SettingsPage() {
         <Box className="bg-white rounded-lg shadow-sm p-4 mb-4">
           <Text.Title className="text-blue-600 mb-4 flex items-center">
             <Icon icon="zi-user" className="mr-2" />
-            Th�ng tin c� nh�n
+            Thông tin cá nhân
           </Text.Title>
           
           <Box className="space-y-4">
@@ -215,15 +215,15 @@ function SettingsPage() {
               className="mb-4"
             >
               <Icon icon="zi-user" className="mr-2" />
-              �ng b� th�ng tin v�i Zalo
+              Đồng bộ thông tin với Zalo
             </Button>
 
             <Box>
-              <Text className="text-gray-700 mb-2">T�n hi�n th�</Text>
+              <Text className="text-gray-700 mb-2">Tên hiển thị</Text>
               <Input
                 value={profileData.name}
                 onChange={(e) => handleProfileChange('name', e.target.value)}
-                placeholder="Nh�p t�n c�a b�n"
+                placeholder="Nhập tên của bạn"
                 className="w-full"
               />
             </Box>
@@ -233,24 +233,24 @@ function SettingsPage() {
               <Input
                 value={profileData.email}
                 onChange={(e) => handleProfileChange('email', e.target.value)}
-                placeholder="Nh�p email c�a b�n"
+                placeholder="Nhập email của bạn"
                 className="w-full"
               />
               <Text className="text-gray-500 text-xs mt-1">
-                9 C�n nh�p th� c�ng
+                ℹ️ Cần nhập thủ công
               </Text>
             </Box>
             
             <Box>
-              <Text className="text-gray-700 mb-2">S� i�n tho�i</Text>
+              <Text className="text-gray-700 mb-2">Số điện thoại</Text>
               <Input
                 value={profileData.phone}
                 onChange={(e) => handleProfileChange('phone', e.target.value)}
-                placeholder="Nh�p s� i�n tho�i"
+                placeholder="Nhập số điện thoại"
                 className="w-full"
               />
               <Text className="text-gray-500 text-xs mt-1">
-                9 C�n nh�p th� c�ng
+                ℹ️ Cần nhập thủ công
               </Text>
             </Box>
           </Box>
@@ -258,13 +258,13 @@ function SettingsPage() {
 
         {/* App Settings */}
         <Box className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <Text.Title className="text-blue-600 mb-4">C�i �t �ng d�ng</Text.Title>
+          <Text.Title className="text-blue-600 mb-4">Cài đặt ứng dụng</Text.Title>
           
           <Box className="space-y-4">
             <Box className="flex items-center justify-between">
               <Box>
-                <Text className="text-gray-800 font-medium">Th�ng b�o</Text>
-                <Text className="text-gray-500 text-sm">Nh�n th�ng b�o tin t�c m�i</Text>
+                <Text className="text-gray-800 font-medium">Thông báo</Text>
+                <Text className="text-gray-500 text-sm">Nhận thông báo tin tức mới</Text>
               </Box>
               <Switch
                 checked={settings.notifications}
@@ -274,8 +274,8 @@ function SettingsPage() {
             
             <Box className="flex items-center justify-between">
               <Box>
-                <Text className="text-gray-800 font-medium">T� �ng l�m m�i</Text>
-                <Text className="text-gray-500 text-sm">C�p nh�t tin t�c t� �ng</Text>
+                <Text className="text-gray-800 font-medium">Tự động làm mới</Text>
+                <Text className="text-gray-500 text-sm">Cập nhật tin tức tự động</Text>
               </Box>
               <Switch
                 checked={settings.autoRefresh}
@@ -284,12 +284,12 @@ function SettingsPage() {
             </Box>
             
             <Box>
-              <Text className="text-gray-800 font-medium mb-2">Giao di�n</Text>
+              <Text className="text-gray-800 font-medium mb-2">Giao diện</Text>
               <Box className="flex space-x-2">
                 {[
-                  { key: 'light', label: 'S�ng' },
-                  { key: 'dark', label: 'T�i' },
-                  { key: 'auto', label: 'T� �ng' }
+                  { key: 'light', label: 'Sáng' },
+                  { key: 'dark', label: 'Tối' },
+                  { key: 'auto', label: 'Tự động' }
                 ].map((theme) => (
                   <Button
                     key={theme.key}
@@ -305,10 +305,10 @@ function SettingsPage() {
             </Box>
             
             <Box>
-              <Text className="text-gray-800 font-medium mb-2">Ng�n ng�</Text>
+              <Text className="text-gray-800 font-medium mb-2">Ngôn ngữ</Text>
               <Box className="flex space-x-2">
                 {[
-                  { key: 'vi', label: 'Ti�ng Vi�t' },
+                  { key: 'vi', label: 'Tiếng Việt' },
                   { key: 'en', label: 'English' }
                 ].map((lang) => (
                   <Button
@@ -328,13 +328,13 @@ function SettingsPage() {
 
         {/* About School */}
         <Box className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <Text.Title className="text-blue-600 mb-4">Th�ng tin tr��ng h�c</Text.Title>
+          <Text.Title className="text-blue-600 mb-4">Thông tin trường học</Text.Title>
           
           <Box className="space-y-3">
             <Box className="flex items-center">
               <Icon icon="zi-location" className="text-gray-500 mr-3" />
               <Box>
-                <Text className="text-gray-800 font-medium">�a ch�</Text>
+                <Text className="text-gray-800 font-medium">Địa chỉ</Text>
                 <Text className="text-gray-600 text-sm">{schoolSettings.address}</Text>
               </Box>
             </Box>
@@ -365,7 +365,7 @@ function SettingsPage() {
                 onClick={() => window.location.href = "tel:" + schoolSettings.phone}
               >
                 <Icon icon="zi-call" className="mb-2 text-green-600" />
-                <Text className="text-sm">G�i i�n</Text>
+                <Text className="text-sm">Gọi điện</Text>
               </Button>
 
               <Button
@@ -383,7 +383,7 @@ function SettingsPage() {
                 onClick={refreshSchoolInfo}
               >
                 <Icon icon="zi-clock-1" className="mb-2 text-blue-600" />
-                <Text className="text-sm">C�p nh�t</Text>
+                <Text className="text-sm">Cập nhật</Text>
               </Button>
             </div>
           </Box>
@@ -393,35 +393,35 @@ function SettingsPage() {
         <Box className="bg-white rounded-lg shadow-sm p-4 mb-4">
           <Text.Title className="text-blue-600 mb-4 flex items-center">
             <Icon icon="zi-notif" className="mr-2" />
-            C�i �t th�ng b�o
+            Cài đặt thông báo
           </Text.Title>
           
           <Box className="space-y-4">
             <Box className="flex items-center justify-between">
               <Box>
-                <Text className="text-gray-800 font-medium">Th�ng b�o tin t�c m�i</Text>
-                <Text className="text-gray-600 text-sm">Nh�n th�ng b�o khi c� tin t�c m�i</Text>
+                <Text className="text-gray-800 font-medium">Thông báo tin tức mới</Text>
+                <Text className="text-gray-600 text-sm">Nhận thông báo khi có tin tức mới</Text>
               </Box>
               <Button
                 size="small"
                 variant={settings.notifications ? "primary" : "secondary"}
                 onClick={() => handleSettingChange('notifications', !settings.notifications)}
               >
-                {settings.notifications ? "B�t" : "T�t"}
+                {settings.notifications ? "Bật" : "Tắt"}
               </Button>
             </Box>
             
             <Box className="flex items-center justify-between">
               <Box>
-                <Text className="text-gray-800 font-medium">�m thanh th�ng b�o</Text>
-                <Text className="text-gray-600 text-sm">Ph�t �m thanh khi c� th�ng b�o</Text>
+                <Text className="text-gray-800 font-medium">Âm thanh thông báo</Text>
+                <Text className="text-gray-600 text-sm">Phát âm thanh khi có thông báo</Text>
               </Box>
               <Button
                 size="small"
                 variant={settings.soundEnabled ? "primary" : "secondary"}
                 onClick={() => handleSettingChange('soundEnabled', !settings.soundEnabled)}
               >
-                {settings.soundEnabled ? "B�t" : "T�t"}
+                {settings.soundEnabled ? "Bật" : "Tắt"}
               </Button>
             </Box>
           </Box>
@@ -431,7 +431,7 @@ function SettingsPage() {
         <Box className="bg-white rounded-lg shadow-sm p-4 mb-4">
           <Text.Title className="text-blue-600 mb-4 flex items-center">
             <Icon icon="zi-more-grid" className="mr-2" />
-            Thao t�c nhanh
+            Thao tác nhanh
           </Text.Title>
           
           <Box className="grid grid-cols-2 gap-3">
@@ -441,7 +441,7 @@ function SettingsPage() {
               onClick={() => navigate('/notifications')}
             >
               <Icon icon="zi-chat" className="mb-2 text-red-600" />
-              <Text className="text-sm">Xem th�ng b�o</Text>
+              <Text className="text-sm">Xem thông báo</Text>
             </Button>
             
             <Button
@@ -452,11 +452,11 @@ function SettingsPage() {
                 const majors = localStorage.getItem('adminMajorsList');
                 const notifications = localStorage.getItem('userNotifications');
                 
-                alert(`=� Th�ng k� d� li�u:\n\n" Tin t�c: ${news ? JSON.parse(news).length : 0} b�i\n" Ng�nh h�c: ${majors ? JSON.parse(majors).length : 0} ng�nh\n" Th�ng b�o: ${notifications ? JSON.parse(notifications).length : 0} th�ng b�o`);
+                alert(`📊 Thống kê dữ liệu:\n\n• Tin tức: ${news ? JSON.parse(news).length : 0} bài\n• Ngành học: ${majors ? JSON.parse(majors).length : 0} ngành\n• Thông báo: ${notifications ? JSON.parse(notifications).length : 0} thông báo`);
               }}
             >
               <Icon icon="zi-bookmark" className="mb-2 text-blue-600" />
-              <Text className="text-sm">Th�ng k� d� li�u</Text>
+              <Text className="text-sm">Thống kê dữ liệu</Text>
             </Button>
             
             <Button
@@ -464,14 +464,14 @@ function SettingsPage() {
               className="flex flex-col items-center p-4 border-gray-200"
               onClick={() => {
                 if (navigator.onLine) {
-                  alert('< K�t n�i internet: T�t\n=� Tr�ng th�i: Online');
+                  alert('🌐 Kết nối internet: Tốt\n📶 Trạng thái: Online');
                 } else {
-                  alert('L Kh�ng c� k�t n�i internet\n=� Tr�ng th�i: Offline');
+                  alert('❌ Không có kết nối internet\n📶 Trạng thái: Offline');
                 }
               }}
             >
               <Icon icon="zi-wifi" className="mb-2 text-blue-600" />
-              <Text className="text-sm">Ki�m tra m�ng</Text>
+              <Text className="text-sm">Kiểm tra mạng</Text>
             </Button>
             
             <Button
@@ -480,11 +480,11 @@ function SettingsPage() {
               onClick={() => {
                 const version = "1.0.0";
                 const buildDate = "2025-09-23";
-                alert(`=� Th�ng tin �ng d�ng:\n\n" Phi�n b�n: ${version}\n" Ng�y build: ${buildDate}\n" Platform: Zalo Mini App\n" Tr��ng: Cao �ng B�ch khoa Nam S�i G�n`);
+                alert(`📱 Thông tin ứng dụng:\n\n• Phiên bản: ${version}\n• Ngày build: ${buildDate}\n• Platform: Zalo Mini App\n• Trường: Cao đẳng Bách khoa Nam Sài Gòn`);
               }}
             >
               <Icon icon="zi-info-circle" className="mb-2 text-green-600" />
-              <Text className="text-sm">Th�ng tin app</Text>
+              <Text className="text-sm">Thông tin app</Text>
             </Button>
             
             <Button
@@ -500,7 +500,7 @@ function SettingsPage() {
 
         {/* System Actions */}
         <Box className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <Text.Title className="text-blue-600 mb-4">H� th�ng</Text.Title>
+          <Text.Title className="text-blue-600 mb-4">Hệ thống</Text.Title>
           
           <Box className="space-y-3">
             <Button
@@ -509,7 +509,7 @@ function SettingsPage() {
               onClick={clearCache}
             >
               <Icon icon="zi-delete" className="mr-3 text-gray-500" />
-              X�a cache �ng d�ng
+              Xóa cache ứng dụng
             </Button>
             
             <Button
@@ -518,7 +518,7 @@ function SettingsPage() {
               onClick={resetSettings}
             >
               <Icon icon="zi-setting" className="mr-3 text-gray-500" />
-              Kh�i ph�c c�i �t g�c
+              Khôi phục cài đặt gốc
             </Button>
             
             <Button
@@ -527,7 +527,7 @@ function SettingsPage() {
               onClick={() => navigate('/about')}
             >
               <Icon icon="zi-info-circle" className="mr-3 text-gray-500" />
-              V� �ng d�ng
+              Về ứng dụng
             </Button>
             
             {/* Debug Menu */}
@@ -537,7 +537,7 @@ function SettingsPage() {
               onClick={() => navigate('/profile-debug')}
             >
               <Icon icon="zi-setting" className="mr-3 text-orange-500" />
-              <Text className="text-orange-600">= Debug Profile (Dev)</Text>
+              <Text className="text-orange-600">🐛 Debug Profile (Dev)</Text>
             </Button>
             
             <Button
@@ -546,7 +546,7 @@ function SettingsPage() {
               onClick={() => navigate('/profile-simple')}
             >
               <Icon icon="zi-user" className="mr-3 text-green-500" />
-              <Text className="text-green-600">=d Profile Simple</Text>
+              <Text className="text-green-600">👤 Profile Simple</Text>
             </Button>
             
             <Button
@@ -555,7 +555,7 @@ function SettingsPage() {
               onClick={() => navigate('/profile-v2')}
             >
               <Icon icon="zi-user" className="mr-3 text-blue-500" />
-              <Text className="text-blue-600">=� Profile V2 (Alternative)</Text>
+              <Text className="text-blue-600">🚀 Profile V2 (Alternative)</Text>
             </Button>
             
             <Button
@@ -564,7 +564,7 @@ function SettingsPage() {
               onClick={() => navigate('/profile')}
             >
               <Icon icon="zi-user" className="mr-3 text-purple-500" />
-              <Text className="text-purple-600">� Profile G�c (Ch�nh th�c)</Text>
+              <Text className="text-purple-600">🏠 Profile Gốc (Chính thức)</Text>
             </Button>
           </Box>
         </Box>
@@ -572,7 +572,7 @@ function SettingsPage() {
         {/* App Version */}
         <Box className="text-center py-4">
           <Text className="text-gray-500 text-sm">
-            Phi�n b�n 1.0.0 - Tr��ng Cao �ng B�ch khoa Nam S�i G�n
+            Phiên bản 1.0.0 - Trường Cao đẳng Bách khoa Nam Sài Gòn
           </Text>
         </Box>
 

@@ -65,7 +65,7 @@ function AdminPageSimple() {
   }, [navigate]);
 
   const handleLogout = () => {
-    if (window.confirm("Bạn c� chắc chắn muốn đăng xuất khỏi trang quản trị?")) {
+    if (window.confirm("Bạn có chắc chắn muốn đăng xuất khỏi trang quản trị?")) {
       console.log('🚪 Admin logging out...');
       localStorage.removeItem("admin_logged_in");
       localStorage.removeItem("admin_login_time");
@@ -111,19 +111,19 @@ function AdminPageSimple() {
           <Box className="bg-white rounded-lg p-4 shadow-sm text-center">
             <Box className="text-2xl mb-2">📰</Box>
             <Text className="font-medium">Tin tức</Text>
-            <Text className="text-sm text-gray-500">{stats.newsCount} b�i viết</Text>
+            <Text className="text-sm text-gray-500">{stats.newsCount} bài viết</Text>
           </Box>
           
           <Box className="bg-white rounded-lg p-4 shadow-sm text-center">
             <Box className="text-2xl mb-2">👥</Box>
-            <Text className="font-medium">Người d�ng</Text>
+            <Text className="font-medium">Người dùng</Text>
             <Text className="text-sm text-gray-500">{stats.usersCount} users</Text>
           </Box>
           
           <Box className="bg-white rounded-lg p-4 shadow-sm text-center">
             <Box className="text-2xl mb-2">📚</Box>
-            <Text className="font-medium">Ng�nh học</Text>
-            <Text className="text-sm text-gray-500">{stats.majorsCount} ng�nh</Text>
+            <Text className="font-medium">Ngành học</Text>
+            <Text className="text-sm text-gray-500">{stats.majorsCount} ngành</Text>
           </Box>
           
           <Box className="bg-white rounded-lg p-4 shadow-sm text-center">
@@ -144,8 +144,8 @@ function AdminPageSimple() {
             <Box className="flex items-center">
               <Box className="text-xl mr-3">📰</Box>
               <Box className="text-left">
-                <Text className="font-medium">Quản l� tin tức</Text>
-                <Text className="text-sm text-gray-500">Tạo, chỉnh sửa v� x�a b�i viết</Text>
+                <Text className="font-medium">Quản lý tin tức</Text>
+                <Text className="text-sm text-gray-500">Tạo, chỉnh sửa và xóa bài viết</Text>
               </Box>
             </Box>
           </Button>
@@ -159,8 +159,8 @@ function AdminPageSimple() {
             <Box className="flex items-center">
               <Box className="text-xl mr-3">👥</Box>
               <Box className="text-left">
-                <Text className="font-medium">Quản l� người d�ng</Text>
-                <Text className="text-sm text-gray-500">Xem danh s�ch v� th�ng tin user</Text>
+                <Text className="font-medium">Quản lý người dùng</Text>
+                <Text className="text-sm text-gray-500">Xem danh sách và thông tin user</Text>
               </Box>
             </Box>
           </Button>
@@ -174,8 +174,8 @@ function AdminPageSimple() {
             <Box className="flex items-center">
               <Box className="text-xl mr-3">📚</Box>
               <Box className="text-left">
-                <Text className="font-medium">Quản l� ng�nh học</Text>
-                <Text className="text-sm text-gray-500">Cập nhật th�ng tin c�c ng�nh đ�o tạo</Text>
+                <Text className="font-medium">Quản lý ngành học</Text>
+                <Text className="text-sm text-gray-500">Cập nhật thông tin các ngành đào tạo</Text>
               </Box>
             </Box>
           </Button>
@@ -189,7 +189,7 @@ function AdminPageSimple() {
             <Box className="flex items-center">
               <Box className="text-xl mr-3">🖼️</Box>
               <Box className="text-left">
-                <Text className="font-medium">Quản l� Banner Tuyển sinh</Text>
+                <Text className="font-medium">Quản lý Banner Tuyển sinh</Text>
                 <Text className="text-sm text-gray-500">Cập nhật slide banner trang chủ</Text>
               </Box>
             </Box>
@@ -205,7 +205,7 @@ function AdminPageSimple() {
               <Box className="text-xl mr-3">📄</Box>
               <Box className="text-left">
                 <Text className="font-medium">Đơn tuyển sinh</Text>
-                <Text className="text-sm text-gray-500">Xem v� xử l� đơn đăng k�</Text>
+                <Text className="text-sm text-gray-500">Xem và xử lý đơn đăng ký</Text>
               </Box>
             </Box>
           </Button>
@@ -219,8 +219,8 @@ function AdminPageSimple() {
             <Box className="flex items-center">
               <Box className="text-xl mr-3">📊</Box>
               <Box className="text-left">
-                <Text className="font-medium">Thống k� & B�o c�o</Text>
-                <Text className="text-sm text-gray-500">Xem b�o c�o v� ph�n t�ch dữ liệu</Text>
+                <Text className="font-medium">Thống kê & Báo cáo</Text>
+                <Text className="text-sm text-gray-500">Xem báo cáo và phân tích dữ liệu</Text>
               </Box>
             </Box>
           </Button>
@@ -234,8 +234,8 @@ function AdminPageSimple() {
             <Box className="flex items-center">
               <Box className="text-xl mr-3">⚙️</Box>
               <Box className="text-left">
-                <Text className="font-medium">C�i đặt hệ thống</Text>
-                <Text className="text-sm text-gray-500">Cấu h�nh ứng dụng v� th�ng số</Text>
+                <Text className="font-medium">Cài đặt hệ thống</Text>
+                <Text className="text-sm text-gray-500">Cấu hình ứng dụng và thông số</Text>
               </Box>
             </Box>
           </Button>

@@ -81,7 +81,7 @@ function AdminNewsPage() {
 
   const handleCreateNews = () => {
     if (!formData.title || !formData.content || !formData.summary) {
-      alert('Vui l�ng nhập đầy đủ ti�u đề, t�m tắt v� nội dung');
+      alert('Vui lòng nhập đầy đủ tiêu đề, tóm tắt và nội dung');
       return;
     }
 
@@ -125,7 +125,7 @@ function AdminNewsPage() {
     if (!editingNews) return;
 
     if (!formData.title || !formData.content || !formData.summary) {
-      alert('Vui l�ng nhập đầy đủ ti�u đề, t�m tắt v� nội dung');
+      alert('Vui lòng nhập đầy đủ tiêu đề, tóm tắt và nội dung');
       return;
     }
 
@@ -156,7 +156,7 @@ function AdminNewsPage() {
   };
 
   const handleDeleteNews = (id: string) => {
-    if (confirm('Bạn c� chắc chắn muốn x�a b�i viết n�y?')) {
+    if (confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
       const updatedNews = newsList.filter(news => news.id !== id);
       DataManager.saveNews(updatedNews);
       setNewsList(updatedNews);
@@ -176,12 +176,12 @@ function AdminNewsPage() {
       'news': 'Tổng hợp',
       'admission': 'Tuyển sinh',
       'event': 'Sự kiện',
-      'announcement': 'Th�ng b�o',
+      'announcement': 'Thông báo',
       // Legacy categories (for backward compatibility)
       'general': 'Tổng hợp',
       'tuyen-sinh': 'Tuyển sinh',
       'su-kien': 'Sự kiện',
-      'thong-bao': 'Th�ng b�o'
+      'thong-bao': 'Thông báo'
     };
     return categories[category] || category;
   };
@@ -189,7 +189,7 @@ function AdminNewsPage() {
   return (
     <Page className="page-with-header bg-gray-50">
       <Header 
-        title="Quản l� tin tức" 
+        title="Quản lý tin tức" 
         showBackIcon={true}
         className="bg-blue-600 text-white"
       />
@@ -209,7 +209,7 @@ function AdminNewsPage() {
       <Box className="p-4">
         {/* Header actions */}
         <Box className="flex justify-between items-center mb-4">
-          <Text.Title>Danh s�ch tin tức ({newsList.length})</Text.Title>
+          <Text.Title>Danh sách tin tức ({newsList.length})</Text.Title>
           <Button 
             variant="primary"
             size="small"
@@ -234,7 +234,7 @@ function AdminNewsPage() {
             <Text className="text-lg font-bold text-green-600">
               {newsList.filter(n => n.status === 'published').length}
             </Text>
-            <Text className="text-xs text-gray-500">Đ� xuất bản</Text>
+            <Text className="text-xs text-gray-500">Đã xuất bản</Text>
             {activeFilter === 'published' && <Text className="text-xs text-green-600 mt-1">✓ Đang lọc</Text>}
           </Box>
           <Box 
@@ -246,7 +246,7 @@ function AdminNewsPage() {
             <Text className="text-lg font-bold text-yellow-600">
               {newsList.filter(n => n.status === 'draft').length}
             </Text>
-            <Text className="text-xs text-gray-500">Bản nh�p</Text>
+            <Text className="text-xs text-gray-500">Bản nháp</Text>
             {activeFilter === 'draft' && <Text className="text-xs text-yellow-600 mt-1">✓ Đang lọc</Text>}
           </Box>
           <Box 
@@ -281,11 +281,11 @@ function AdminNewsPage() {
             <Box className="flex items-center gap-2">
               <Text className="text-sm text-blue-700 font-medium">
                 🔍 Đang hiển thị: {
-                  activeFilter === 'published' ? 'B�i đ� xuất bản' :
-                  activeFilter === 'draft' ? 'Bản nh�p' :
-                  activeFilter === 'featured' ? 'B�i nổi bật' :
+                  activeFilter === 'published' ? 'Bài đã xuất bản' :
+                  activeFilter === 'draft' ? 'Bản nháp' :
+                  activeFilter === 'featured' ? 'Bài nổi bật' :
                   'Sắp xếp theo lượt xem'
-                } ({filteredNews.length} b�i)
+                } ({filteredNews.length} bài)
               </Text>
             </Box>
             <Button 
@@ -294,7 +294,7 @@ function AdminNewsPage() {
               onClick={() => handleFilterClick('all')}
               className="text-blue-600"
             >
-              X�a bộ lọc
+              Xóa bộ lọc
             </Button>
           </Box>
         )}
@@ -305,7 +305,7 @@ function AdminNewsPage() {
             <List.Item
               key={news.id}
               title={`${news.featured ? '⭐ ' : ''}${news.title}`}
-              subTitle={`${getCategoryName(news.category)} � ${new Date(news.createdAt).toLocaleDateString('vi-VN')} � ${news.status === 'published' ? 'Đ� xuất bản' : 'Bản nh�p'} � ${news.viewCount} lượt xem`}
+              subTitle={`${getCategoryName(news.category)} • ${new Date(news.createdAt).toLocaleDateString('vi-VN')} • ${news.status === 'published' ? 'Đã xuất bản' : 'Bản nháp'} • ${news.viewCount} lượt xem`}
               prefix={
                 news.imageUrl ? (
                   <img 
@@ -342,7 +342,7 @@ function AdminNewsPage() {
                     onClick={() => handleDeleteNews(news.id)}
                     className="text-red-600"
                   >
-                    X�a
+                    Xóa
                   </Button>
                 </Box>
               }
@@ -352,7 +352,7 @@ function AdminNewsPage() {
 
         {newsList.length === 0 && (
           <Box className="text-center py-8">
-            <Text className="text-gray-500">Chưa c� tin tức n�o</Text>
+            <Text className="text-gray-500">Chưa có tin tức nào</Text>
           </Box>
         )}
       </Box>
@@ -387,18 +387,18 @@ function AdminNewsPage() {
       >
         <Box className="space-y-4 max-h-96 overflow-y-auto">
           <Box>
-            <Text className="mb-2 font-medium">Ti�u đề</Text>
+            <Text className="mb-2 font-medium">Tiêu đề</Text>
             <Input
-              placeholder="Nhập ti�u đề tin tức"
+              placeholder="Nhập tiêu đề tin tức"
               value={formData.title}
               onChange={(e) => setFormData({...formData, title: e.target.value})}
             />
           </Box>
 
           <Box>
-            <Text className="mb-2 font-medium">T�m tắt</Text>
+            <Text className="mb-2 font-medium">Tóm tắt</Text>
             <Input.TextArea
-              placeholder="Nhập t�m tắt ngắn gọn về tin tức"
+              placeholder="Nhập tóm tắt ngắn gọn về tin tức"
               value={formData.summary}
               onChange={(e) => setFormData({...formData, summary: e.target.value})}
               rows={2}
@@ -415,7 +415,7 @@ function AdminNewsPage() {
               <option value="news">Tổng hợp</option>
               <option value="admission">Tuyển sinh</option>
               <option value="event">Sự kiện</option>
-              <option value="announcement">Th�ng b�o</option>
+              <option value="announcement">Thông báo</option>
             </select>
           </Box>
 
@@ -441,7 +441,7 @@ function AdminNewsPage() {
           </Box>
 
           <Box className="flex items-center justify-between">
-            <Text className="font-medium">B�i viết nổi bật</Text>
+            <Text className="font-medium">Bài viết nổi bật</Text>
             <Switch
               checked={formData.featured}
               onChange={(e) => setFormData({...formData, featured: e.target.checked})}
@@ -449,21 +449,21 @@ function AdminNewsPage() {
           </Box>
 
           <Box>
-            <Text className="mb-2 font-medium">Trạng th�i</Text>
+            <Text className="mb-2 font-medium">Trạng thái</Text>
             <select
               value={formData.status}
               onChange={(e) => setFormData({...formData, status: e.target.value as 'draft' | 'published'})}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="draft">Bản nh�p</option>
+              <option value="draft">Bản nháp</option>
               <option value="published">Xuất bản</option>
             </select>
           </Box>
 
           <Box>
-            <Text className="mb-2 font-medium">Tags (c�ch nhau bằng dấu phẩy)</Text>
+            <Text className="mb-2 font-medium">Tags (cách nhau bằng dấu phẩy)</Text>
             <Input
-              placeholder="tin tức, quan trọng, th�ng b�o"
+              placeholder="tin tức, quan trọng, thông báo"
               value={formData.tags}
               onChange={(e) => setFormData({...formData, tags: e.target.value})}
             />

@@ -47,10 +47,10 @@ function AdminStatsPage() {
 
   const getPeriodName = (period: string) => {
     const periods = {
-      'today': 'H�m nay',
-      'week': 'Tuần n�y',
-      'month': 'Th�ng n�y',
-      'year': 'Năm n�y'
+      'today': 'Hôm nay',
+      'week': 'Tuần này',
+      'month': 'Tháng này',
+      'year': 'Năm này'
     };
     return periods[period] || period;
   };
@@ -59,7 +59,7 @@ function AdminStatsPage() {
     return (
       <Page className="page-with-header bg-gray-50">
         <Header 
-          title="Thống k� & B�o c�o" 
+          title="Thống kê & Báo cáo" 
           showBackIcon={true}
           className="bg-blue-600 text-white"
         />
@@ -73,7 +73,7 @@ function AdminStatsPage() {
   return (
     <Page className="page-with-header bg-gray-50">
       <Header 
-        title="Thống k� & B�o c�o" 
+        title="Thống kê & Báo cáo" 
         showBackIcon={true}
         className="bg-blue-600 text-white"
       />
@@ -115,53 +115,53 @@ function AdminStatsPage() {
           <Box className="grid grid-cols-2 gap-3 mb-4">
             <Box className="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-4 rounded-lg">
               <Text className="text-2xl font-bold">{formatNumber(stats.users.total)}</Text>
-              <Text className="text-sm opacity-90">Tổng người d�ng</Text>
-              <Text className="text-xs opacity-75">+{stats.users.newThisMonth} th�ng n�y</Text>
+              <Text className="text-sm opacity-90">Tổng người dùng</Text>
+              <Text className="text-xs opacity-75">+{stats.users.newThisMonth} tháng này</Text>
             </Box>
             <Box className="bg-gradient-to-br from-green-500 to-green-600 text-white p-4 rounded-lg">
               <Text className="text-2xl font-bold">{formatNumber(stats.news.published)}</Text>
-              <Text className="text-sm opacity-90">Tin tức đ� xuất bản</Text>
+              <Text className="text-sm opacity-90">Tin tức đã xuất bản</Text>
               <Text className="text-xs opacity-75">{stats.news.total} tổng cộng</Text>
             </Box>
             <Box className="bg-gradient-to-br from-purple-500 to-purple-600 text-white p-4 rounded-lg">
               <Text className="text-2xl font-bold">{formatNumber(stats.majors.active)}</Text>
-              <Text className="text-sm opacity-90">Ng�nh đang tuyển</Text>
+              <Text className="text-sm opacity-90">Ngành đang tuyển</Text>
               <Text className="text-xs opacity-75">{stats.majors.total} tổng cộng</Text>
             </Box>
             <Box className="bg-gradient-to-br from-orange-500 to-orange-600 text-white p-4 rounded-lg">
               <Text className="text-2xl font-bold">{formatNumber(stats.applications.total)}</Text>
               <Text className="text-sm opacity-90">Đơn tuyển sinh</Text>
-              <Text className="text-xs opacity-75">+{stats.applications.thisMonth} th�ng n�y</Text>
+              <Text className="text-xs opacity-75">+{stats.applications.thisMonth} tháng này</Text>
             </Box>
           </Box>
         </Box>
 
         {/* User Statistics */}
         <Box className="mb-6">
-          <Text.Title className="mb-3">👥 Thống k� người d�ng</Text.Title>
+          <Text.Title className="mb-3">👥 Thống kê người dùng</Text.Title>
           <Box className="bg-white p-4 rounded-lg space-y-3">
             <Box className="flex justify-between items-center">
-              <Text className="text-gray-600">Tổng số người d�ng:</Text>
+              <Text className="text-gray-600">Tổng số người dùng:</Text>
               <Text className="font-bold text-lg">{formatNumber(stats.users.total)}</Text>
             </Box>
             <Box className="flex justify-between items-center">
-              <Text className="text-gray-600">Người d�ng hoạt động:</Text>
+              <Text className="text-gray-600">Người dùng hoạt động:</Text>
               <Text className="font-bold text-green-600">{formatNumber(stats.users.active)}</Text>
             </Box>
             <Box className="flex justify-between items-center">
-              <Text className="text-gray-600">Sinh vi�n:</Text>
+              <Text className="text-gray-600">Sinh viên:</Text>
               <Text className="font-bold text-blue-600">{formatNumber(stats.users.students)}</Text>
             </Box>
             <Box className="flex justify-between items-center">
-              <Text className="text-gray-600">Giảng vi�n:</Text>
+              <Text className="text-gray-600">Giảng viên:</Text>
               <Text className="font-bold text-purple-600">{formatNumber(stats.users.teachers)}</Text>
             </Box>
             <Box className="flex justify-between items-center">
-              <Text className="text-gray-600">Quản trị vi�n:</Text>
+              <Text className="text-gray-600">Quản trị viên:</Text>
               <Text className="font-bold text-red-600">{formatNumber(stats.users.admins)}</Text>
             </Box>
             <Box className="flex justify-between items-center pt-2 border-t">
-              <Text className="text-gray-600">Người d�ng mới th�ng n�y:</Text>
+              <Text className="text-gray-600">Người dùng mới tháng này:</Text>
               <Text className="font-bold text-orange-600">{formatNumber(stats.users.newThisMonth)}</Text>
             </Box>
           </Box>
@@ -169,16 +169,16 @@ function AdminStatsPage() {
 
         {/* News Statistics */}
         <Box className="mb-6">
-          <Text.Title className="mb-3">📰 Thống k� tin tức</Text.Title>
+          <Text.Title className="mb-3">📰 Thống kê tin tức</Text.Title>
           <Box className="bg-white p-4 rounded-lg">
             <Box className="grid grid-cols-2 gap-4 mb-4">
               <Box className="text-center">
                 <Text className="text-2xl font-bold text-green-600">{stats.news.published}</Text>
-                <Text className="text-sm text-gray-600">Đ� xuất bản</Text>
+                <Text className="text-sm text-gray-600">Đã xuất bản</Text>
               </Box>
               <Box className="text-center">
                 <Text className="text-2xl font-bold text-yellow-600">{stats.news.draft}</Text>
-                <Text className="text-sm text-gray-600">Bản nh�p</Text>
+                <Text className="text-sm text-gray-600">Bản nháp</Text>
               </Box>
               <Box className="text-center">
                 <Text className="text-2xl font-bold text-red-600">{stats.news.featured}</Text>
@@ -190,7 +190,7 @@ function AdminStatsPage() {
               </Box>
             </Box>
             <Box className="flex justify-between items-center pt-3 border-t">
-              <Text className="text-gray-600">Tổng số lượt th�ch:</Text>
+              <Text className="text-gray-600">Tổng số lượt thích:</Text>
               <Text className="font-bold text-pink-600">{formatNumber(stats.news.totalLikes)}</Text>
             </Box>
           </Box>
@@ -198,22 +198,22 @@ function AdminStatsPage() {
 
         {/* Majors Statistics */}
         <Box className="mb-6">
-          <Text.Title className="mb-3">📚 Thống k� tuyển sinh</Text.Title>
+          <Text.Title className="mb-3">📚 Thống kê tuyển sinh</Text.Title>
           <Box className="bg-white p-4 rounded-lg space-y-3">
             <Box className="flex justify-between items-center">
-              <Text className="text-gray-600">Tổng ng�nh học:</Text>
+              <Text className="text-gray-600">Tổng ngành học:</Text>
               <Text className="font-bold text-lg">{formatNumber(stats.majors.total)}</Text>
             </Box>
             <Box className="flex justify-between items-center">
-              <Text className="text-gray-600">Ng�nh đang tuyển:</Text>
+              <Text className="text-gray-600">Ngành đang tuyển:</Text>
               <Text className="font-bold text-green-600">{formatNumber(stats.majors.active)}</Text>
             </Box>
             <Box className="flex justify-between items-center">
-              <Text className="text-gray-600">Tổng chỉ ti�u:</Text>
+              <Text className="text-gray-600">Tổng chỉ tiêu:</Text>
               <Text className="font-bold text-blue-600">{formatNumber(stats.majors.totalQuota)}</Text>
             </Box>
             <Box className="flex justify-between items-center">
-              <Text className="text-gray-600">Đ� tuyển:</Text>
+              <Text className="text-gray-600">Đã tuyển:</Text>
               <Text className="font-bold text-purple-600">{formatNumber(stats.majors.totalEnrolled)}</Text>
             </Box>
             <Box className="flex justify-between items-center pt-2 border-t">
@@ -225,7 +225,7 @@ function AdminStatsPage() {
 
         {/* Applications Statistics */}
         <Box className="mb-6">
-          <Text.Title className="mb-3">📄 Thống k� đơn tuyển sinh</Text.Title>
+          <Text.Title className="mb-3">📄 Thống kê đơn tuyển sinh</Text.Title>
           <Box className="bg-white p-4 rounded-lg">
             <Box className="grid grid-cols-2 gap-4 mb-4">
               <Box className="text-center">
@@ -238,7 +238,7 @@ function AdminStatsPage() {
               </Box>
               <Box className="text-center">
                 <Text className="text-2xl font-bold text-green-600">{stats.applications.approved}</Text>
-                <Text className="text-sm text-gray-600">Đ� duyệt</Text>
+                <Text className="text-sm text-gray-600">Đã duyệt</Text>
               </Box>
               <Box className="text-center">
                 <Text className="text-2xl font-bold text-red-600">{stats.applications.rejected}</Text>
@@ -246,7 +246,7 @@ function AdminStatsPage() {
               </Box>
             </Box>
             <Box className="flex justify-between items-center pt-3 border-t">
-              <Text className="text-gray-600">Đơn mới th�ng n�y:</Text>
+              <Text className="text-gray-600">Đơn mới tháng này:</Text>
               <Text className="font-bold text-orange-600">{formatNumber(stats.applications.thisMonth)}</Text>
             </Box>
           </Box>
@@ -257,11 +257,11 @@ function AdminStatsPage() {
           <Text.Title className="mb-3">📈 Hoạt động hệ thống</Text.Title>
           <Box className="bg-white p-4 rounded-lg space-y-3">
             <Box className="flex justify-between items-center">
-              <Text className="text-gray-600">Người d�ng hoạt động h�ng ng�y:</Text>
+              <Text className="text-gray-600">Người dùng hoạt động hàng ngày:</Text>
               <Text className="font-bold text-green-600">{formatNumber(stats.activities.dailyActiveUsers)}</Text>
             </Box>
             <Box className="flex justify-between items-center">
-              <Text className="text-gray-600">Người d�ng hoạt động h�ng th�ng:</Text>
+              <Text className="text-gray-600">Người dùng hoạt động hàng tháng:</Text>
               <Text className="font-bold text-blue-600">{formatNumber(stats.activities.monthlyActiveUsers)}</Text>
             </Box>
           </Box>
@@ -269,13 +269,13 @@ function AdminStatsPage() {
 
         {/* Popular Majors */}
         <Box className="mb-6">
-          <Text.Title className="mb-3">🔥 Ng�nh học được quan t�m nhất</Text.Title>
+          <Text.Title className="mb-3">🔥 Ngành học được quan tâm nhất</Text.Title>
           <List>
             {stats.activities.popularMajors.map((major, index) => (
               <List.Item
                 key={major.majorId}
                 title={`${index + 1}. ${major.majorName}`}
-                subTitle={`${major.applications} đơn đăng k�`}
+                subTitle={`${major.applications} đơn đăng ký`}
                 suffix={
                   <Box className="text-center">
                     <Text className="text-lg font-bold text-blue-600">{major.applications}</Text>
@@ -287,7 +287,7 @@ function AdminStatsPage() {
           </List>
           {stats.activities.popularMajors.length === 0 && (
             <Box className="bg-white p-4 rounded text-center">
-              <Text className="text-gray-500">Chưa c� dữ liệu</Text>
+              <Text className="text-gray-500">Chưa có dữ liệu</Text>
             </Box>
           )}
         </Box>
@@ -312,7 +312,7 @@ function AdminStatsPage() {
           </List>
           {stats.activities.popularNews.length === 0 && (
             <Box className="bg-white p-4 rounded text-center">
-              <Text className="text-gray-500">Chưa c� dữ liệu</Text>
+              <Text className="text-gray-500">Chưa có dữ liệu</Text>
             </Box>
           )}
         </Box>

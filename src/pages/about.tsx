@@ -8,33 +8,33 @@ function AboutPage() {
   const features = [
     {
       icon: "📰",
-      title: "Tin tức & Th�ng b�o",
-      description: "Cập nhật tin tức mới nhất từ trường v� c�c th�ng b�o quan trọng"
+      title: "Tin tức & Thông báo",
+      description: "Cập nhật tin tức mới nhất từ trường và các thông báo quan trọng"
     },
     {
       icon: "🎓",
-      title: "Ng�nh đ�o tạo",
-      description: "Kh�m ph� c�c ng�nh học với th�ng tin chi tiết về chương tr�nh v� cơ hội việc l�m"
+      title: "Ngành đào tạo",
+      description: "Khám phá các ngành học với thông tin chi tiết về chương trình và cơ hội việc làm"
     },
     {
       icon: "📋",
-      title: "Đăng k� tuyển sinh",
-      description: "Nộp hồ sơ tuyển sinh trực tuyến một c�ch nhanh ch�ng v� tiện lợi"
+      title: "Đăng ký tuyển sinh",
+      description: "Nộp hồ sơ tuyển sinh trực tuyến một cách nhanh chóng và tiện lợi"
     },
     {
       icon: "🔔",
-      title: "Th�ng b�o th�ng minh",
-      description: "Nhận th�ng b�o kịp thời về c�c sự kiện v� hoạt động của trường"
+      title: "Thông báo thông minh",
+      description: "Nhận thông báo kịp thời về các sự kiện và hoạt động của trường"
     },
     {
       icon: "👤",
-      title: "Quản l� c� nh�n",
-      description: "Cập nhật th�ng tin c� nh�n v� theo d�i c�c hoạt động của bạn"
+      title: "Quản lý cá nhân",
+      description: "Cập nhật thông tin cá nhân và theo dõi các hoạt động của bạn"
     },
     {
       icon: "⚙️",
-      title: "C�i đặt linh hoạt",
-      description: "T�y chỉnh ứng dụng theo sở th�ch với nhiều t�y chọn c�i đặt"
+      title: "Cài đặt linh hoạt",
+      description: "Tùy chỉnh ứng dụng theo sở thích với nhiều tùy chọn cài đặt"
     }
   ];
 
@@ -42,7 +42,7 @@ function AboutPage() {
     {
       icon: "zi-home",
       label: "Địa chỉ",
-      value: "47 Cao Lỗ, Phường Ch�nh Hưng, TP. Hồ Ch� Minh",
+      value: "47 Cao Lỗ, Phường Chánh Hưng, TP. Hồ Chí Minh",
       color: "text-blue-600"
     },
     {
@@ -67,9 +67,9 @@ function AboutPage() {
 
   const developers = [
     {
-      name: "Trường Cao đẳng B�ch khoa Nam S�i G�n",
-      role: "Đơn vị ph�t triển",
-      description: "Ứng dụng được ph�t triển bởi đội ngũ c�ng nghệ th�ng tin của trường"
+      name: "Trường Cao đẳng Bách khoa Nam Sài Gòn",
+      role: "Đơn vị phát triển",
+      description: "Ứng dụng được phát triển bởi đội ngũ công nghệ thông tin của trường"
     }
   ];
 
@@ -92,10 +92,10 @@ function AboutPage() {
             NSG News
           </Text.Title>
           <Text className="text-gray-600 mb-3">
-            Ứng dụng th�ng tin tuyển sinh
+            Ứng dụng thông tin tuyển sinh
           </Text>
           <Box className="inline-block px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-            Phi�n bản 1.0.0
+            Phiên bản 1.0.0
           </Box>
         </Box>
 
@@ -103,13 +103,13 @@ function AboutPage() {
         <Box className="bg-white rounded-lg p-4 shadow-sm">
           <Text.Title className="text-lg font-bold mb-4 flex items-center">
             <Icon icon="zi-home" className="mr-2 text-blue-600" />
-            Trường Cao đẳng B�ch khoa Nam S�i G�n
+            Trường Cao đẳng Bách khoa Nam Sài Gòn
           </Text.Title>
           <Text className="text-gray-700 leading-relaxed mb-4">
-            Trường Cao đẳng B�ch khoa Nam S�i G�n l� một trong những cơ sở gi�o dục uy t�n 
-            tại TP. Hồ Ch� Minh, chuy�n đ�o tạo c�c ng�nh kỹ thuật v� c�ng nghệ. 
-            Với đội ngũ giảng vi�n gi�u kinh nghiệm v� cơ sở vật chất hiện đại, 
-            trường cam kết mang đến chất lượng gi�o dục tốt nhất cho sinh vi�n.
+            Trường Cao đẳng Bách khoa Nam Sài Gòn là một trong những cơ sở giáo dục uy tín 
+            tại TP. Hồ Chí Minh, chuyên đào tạo các ngành kỹ thuật và công nghệ. 
+            Với đội ngũ giảng viên giàu kinh nghiệm và cơ sở vật chất hiện đại, 
+            trường cam kết mang đến chất lượng giáo dục tốt nhất cho sinh viên.
           </Text>
         </Box>
 
@@ -117,7 +117,7 @@ function AboutPage() {
         <Box className="bg-white rounded-lg p-4 shadow-sm">
           <Text.Title className="text-lg font-bold mb-4 flex items-center">
             <Icon icon="zi-star" className="mr-2 text-yellow-500" />
-            T�nh năng ch�nh
+            Tính năng chính
           </Text.Title>
           <Box className="grid grid-cols-1 gap-4">
             {features.map((feature, index) => (
@@ -136,7 +136,7 @@ function AboutPage() {
         <Box className="bg-white rounded-lg p-4 shadow-sm">
           <Text.Title className="text-lg font-bold mb-4 flex items-center">
             <Icon icon="zi-chat" className="mr-2 text-green-600" />
-            Th�ng tin li�n hệ
+            Thông tin liên hệ
           </Text.Title>
           <Box className="space-y-3">
             {contacts.map((contact, index) => (
@@ -155,7 +155,7 @@ function AboutPage() {
         <Box className="bg-white rounded-lg p-4 shadow-sm">
           <Text.Title className="text-lg font-bold mb-4 flex items-center">
             <Icon icon="zi-user" className="mr-2 text-purple-600" />
-            Đội ngũ ph�t triển
+            Đội ngũ phát triển
           </Text.Title>
           {developers.map((dev, index) => (
             <Box key={index} className="p-3 bg-gray-50 rounded-lg">
@@ -170,7 +170,7 @@ function AboutPage() {
         <Box className="bg-white rounded-lg p-4 shadow-sm">
           <Text.Title className="text-lg font-bold mb-4 flex items-center">
             <Icon icon="zi-setting" className="mr-2 text-gray-600" />
-            Th�ng tin kỹ thuật
+            Thông tin kỹ thuật
           </Text.Title>
           <Box className="grid grid-cols-2 gap-3 text-sm">
             <Box>
@@ -186,7 +186,7 @@ function AboutPage() {
               <Text className="font-medium">ZMP UI</Text>
             </Box>
             <Box>
-              <Text className="text-gray-500">Phi�n bản</Text>
+              <Text className="text-gray-500">Phiên bản</Text>
               <Text className="font-medium">1.0.0</Text>
             </Box>
           </Box>
@@ -205,7 +205,7 @@ function AboutPage() {
               onClick={() => navigate('/settings')}
             >
               <Icon icon="zi-setting" className="mr-3" />
-              C�i đặt ứng dụng
+              Cài đặt ứng dụng
             </Button>
             
             <Button 
@@ -214,7 +214,7 @@ function AboutPage() {
               onClick={() => navigate('/profile')}
             >
               <Icon icon="zi-user" className="mr-3" />
-              Th�ng tin t�i khoản
+              Thông tin tài khoản
             </Button>
             
             <Button 
@@ -223,7 +223,7 @@ function AboutPage() {
               onClick={() => window.open('https://namsaigon.edu.vn', '_blank')}
             >
               <Icon icon="zi-bookmark" className="mr-3" />
-              Website ch�nh thức
+              Website chính thức
             </Button>
           </Box>
         </Box>
@@ -231,7 +231,7 @@ function AboutPage() {
         {/* Footer */}
         <Box className="text-center py-4">
           <Text className="text-gray-500 text-sm mb-2">
-            � 2025 Trường Cao đẳng B�ch khoa Nam S�i G�n
+            © 2025 Trường Cao đẳng Bách khoa Nam Sài Gòn
           </Text>
           <Text className="text-gray-400 text-xs">
             Tất cả quyền được bảo lưu

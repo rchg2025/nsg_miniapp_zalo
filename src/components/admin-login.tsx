@@ -8,22 +8,22 @@ interface AdminLoginProps {
   onCancel: () => void;
 }
 
-// H�m x�c thực admin - sẽ kết nối với API backend
+// Hàm xác thực admin - sẽ kết nối với API backend
 const validateAdminCredentials = (username: string, password: string) => {
-  // Trong thực tế, gọi API để x�c thực
-  // Tạm thời để một t�i khoản admin duy nhất để kh�ng lộ th�ng tin
+  // Trong thực tế, gọi API để xác thực
+  // Tạm thời để một tài khoản admin duy nhất để không lộ thông tin
   if (username === "admin" && password === "admin@nsg2025") {
-    return { username: "admin", role: "Quản trị vi�n NSG" };
+    return { username: "admin", role: "Quản trị viên NSG" };
   }
   return null;
 };
 
-// Danh s�ch Zalo ID c� quyền admin (th�m Zalo ID thật v�o đ�y)
+// Danh sách Zalo ID có quyền admin (thêm Zalo ID thật vào đây)
 const ADMIN_ZALO_IDS = [
   // Tự động cấp quyền cho user hiện tại để test
-  // Th�m Zalo ID thật của admin/giảng vi�n tại đ�y:
-  // "2847656892858292658", // V� dụ Zalo ID của admin
-  // "1234567890123456789", // V� dụ Zalo ID của giảng vi�n
+  // Thêm Zalo ID thật của admin/giảng viên tại đây:
+  // "2847656892858292658", // Ví dụ Zalo ID của admin
+  // "1234567890123456789", // Ví dụ Zalo ID của giảng viên
 ];
 
 function AdminLogin({ isVisible, onLoginSuccess, onCancel }: AdminLoginProps) {
@@ -37,7 +37,7 @@ function AdminLogin({ isVisible, onLoginSuccess, onCancel }: AdminLoginProps) {
 
   const handleManualLogin = async () => {
     if (!username.trim() || !password.trim()) {
-      setError("Vui l�ng nhập đầy đủ th�ng tin");
+      setError("Vui lòng nhập đầy đủ thông tin");
       return;
     }
 
@@ -47,11 +47,11 @@ function AdminLogin({ isVisible, onLoginSuccess, onCancel }: AdminLoginProps) {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // X�c thực t�i khoản admin
+    // Xác thực tài khoản admin
     const validAccount = validateAdminCredentials(username, password);
     
     if (validAccount) {
-      // Lưu trạng th�i admin login
+      // Lưu trạng thái admin login
       localStorage.setItem("admin_logged_in", "true");
       localStorage.setItem("admin_login_time", Date.now().toString());
       localStorage.setItem("admin_role", validAccount.role);
@@ -63,7 +63,7 @@ function AdminLogin({ isVisible, onLoginSuccess, onCancel }: AdminLoginProps) {
       setPassword("");
       setError("");
     } else {
-      setError("T�n đăng nhập hoặc mật khẩu kh�ng đ�ng!");
+      setError("Tên đăng nhập hoặc mật khẩu không đúng!");
     }
 
     setIsLoading(false);
@@ -107,19 +107,19 @@ function AdminLogin({ isVisible, onLoginSuccess, onCancel }: AdminLoginProps) {
             className="text-5xl text-blue-600 mx-auto block mb-3"
           />
           <Text className="text-gray-600 text-sm">
-            Nhập th�ng tin đăng nhập để truy cập trang quản trị
+            Nhập thông tin đăng nhập để truy cập trang quản trị
           </Text>
         </Box>
 
         {/* Username Input */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            T�n đăng nhập:
+            Tên đăng nhập:
           </Text>
           <Input
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            placeholder="Nhập t�n đăng nhập"
+            placeholder="Nhập tên đăng nhập"
             onKeyPress={handleKeyPress}
             className="w-full"
           />
@@ -166,7 +166,7 @@ function AdminLogin({ isVisible, onLoginSuccess, onCancel }: AdminLoginProps) {
         {isLoading && (
           <Box className="text-center">
             <Text className="text-blue-600 text-sm">
-              Đang x�c thực...
+              Đang xác thực...
             </Text>
           </Box>
         )}

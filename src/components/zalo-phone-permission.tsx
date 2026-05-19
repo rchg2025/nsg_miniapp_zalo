@@ -1,5 +1,5 @@
 /**
- * Component xử l� quyền truy cập số điện thoại Zalo
+ * Component xử lý quyền truy cập số điện thoại Zalo
  */
 
 import React, { useState } from 'react';
@@ -26,7 +26,7 @@ export const ZaloPhonePermission: React.FC<ZaloPhonePermissionProps> = ({
     setIsLoading(true);
     
     try {
-      // Hiển thị modal giải th�ch trước khi request
+      // Hiển thị modal giải thích trước khi request
       if (showModal) {
         setShowPermissionModal(true);
         return;
@@ -42,14 +42,14 @@ export const ZaloPhonePermission: React.FC<ZaloPhonePermissionProps> = ({
 
   const requestPhonePermission = async () => {
     try {
-      console.log('🔐 Bắt đầu quy tr�nh xin quyền số điện thoại...');
+      console.log('🔐 Bắt đầu quy trình xin quyền số điện thoại...');
       
       // Bước 1: Kiểm tra quyền hiện tại
       const permissions = await ZaloUserService.checkPermissions();
       console.log('📋 Quyền hiện tại:', permissions);
 
       if (permissions.phone) {
-        console.log('✅ Đ� c� quyền số điện thoại, đang lấy th�ng tin...');
+        console.log('✅ Đã có quyền số điện thoại, đang lấy thông tin...');
         const phone = await ZaloUserService.requestPhonePermission();
         if (phone) {
           onPhoneReceived?.(phone);
@@ -58,14 +58,14 @@ export const ZaloPhonePermission: React.FC<ZaloPhonePermissionProps> = ({
       }
 
       // Bước 2: Request quyền số điện thoại
-      console.log('📞 Đang y�u cầu quyền truy cập số điện thoại...');
+      console.log('📞 Đang yêu cầu quyền truy cập số điện thoại...');
       const phone = await ZaloUserService.requestPhonePermission();
       
       if (phone) {
-        console.log('✅ Lấy số điện thoại th�nh c�ng:', phone);
+        console.log('✅ Lấy số điện thoại thành công:', phone);
         onPhoneReceived?.(phone);
       } else {
-        const errorMsg = 'Kh�ng thể lấy số điện thoại. Vui l�ng kiểm tra quyền truy cập.';
+        const errorMsg = 'Không thể lấy số điện thoại. Vui lòng kiểm tra quyền truy cập.';
         console.log('❌', errorMsg);
         onError?.(errorMsg);
       }
@@ -85,7 +85,7 @@ export const ZaloPhonePermission: React.FC<ZaloPhonePermissionProps> = ({
   const handleCancelPermission = () => {
     setShowPermissionModal(false);
     setIsLoading(false);
-    onError?.('Người d�ng từ chối cấp quyền truy cập số điện thoại');
+    onError?.('Người dùng từ chối cấp quyền truy cập số điện thoại');
   };
 
   return (
@@ -102,7 +102,7 @@ export const ZaloPhonePermission: React.FC<ZaloPhonePermissionProps> = ({
         {buttonText}
       </Button>
 
-      {/* Modal giải th�ch quyền truy cập */}
+      {/* Modal giải thích quyền truy cập */}
       {showPermissionModal && (
         <Modal
           visible={showPermissionModal}
@@ -115,7 +115,7 @@ export const ZaloPhonePermission: React.FC<ZaloPhonePermissionProps> = ({
               onClick: handleCancelPermission
             },
             {
-              text: "Cho ph�p",
+              text: "Cho phép",
               highLight: true,
               onClick: handleConfirmPermission
             }
@@ -125,7 +125,7 @@ export const ZaloPhonePermission: React.FC<ZaloPhonePermissionProps> = ({
             <Box className="flex items-center mb-4">
               <Icon icon="zi-check-circle" className="text-green-600 mr-3 text-2xl" />
               <Box>
-                <Text.Title size="small">Y�u cầu quyền truy cập</Text.Title>
+                <Text.Title size="small">Yêu cầu quyền truy cập</Text.Title>
                 <Text className="text-gray-600">Ứng dụng cần quyền để lấy số điện thoại</Text>
               </Box>
             </Box>
@@ -133,12 +133,12 @@ export const ZaloPhonePermission: React.FC<ZaloPhonePermissionProps> = ({
             <Box className="bg-blue-50 rounded-lg p-3 mb-4">
               <Text className="text-sm text-blue-800">
                 <Icon icon="zi-info-circle" className="mr-1" />
-                <strong>Tại sao cần quyền n�y?</strong>
+                <strong>Tại sao cần quyền này?</strong>
               </Text>
               <Text className="text-sm text-blue-700 mt-2">
-                � Tự động điền số điện thoại v�o form{'\n'}
-                � Li�n hệ khẩn cấp khi cần thiết{'\n'}
-                � X�c thực t�i khoản an to�n hơn
+                • Tự động điền số điện thoại vào form{'\n'}
+                • Liên hệ khẩn cấp khi cần thiết{'\n'}
+                • Xác thực tài khoản an toàn hơn
               </Text>
             </Box>
 
@@ -148,15 +148,15 @@ export const ZaloPhonePermission: React.FC<ZaloPhonePermissionProps> = ({
                 <strong>Cam kết bảo mật:</strong>
               </Text>
               <Text className="text-sm text-green-700 mt-2">
-                � Kh�ng chia sẻ th�ng tin với b�n thứ 3{'\n'}
-                � Chỉ sử dụng cho mục đ�ch ứng dụng{'\n'}
-                � Dữ liệu được m� h�a an to�n
+                • Không chia sẻ thông tin với bên thứ 3{'\n'}
+                • Chỉ sử dụng cho mục đích ứng dụng{'\n'}
+                • Dữ liệu được mã hóa an toàn
               </Text>
             </Box>
 
             <Box className="border-l-4 border-orange-400 pl-3 py-2">
               <Text className="text-sm text-gray-700">
-                <strong>Lưu �:</strong> Bạn c� thể thu hồi quyền n�y bất kỳ l�c n�o trong c�i đặt Zalo.
+                <strong>Lưu ý:</strong> Bạn có thể thu hồi quyền này bất kỳ lúc nào trong cài đặt Zalo.
               </Text>
             </Box>
           </Box>
