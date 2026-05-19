@@ -9,6 +9,7 @@ const port = process.env.PORT || 3001; // Cổng server sẽ chạy
 
 // Middleware
 app.use(cors()); // Cho phép Cross-Origin Resource Sharing
+app.use(express.static('public')); // Serve the Admin Frontend UI
 app.use(bodyParser.json({
   verify: (req, res, buf, encoding) => {
     // Lưu raw body để xác thực chữ ký của Zalo
