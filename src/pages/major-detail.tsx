@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { Box, Button, Icon, Page, Text, Header } from "zmp-ui";
 import { useNavigate, useParams } from "react-router-dom";
 import { DataManager, Major } from "@/utils/data-manager";
@@ -34,35 +34,36 @@ function MajorDetailPage() {
   const getMajorIcon = (majorCode: string) => {
     const code = majorCode.toLowerCase();
     if (code.includes('cntt') || code.includes('it') || code.includes('tin')) {
-      return '💻';
+      return 'ðŸ’»';
     }
     if (code.includes('kt') || code.includes('kinh') || code.includes('tai')) {
-      return '💼';
+      return 'ðŸ’¼';
     }
     if (code.includes('xd') || code.includes('xay') || code.includes('dung')) {
-      return '🏗️';
+      return 'ðŸ—ï¸';
     }
     if (code.includes('co') || code.includes('may') || code.includes('dien')) {
-      return '⚙️';
+      return 'âš™ï¸';
     }
     if (code.includes('y') || code.includes('duoc') || code.includes('sk')) {
-      return '⚕️';
+      return 'âš•ï¸';
     }
     if (code.includes('ngoai') || code.includes('anh') || code.includes('nn')) {
-      return '🌍';
+      return 'ðŸŒ';
     }
-    return '🎓';
+    return 'ðŸŽ“';
   };
 
   useEffect(() => {
-    const loadMajorDetail = () => {
+    const loadMajorDetail = async () => {
       try {
         if (id) {
-          const allMajors = DataManager.getMajors();
-          const foundMajor = allMajors.find(m => 
-            m.id === id || 
-            m.code.toLowerCase() === id.toLowerCase() ||
-            m.code.toLowerCase().includes(id.toLowerCase())
+          const { getMajors } = await import('@/utils/api');
+          const allMajors = await getMajors();
+          const foundMajor = allMajors.find((m: any) => 
+            String(m.id) === String(id) || 
+            (m.code && m.code.toLowerCase() === id.toLowerCase()) ||
+            (m.code && m.code.toLowerCase().includes(id.toLowerCase()))
           );
           
           if (foundMajor) {
@@ -76,7 +77,7 @@ function MajorDetailPage() {
       }
     };
 
-    loadMajorDetail();
+loadMajorDetail();
   }, [id]);
 
   const formatCurrency = (amount: number) => {
@@ -88,7 +89,7 @@ function MajorDetailPage() {
 
   const handleRegister = () => {
     if (major) {
-      console.log('🎯 Navigating to registration with major:', major.name, major.id);  
+      console.log('ðŸŽ¯ Navigating to registration with major:', major.name, major.id);  
       navigate(`/admission-registration?majorId=${major.id}&majorName=${encodeURIComponent(major.name)}`);
     }
   };
@@ -97,13 +98,13 @@ function MajorDetailPage() {
     return (
       <Page className="bg-gray-50">
         <Header 
-          title="Chi tiết ngành học"
+          title="Chi tiáº¿t ngÃ nh há»c"
           showBackIcon={true}
           onBackClick={() => navigate(-1)}
           className="bg-blue-600 text-white"
         />
         <Box className="p-4 text-center">
-          <Text>Đang tải...</Text>
+          <Text>Äang táº£i...</Text>
         </Box>
       </Page>
     );
@@ -113,19 +114,19 @@ function MajorDetailPage() {
     return (
       <Page className="bg-gray-50">
         <Header 
-          title="Chi tiết ngành học"
+          title="Chi tiáº¿t ngÃ nh há»c"
           showBackIcon={true}
           onBackClick={() => navigate(-1)}
           className="bg-blue-600 text-white"
         />
         <Box className="p-4 text-center">
           <Icon icon="zi-info-circle" size={48} className="text-gray-400 mb-4" />
-          <Text className="text-gray-500">Không tìm thấy thông tin ngành học</Text>
+          <Text className="text-gray-500">KhÃ´ng tÃ¬m tháº¥y thÃ´ng tin ngÃ nh há»c</Text>
           <Button 
             className="mt-4"
             onClick={() => navigate("/majors")}
           >
-            Quay lại danh sách ngành
+            Quay láº¡i danh sÃ¡ch ngÃ nh
           </Button>
         </Box>
       </Page>
@@ -163,7 +164,7 @@ function MajorDetailPage() {
                     {major.name}
                   </Text.Title>
                   <Text className="text-blue-100 text-sm">
-                    Mã ngành: {major.code}
+                    MÃ£ ngÃ nh: {major.code}
                   </Text>
                 </Box>
               </Box>
@@ -177,12 +178,12 @@ function MajorDetailPage() {
         <Box className="grid grid-cols-2 gap-3">
           <Box className="bg-white rounded-lg p-4 shadow-sm">
             <Icon icon="zi-setting" className="text-blue-600 mb-2" />
-            <Text className="text-sm text-gray-500">Thời gian đào tạo</Text>
+            <Text className="text-sm text-gray-500">Thá»i gian Ä‘Ã o táº¡o</Text>
             <Text.Title className="text-lg">{major.duration}</Text.Title>
           </Box>
           <Box className="bg-white rounded-lg p-4 shadow-sm">
             <Icon icon="zi-plus-circle" className="text-green-600 mb-2" />
-            <Text className="text-sm text-gray-500">Học phí/năm</Text>
+            <Text className="text-sm text-gray-500">Há»c phÃ­/nÄƒm</Text>
             <Text.Title className="text-lg text-green-600">
               {formatCurrency(major.tuitionFee)}
             </Text.Title>
@@ -193,7 +194,7 @@ function MajorDetailPage() {
       {/* Description */}
       <Box className="mx-4 mb-4 bg-white rounded-lg shadow-sm p-4">
         <Text.Title className="text-lg font-bold mb-3 text-gray-800">
-          📝 Mô tả ngành học
+          ðŸ“ MÃ´ táº£ ngÃ nh há»c
         </Text.Title>
         <Text className="text-gray-700 leading-relaxed">
           {major.description}
@@ -203,13 +204,13 @@ function MajorDetailPage() {
       {/* Education Level */}
       <Box className="mx-4 mb-4 bg-white rounded-lg shadow-sm p-4">
         <Text.Title className="text-lg font-bold mb-3 text-gray-800">
-          🎓 Hệ đào tạo
+          ðŸŽ“ Há»‡ Ä‘Ã o táº¡o
         </Text.Title>
         <Box className="flex flex-wrap gap-2">
           <Box className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-            {major.educationLevel === 'caodang' ? 'Cao đẳng' : 
-             major.educationLevel === 'trungcap' ? 'Trung cấp' :
-             major.educationLevel === 'caodang-lienthong' ? 'Cao đẳng liên thông' : 
+            {major.educationLevel === 'caodang' ? 'Cao Ä‘áº³ng' : 
+             major.educationLevel === 'trungcap' ? 'Trung cáº¥p' :
+             major.educationLevel === 'caodang-lienthong' ? 'Cao Ä‘áº³ng liÃªn thÃ´ng' : 
              major.educationLevel}
           </Box>
         </Box>
@@ -218,7 +219,7 @@ function MajorDetailPage() {
       {/* Subjects */}
       <Box className="mx-4 mb-4 bg-white rounded-lg shadow-sm p-4">
         <Text.Title className="text-lg font-bold mb-3 text-gray-800">
-          📚 Môn học chính
+          ðŸ“š MÃ´n há»c chÃ­nh
         </Text.Title>
         <Box className="space-y-2">
           {major.subjects && major.subjects.length > 0 ? (
@@ -229,7 +230,7 @@ function MajorDetailPage() {
               </Box>
             ))
           ) : (
-            <Text className="text-gray-500">Chưa có thông tin môn học.</Text>
+            <Text className="text-gray-500">ChÆ°a cÃ³ thÃ´ng tin mÃ´n há»c.</Text>
           )}
         </Box>
       </Box>
@@ -237,7 +238,7 @@ function MajorDetailPage() {
       {/* Career Prospects */}
       <Box className="mx-4 mb-4 bg-white rounded-lg shadow-sm p-4">
         <Text.Title className="text-lg font-bold mb-3 text-gray-800">
-          🚀 Cơ hội nghề nghiệp
+          ðŸš€ CÆ¡ há»™i nghá» nghiá»‡p
         </Text.Title>
         <Box className="space-y-2">
           {major.careerProspects && major.careerProspects.length > 0 ? (
@@ -248,7 +249,7 @@ function MajorDetailPage() {
               </Box>
             ))
           ) : (
-            <Text className="text-gray-500">Chưa có thông tin cơ hội nghề nghiệp.</Text>
+            <Text className="text-gray-500">ChÆ°a cÃ³ thÃ´ng tin cÆ¡ há»™i nghá» nghiá»‡p.</Text>
           )}
         </Box>
       </Box>
@@ -257,7 +258,7 @@ function MajorDetailPage() {
       {major.website && (
         <Box className="mx-4 mb-4 bg-white rounded-lg shadow-sm p-4">
           <Text.Title className="text-lg font-bold mb-3 text-gray-800">
-            📋 Chương trình chi tiết
+            ðŸ“‹ ChÆ°Æ¡ng trÃ¬nh chi tiáº¿t
           </Text.Title>
           <Button 
             variant="secondary"
@@ -266,7 +267,7 @@ function MajorDetailPage() {
             onClick={() => window.open(major.website, "_blank")}
           >
             <Icon icon="zi-calendar" className="mr-2" />
-            Xem chương trình đào tạo chi tiết
+            Xem chÆ°Æ¡ng trÃ¬nh Ä‘Ã o táº¡o chi tiáº¿t
           </Button>
         </Box>
       )}
@@ -282,7 +283,7 @@ function MajorDetailPage() {
               onClick={handleRegister}
             >
               <Icon icon="zi-edit" className="mr-2" />
-              Đăng ký ngành này
+              ÄÄƒng kÃ½ ngÃ nh nÃ y
             </Button>
             <Box className="grid grid-cols-2 gap-3">
               <Button 
@@ -290,7 +291,7 @@ function MajorDetailPage() {
                 onClick={() => navigate("/majors")}
               >
                 <Icon icon="zi-arrow-left" className="mr-1" />
-                Quay lại
+                Quay láº¡i
               </Button>
               <Button 
                 variant="secondary"

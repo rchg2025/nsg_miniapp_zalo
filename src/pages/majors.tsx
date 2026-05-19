@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect } from "react";
 import { Box, Button, Page, Text, Header, Input, Select } from "zmp-ui";
 import { useNavigate } from "react-router-dom";
 import { DataManager, Major } from "@/utils/data-manager";
@@ -11,17 +11,20 @@ function MajorsPage() {
   const [filteredMajors, setFilteredMajors] = useState<Major[]>([]);
 
   useEffect(() => {
-    const loadMajors = () => {
-      const majors = DataManager.getMajors(); // Hiển thị tất cả ngành học
-      setMajorsData(majors);
-    };
+    const loadMajors = async () => {
+      try {
+        const { getMajors } = await import('@/utils/api');
+        const majors = await getMajors();
+        setMajorsData(majors);
+      } catch (e) {
+        console.error('Lỗi tải ngành:', e);
+      }
+    };loadMajors();
 
-    loadMajors();
-
-    // Lắng nghe sự kiện storage để cập nhật khi có thay đổi từ admin
+    // Láº¯ng nghe sá»± kiá»‡n storage Ä‘á»ƒ cáº­p nháº­t khi cÃ³ thay Ä‘á»•i tá»« admin
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'adminMajorsList') {
-        console.log('🔄 Phát hiện thay đổi ngành học từ admin, đang reload...');
+        console.log('ðŸ”„ PhÃ¡t hiá»‡n thay Ä‘á»•i ngÃ nh há»c tá»« admin, Ä‘ang reload...');
         loadMajors();
       }
     };
@@ -52,11 +55,11 @@ function MajorsPage() {
   const getEducationLevelText = (level: string) => {
     switch (level) {
       case 'caodang':
-        return "Cao đẳng";
+        return "Cao Ä‘áº³ng";
       case 'trungcap':
-        return "Trung cấp";
+        return "Trung cáº¥p";
       case 'caodang-lienthong':
-        return "Cao đẳng liên thông";
+        return "Cao Ä‘áº³ng liÃªn thÃ´ng";
       default:
         return level;
     }
@@ -76,7 +79,7 @@ function MajorsPage() {
   return (
     <Page className="page-with-header bg-gray-50">
       <Header 
-        title="Ngành học" 
+        title="NgÃ nh há»c" 
         showBackIcon={true}
         className="bg-blue-600 text-white"
       />
@@ -85,52 +88,52 @@ function MajorsPage() {
         <Box className="space-y-3 mb-6">
           <Input
             type="text"
-            placeholder="🔍 Tìm kiếm ngành học..."
+            placeholder="ðŸ” TÃ¬m kiáº¿m ngÃ nh há»c..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full"
           />
           
           <Select
-            placeholder="Chọn hệ đào tạo"
+            placeholder="Chá»n há»‡ Ä‘Ã o táº¡o"
             value={selectedLevel}
             onChange={(value) => setSelectedLevel(value as string)}
           >
-            <Select.Option value="all" title="Tất cả hệ đào tạo" />
-            <Select.Option value="caodang" title="Cao đẳng" />
-            <Select.Option value="trungcap" title="Trung cấp" />
-            <Select.Option value="caodang-lienthong" title="Cao đẳng liên thông" />
+            <Select.Option value="all" title="Táº¥t cáº£ há»‡ Ä‘Ã o táº¡o" />
+            <Select.Option value="caodang" title="Cao Ä‘áº³ng" />
+            <Select.Option value="trungcap" title="Trung cáº¥p" />
+            <Select.Option value="caodang-lienthong" title="Cao Ä‘áº³ng liÃªn thÃ´ng" />
           </Select>
         </Box>
 
         <Box className="grid grid-cols-2 gap-3 mb-6">
           <Box className="bg-white p-3 rounded-lg text-center">
             <Text className="text-lg font-bold text-blue-600">{majorsData.length}</Text>
-            <Text className="text-xs text-gray-500">Tổng ngành</Text>
+            <Text className="text-xs text-gray-500">Tá»•ng ngÃ nh</Text>
           </Box>
           <Box className="bg-white p-3 rounded-lg text-center">
             <Text className="text-lg font-bold text-green-600">
               {majorsData.filter(m => m.educationLevel === 'caodang').length}
             </Text>
-            <Text className="text-xs text-gray-500">Cao đẳng</Text>
+            <Text className="text-xs text-gray-500">Cao Ä‘áº³ng</Text>
           </Box>
           <Box className="bg-white p-3 rounded-lg text-center">
             <Text className="text-lg font-bold text-orange-600">
               {majorsData.filter(m => m.educationLevel === 'trungcap').length}
             </Text>
-            <Text className="text-xs text-gray-500">Trung cấp</Text>
+            <Text className="text-xs text-gray-500">Trung cáº¥p</Text>
           </Box>
           <Box className="bg-white p-3 rounded-lg text-center">
             <Text className="text-lg font-bold text-purple-600">
               {majorsData.filter(m => m.educationLevel === 'caodang-lienthong').length}
             </Text>
-            <Text className="text-xs text-gray-500">Cao đẳng liên thông</Text>
+            <Text className="text-xs text-gray-500">Cao Ä‘áº³ng liÃªn thÃ´ng</Text>
           </Box>
         </Box>
 
         <Box className="mb-4">
           <Text className="text-gray-600">
-            Hiển thị {filteredMajors.length} trong {majorsData.length} ngành học
+            Hiá»ƒn thá»‹ {filteredMajors.length} trong {majorsData.length} ngÃ nh há»c
           </Text>
         </Box>
 
@@ -148,17 +151,17 @@ function MajorsPage() {
 
               <Box className="space-y-2 mb-4">
                 <Box className="flex items-center justify-between">
-                  <Text className="text-sm text-gray-500">Mã ngành:</Text>
+                  <Text className="text-sm text-gray-500">MÃ£ ngÃ nh:</Text>
                   <Text className="text-sm font-medium">{major.code}</Text>
                 </Box>
                 
                 <Box className="flex items-center justify-between">
-                  <Text className="text-sm text-gray-500">Thời gian:</Text>
+                  <Text className="text-sm text-gray-500">Thá»i gian:</Text>
                   <Text className="text-sm font-medium">{major.duration}</Text>
                 </Box>
                 
                 <Box className="flex items-center justify-between">
-                  <Text className="text-sm text-gray-500">Học phí:</Text>
+                  <Text className="text-sm text-gray-500">Há»c phÃ­:</Text>
                   <Text className="text-sm font-medium text-green-600">
                     {formatCurrency(major.tuitionFee)}
                   </Text>
@@ -167,7 +170,7 @@ function MajorsPage() {
                 {major.website && (
                   <Box className="flex items-center justify-between">
                     <Text className="text-sm text-gray-500">Website:</Text>
-                    <Text className="text-sm text-blue-600">🌐 Xem chi tiết</Text>
+                    <Text className="text-sm text-blue-600">ðŸŒ Xem chi tiáº¿t</Text>
                   </Box>
                 )}
               </Box>
@@ -178,7 +181,7 @@ function MajorsPage() {
                 fullWidth
                 onClick={() => handleMajorClick(major.id)}
               >
-                Xem chi tiết
+                Xem chi tiáº¿t
               </Button>
             </Box>
           ))}
@@ -186,24 +189,24 @@ function MajorsPage() {
 
         {filteredMajors.length === 0 && (
           <Box className="text-center py-12">
-            <Text className="text-6xl mb-4">🔍</Text>
-            <Text className="text-gray-500 mb-2">Không tìm thấy ngành học</Text>
+            <Text className="text-6xl mb-4">ðŸ”</Text>
+            <Text className="text-gray-500 mb-2">KhÃ´ng tÃ¬m tháº¥y ngÃ nh há»c</Text>
             <Text className="text-gray-400 text-sm">
-              Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc
+              Thá»­ thay Ä‘á»•i tá»« khÃ³a tÃ¬m kiáº¿m hoáº·c bá»™ lá»c
             </Text>
           </Box>
         )}
 
         <Box className="mt-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg p-6 text-white text-center">
-          <Text.Title className="mb-2 text-white">🎓 Sẵn sàng đăng ký?</Text.Title>
+          <Text.Title className="mb-2 text-white">ðŸŽ“ Sáºµn sÃ ng Ä‘Äƒng kÃ½?</Text.Title>
           <Text className="mb-4 text-blue-100">
-            Khám phá cơ hội học tập tại Trường Cao đẳng Bách khoa Nam Sài Gon
+            KhÃ¡m phÃ¡ cÆ¡ há»™i há»c táº­p táº¡i TrÆ°á»ng Cao Ä‘áº³ng BÃ¡ch khoa Nam SÃ i Gon
           </Text>
           <Button 
             variant="secondary"
             onClick={() => navigate('/admission-registration')}
           >
-            Đăng ký tuyển sinh ngay
+            ÄÄƒng kÃ½ tuyá»ƒn sinh ngay
           </Button>
         </Box>
       </Box>
