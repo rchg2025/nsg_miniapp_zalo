@@ -1,4 +1,4 @@
-const { Pool } = require('pg');
+﻿const { Pool } = require('pg');
 require('dotenv').config();
 
 const pool = new Pool({
@@ -12,14 +12,23 @@ const pool = new Pool({
 const initDB = async () => {
   const client = await pool.connect();
   try {
-    const createTablesQuery = `
+    const createTablesQuery = \
       -- 1. Người dùng
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
         zalo_id VARCHAR(255) UNIQUE NOT NULL,
+        role VARCHAR(50) DEFAULT 'user',
+        phone VARCHAR(50),
         name VARCHAR(255),
         avatar VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      -- 7. Cấu hình hệ thống
+      CREATE TABLE IF NOT EXISTS settings (
+        id SERIAL PRIMARY KEY,
+        config_key VARCHAR(100) UNIQUE NOT NULL,
+        config_value TEXT
       );
 
       -- 2. Tin tức
@@ -75,8 +84,13 @@ const initDB = async () => {
         zalo_id VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-    `;
+    \;
     await client.query(createTablesQuery);
+    
+    // Đảm bảo ALTER TABLE cho database cũ
+    try { await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'user'"); } catch(e) {}
+    try { await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(50)"); } catch(e) {}
+    
     console.log("✅ Các bảng CSDL đã được khởi tạo/kiểm tra thành công.");
   } catch (err) {
     console.error("❌ Lỗi khởi tạo CSDL:", err);
