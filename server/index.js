@@ -312,7 +312,7 @@ app.delete('/api/admissions/:id', async (req, res) => {
 
 // Endpoint kiá»ƒm tra server cÃ³ Ä‘ang cháº¡y khÃ´ng
 app.get('/', (req, res) => {
-  res.send('Zalo Webhook & NSG Backend Server Ä‘ang cháº¡y (ÄÃ£ káº¿t ná»‘i PostgreSQL)!');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Khởi động server
@@ -320,4 +320,5 @@ app.listen(port, () => {
   console.log(`Server đang lắng nghe tại http://localhost:${port}`);
 });
 module.exports = app;
+
 

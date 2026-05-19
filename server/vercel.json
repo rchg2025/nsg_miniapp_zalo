@@ -4,13 +4,24 @@
     {
       "src": "index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
-    { "handle": "filesystem" },
+    {
+      "src": "/api/(.*)",
+      "dest": "index.js"
+    },
+    {
+      "src": "/zalo-webhook",
+      "dest": "index.js"
+    },
     {
       "src": "/(.*)",
-      "dest": "index.js"
+      "dest": "public/$1"
     }
   ]
 }
