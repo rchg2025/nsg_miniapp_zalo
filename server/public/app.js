@@ -261,8 +261,99 @@ async function fetchAdminMajors() {
     try {
         const res = await fetch(API_BASE + '/majors');
         const data = await res.json();
-        localStorage.setItem('adminMajorsList', JSON.stringify(data));
-        // Todo: Render UI for majors
+        const tbody = document.getElementById('majors-tbody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        data.forEach(m => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-b';
+            tr.innerHTML = `
+                <td class="p-4">${m.code || ''}</td>
+                <td class="p-4 font-bold">${m.name || ''}</td>
+                <td class="p-4 text-right">
+                    <button onclick="deleteMajor(${m.id})" class="text-red-600 hover:underline">Xóa</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
     } catch(e) {}
 }
-async function fetchAdminNotis() { }
+
+async function saveMajor() {
+    const code = document.getElementById('major-code').value;
+    const name = document.getElementById('major-name').value;
+    const description = document.getElementById('major-description').value;
+    const requirements = document.getElementById('major-requirements').value;
+    try {
+        await fetch(API_BASE + '/majors', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code, name, description, requirements })
+        });
+        document.getElementById('major-modal').classList.add('hidden');
+        document.getElementById('major-code').value = '';
+        document.getElementById('major-name').value = '';
+        document.getElementById('major-description').value = '';
+        document.getElementById('major-requirements').value = '';
+        fetchAdminMajors();
+    } catch(e) { alert('Lỗi lưu ngành học'); }
+}
+
+async function deleteMajor(id) {
+    if(!confirm('Xóa ngành học này?')) return;
+    try {
+        await fetch(API_BASE + '/majors/' + id, { method: 'DELETE' });
+        fetchAdminMajors();
+    } catch(e) {}
+}
+
+async function fetchAdminNotis() {
+    try {
+        const res = await fetch(API_BASE + '/notifications');
+        const data = await res.json();
+        const tbody = document.getElementById('noti-tbody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        data.forEach(n => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-b';
+            const date = new Date(n.created_at).toLocaleString('vi-VN');
+            tr.innerHTML = `
+                <td class="p-4 font-bold">${n.title || ''}</td>
+                <td class="p-4 text-sm text-gray-600">${n.message || ''}</td>
+                <td class="p-4">${date}</td>
+                <td class="p-4 text-right">
+                    <button onclick="deleteNoti(${n.id})" class="text-red-600 hover:underline">Xóa</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    } catch(e) {}
+}
+
+async function saveNoti() {
+    const title = document.getElementById('noti-title').value;
+    const message = document.getElementById('noti-message').value;
+    try {
+        await fetch(API_BASE + '/notifications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, message, type: 'info' })
+        });
+        document.getElementById('noti-modal').classList.add('hidden');
+        document.getElementById('noti-title').value = '';
+        document.getElementById('noti-message').value = '';
+        fetchAdminNotis();
+    } catch(e) { alert('Lỗi thông báo'); }
+}
+
+async function deleteNoti(id) {
+    if(!confirm('Xóa thông báo này?')) return;
+    try {
+        await fetch(API_BASE + '/notifications/' + id, { method: 'DELETE' });
+        fetchAdminNotis();
+    } catch(e) {}
+}
+

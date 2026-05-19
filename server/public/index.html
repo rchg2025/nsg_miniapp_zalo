@@ -247,6 +247,82 @@
             </div>
           </div>
         </div>
+
+        <!-- MODAL TIN TỨC -->
+        <div id="news-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div class="bg-white rounded-lg shadow-lg w-1/2 p-6 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold mb-4">Đăng Tin Tức Mới</h3>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2 font-medium">Tiêu đề</label>
+              <input type="text" id="news-title" class="w-full px-4 py-2 border rounded">
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2 font-medium">Đường dẫn Hình ảnh (URL)</label>
+              <input type="text" id="news-image" class="w-full px-4 py-2 border rounded" placeholder="https://...">
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2 font-medium">Chuyên mục</label>
+              <select id="news-category" class="w-full px-4 py-2 border rounded bg-white">
+                <option value="Tin Tức">Tin Tức</option>
+                <option value="Sự kiện">Sự kiện</option>
+              </select>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2 font-medium">Nội dung</label>
+              <textarea id="news-content" class="w-full px-4 py-2 border rounded h-32"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+              <button onclick="document.getElementById('news-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded">Hủy</button>
+              <button onclick="saveNews()" class="px-4 py-2 bg-blue-600 text-white rounded font-bold">Lưu lại</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODAL NGÀNH HỌC -->
+        <div id="major-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div class="bg-white rounded-lg shadow-lg w-1/2 p-6 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold mb-4">Thêm / Sửa Ngành Học</h3>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2 font-medium">Mã ngành</label>
+              <input type="text" id="major-code" class="w-full px-4 py-2 border rounded" placeholder="Vd: CNTT">
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2 font-medium">Tên ngành</label>
+              <input type="text" id="major-name" class="w-full px-4 py-2 border rounded">
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2 font-medium">Mô tả giới thiệu</label>
+              <textarea id="major-description" class="w-full px-4 py-2 border rounded h-24"></textarea>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2 font-medium">Yêu cầu tuyển sinh</label>
+              <textarea id="major-requirements" class="w-full px-4 py-2 border rounded h-24"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+              <button onclick="document.getElementById('major-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded">Hủy</button>
+              <button onclick="saveMajor()" class="px-4 py-2 bg-blue-600 text-white rounded font-bold">Lưu lại</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODAL THÔNG BÁO -->
+        <div id="noti-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div class="bg-white rounded-lg shadow-lg w-1/2 p-6 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-xl font-bold mb-4">Soạn Thông Báo</h3>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2 font-medium">Tiêu đề</label>
+              <input type="text" id="noti-title" class="w-full px-4 py-2 border rounded">
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2 font-medium">Nội dung</label>
+              <textarea id="noti-message" class="w-full px-4 py-2 border rounded h-32"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 mt-6">
+              <button onclick="document.getElementById('noti-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded">Hủy</button>
+              <button onclick="saveNoti()" class="px-4 py-2 bg-blue-600 text-white rounded font-bold">Lưu lại</button>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   </div>
