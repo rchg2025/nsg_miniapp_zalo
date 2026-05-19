@@ -1,33 +1,33 @@
-const express = require('express');
+﻿const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const crypto = require('crypto');
 const path = require('path');
-const db = require('./db'); // Kết nối PostgreSQL
+const db = require('./db'); // Káº¿t ná»‘i PostgreSQL
 
 const app = express();
-const port = process.env.PORT || 3001; // Cổng server sẽ chạy
+const port = process.env.PORT || 3001; // Cá»•ng server sáº½ cháº¡y
 
 // Middleware
-app.use(cors()); // Cho phép Cross-Origin Resource Sharing
+app.use(cors()); // Cho phÃ©p Cross-Origin Resource Sharing
 app.use(express.static(path.join(__dirname, 'public'))); // Serve the Admin Frontend UI
 app.use(bodyParser.json({
   verify: (req, res, buf, encoding) => {
-    // Lưu raw body để xác thực chữ ký của Zalo
+    // LÆ°u raw body Ä‘á»ƒ xÃ¡c thá»±c chá»¯ kÃ½ cá»§a Zalo
     if (buf && buf.length) {
       req.rawBody = buf.toString(encoding || 'utf8');
     }
   },
 }));
 
-// --- CẤU HÌNH CỦA BẠN ---
-// Thay thế bằng App ID và Secret Key của Mini App của bạn
+// --- Cáº¤U HÃŒNH Cá»¦A Báº N ---
+// Thay tháº¿ báº±ng App ID vÃ  Secret Key cá»§a Mini App cá»§a báº¡n
 const ZALO_APP_ID = '683482533449307102'; 
 const ZALO_SECRET_KEY = 'BXXadkS11DDnKZjZQHmP';
 
-// Endpoint để Zalo xác thực Webhook URL (chỉ chạy 1 lần khi bạn cấu hình)
+// Endpoint Ä‘á»ƒ Zalo xÃ¡c thá»±c Webhook URL (chá»‰ cháº¡y 1 láº§n khi báº¡n cáº¥u hÃ¬nh)
 app.get('/zalo-webhook', (req, res) => {
-  console.log('GET /zalo-webhook - Yêu cầu xác thực từ Zalo');
+  console.log('GET /zalo-webhook - YÃªu cáº§u xÃ¡c thá»±c tá»« Zalo');
   const challenge = req.query.challenge;
   if (challenge) {
     console.log('Challenge code:', challenge);
@@ -37,63 +37,63 @@ app.get('/zalo-webhook', (req, res) => {
   }
 });
 
-// Endpoint chính để nhận sự kiện từ Zalo
+// Endpoint chÃ­nh Ä‘á»ƒ nháº­n sá»± kiá»‡n tá»« Zalo
 app.post('/zalo-webhook', (req, res) => {
   const zaloSignature = req.header('X-Zalo-Signature');
   const timestamp = req.header('X-Zalo-Request-Timestamp');
   
-  console.log('\n--- Có sự kiện mới từ Zalo ---');
+  console.log('\n--- CÃ³ sá»± kiá»‡n má»›i tá»« Zalo ---');
   console.log('Timestamp:', timestamp);
   console.log('Signature:', zaloSignature);
-  console.log('Nội dung sự kiện (Body):', JSON.stringify(req.body, null, 2));
+  console.log('Ná»™i dung sá»± kiá»‡n (Body):', JSON.stringify(req.body, null, 2));
 
-  // 1. Xác thực chữ ký (quan trọng để bảo mật)
+  // 1. XÃ¡c thá»±c chá»¯ kÃ½ (quan trá»ng Ä‘á»ƒ báº£o máº­t)
   const dataToVerify = ZALO_APP_ID + timestamp + req.rawBody;
   const generatedSignature = `mac=${crypto.createHmac('sha256', ZALO_SECRET_KEY).update(dataToVerify).digest('hex')}`;
 
   if (generatedSignature !== zaloSignature) {
-    console.error('Lỗi: Chữ ký không hợp lệ!');
+    console.error('Lá»—i: Chá»¯ kÃ½ khÃ´ng há»£p lá»‡!');
     return res.status(403).send('Invalid signature');
   }
   
-  console.log('✅ Chữ ký hợp lệ!');
+  console.log('âœ… Chá»¯ kÃ½ há»£p lá»‡!');
 
-  // 2. Xử lý sự kiện
+  // 2. Xá»­ lÃ½ sá»± kiá»‡n
   const event = req.body;
   
-  // Ví dụ: Xử lý sự kiện "user_follow_oa"
+  // VÃ­ dá»¥: Xá»­ lÃ½ sá»± kiá»‡n "user_follow_oa"
   if (event.event_name === 'user_follow_oa') {
     const followerId = event.follower.id;
-    console.log(`Sự kiện: Người dùng [${followerId}] vừa quan tâm OA.`);
-    // Tại đây bạn có thể lưu thông tin người dùng vào database của mình
+    console.log(`Sá»± kiá»‡n: NgÆ°á»i dÃ¹ng [${followerId}] vá»«a quan tÃ¢m OA.`);
+    // Táº¡i Ä‘Ã¢y báº¡n cÃ³ thá»ƒ lÆ°u thÃ´ng tin ngÆ°á»i dÃ¹ng vÃ o database cá»§a mÃ¬nh
   }
 
-  // Ví dụ: Xử lý sự kiện người dùng gửi tin nhắn "hello"
+  // VÃ­ dá»¥: Xá»­ lÃ½ sá»± kiá»‡n ngÆ°á»i dÃ¹ng gá»­i tin nháº¯n "hello"
   if (event.event_name === 'user_send_text' && event.message.text.toLowerCase() === 'hello') {
     const senderId = event.sender.id;
-    console.log(`Sự kiện: Người dùng [${senderId}] đã gửi tin nhắn "hello".`);
-    // Tại đây bạn có thể gọi Zalo API để trả lời tin nhắn
+    console.log(`Sá»± kiá»‡n: NgÆ°á»i dÃ¹ng [${senderId}] Ä‘Ã£ gá»­i tin nháº¯n "hello".`);
+    // Táº¡i Ä‘Ã¢y báº¡n cÃ³ thá»ƒ gá»i Zalo API Ä‘á»ƒ tráº£ lá»i tin nháº¯n
   }
 
-  // Phản hồi cho Zalo để xác nhận đã nhận sự kiện
+  // Pháº£n há»“i cho Zalo Ä‘á»ƒ xÃ¡c nháº­n Ä‘Ã£ nháº­n sá»± kiá»‡n
   res.status(200).send('Event received');
 });
 
-// --- CÁC API CHO ZALO MINI APP (FRONTEND) GỌI TỚI ---
+// --- CÃC API CHO ZALO MINI APP (FRONTEND) Gá»ŒI Tá»šI ---
 
-// ================= TIN TỨC (NEWS) =================
-// 1. API Lấy danh sách tin tức
+// ================= TIN Tá»¨C (NEWS) =================
+// 1. API Láº¥y danh sÃ¡ch tin tá»©c
 app.get('/api/news', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT * FROM news ORDER BY created_at DESC');
     res.json(rows);
   } catch (error) {
-    console.error("Lỗi lấy danh sách tin tức", error);
+    console.error("Lá»—i láº¥y danh sÃ¡ch tin tá»©c", error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// Thêm tin tức mới
+// ThÃªm tin tá»©c má»›i
 app.post('/api/news', async (req, res) => {
   const { title, content, image_url, category } = req.body;
   try {
@@ -107,7 +107,7 @@ app.post('/api/news', async (req, res) => {
   }
 });
 
-// Sửa tin tức
+// Sá»­a tin tá»©c
 app.put('/api/news/:id', async (req, res) => {
   const { id } = req.params;
   const { title, content, image_url, category } = req.body;
@@ -122,7 +122,7 @@ app.put('/api/news/:id', async (req, res) => {
   }
 });
 
-// Xóa tin tức
+// XÃ³a tin tá»©c
 app.delete('/api/news/:id', async (req, res) => {
   try {
     await db.query('DELETE FROM news WHERE id = $1', [req.params.id]);
@@ -132,19 +132,19 @@ app.delete('/api/news/:id', async (req, res) => {
   }
 });
 
-// ================= NGÀNH HỌC (MAJORS) =================
-// 2. API Lấy danh sách ngành học
+// ================= NGÃ€NH Há»ŒC (MAJORS) =================
+// 2. API Láº¥y danh sÃ¡ch ngÃ nh há»c
 app.get('/api/majors', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT * FROM majors ORDER BY code ASC');
     res.json(rows);
   } catch (error) {
-    console.error("Lỗi lấy danh sách ngành học", error);
+    console.error("Lá»—i láº¥y danh sÃ¡ch ngÃ nh há»c", error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// Thêm ngành học
+// ThÃªm ngÃ nh há»c
 app.post('/api/majors', async (req, res) => {
   const { code, name, description, requirements } = req.body;
   try {
@@ -158,7 +158,7 @@ app.post('/api/majors', async (req, res) => {
   }
 });
 
-// Cập nhật ngành học
+// Cáº­p nháº­t ngÃ nh há»c
 app.put('/api/majors/:id', async (req, res) => {
   const { id } = req.params;
   const { code, name, description, requirements } = req.body;
@@ -173,7 +173,7 @@ app.put('/api/majors/:id', async (req, res) => {
   }
 });
 
-// Xóa ngành học
+// XÃ³a ngÃ nh há»c
 app.delete('/api/majors/:id', async (req, res) => {
   try {
     await db.query('DELETE FROM majors WHERE id = $1', [req.params.id]);
@@ -183,12 +183,12 @@ app.delete('/api/majors/:id', async (req, res) => {
   }
 });
 
-// ================= NGƯỜI DÙNG (USERS) =================
-// 3. API Đăng ký/Cập nhật thông tin người dùng từ Zalo
+// ================= NGÆ¯á»œI DÃ™NG (USERS) =================
+// 3. API ÄÄƒng kÃ½/Cáº­p nháº­t thÃ´ng tin ngÆ°á»i dÃ¹ng tá»« Zalo
 app.post('/api/users', async (req, res) => {
   const { zalo_id, name, avatar } = req.body;
   if (!zalo_id) {
-    return res.status(400).json({ error: 'Thiếu zalo_id' });
+    return res.status(400).json({ error: 'Thiáº¿u zalo_id' });
   }
   
   try {
@@ -202,12 +202,12 @@ app.post('/api/users', async (req, res) => {
     const { rows } = await db.query(query, [zalo_id, name, avatar]);
     res.json(rows[0]);
   } catch (error) {
-    console.error("Lỗi cập nhật người dùng", error);
+    console.error("Lá»—i cáº­p nháº­t ngÆ°á»i dÃ¹ng", error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// ================= THÔNG BÁO (NOTIFICATIONS) =================
+// ================= THÃ”NG BÃO (NOTIFICATIONS) =================
 app.get('/api/notifications', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT * FROM notifications ORDER BY created_at DESC');
@@ -241,7 +241,7 @@ app.delete('/api/notifications/:id', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ================= SỰ KIỆN (EVENTS) =================
+// ================= Sá»° KIá»†N (EVENTS) =================
 app.get('/api/events', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT * FROM events ORDER BY event_date DESC');
@@ -275,7 +275,7 @@ app.delete('/api/events/:id', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ================= ĐĂNG KÝ TUYỂN SINH (ADMISSIONS) =================
+// ================= ÄÄ‚NG KÃ TUYá»‚N SINH (ADMISSIONS) =================
 app.get('/api/admissions', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT * FROM admissions ORDER BY created_at DESC');
@@ -293,7 +293,7 @@ app.post('/api/admissions', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.put('/api/admissions/:id', async (req, res) => {
-  // Chủ yếu dùng để duyệt (Duyệt/Từ chối) đăng ký
+  // Chá»§ yáº¿u dÃ¹ng Ä‘á»ƒ duyá»‡t (Duyá»‡t/Tá»« chá»‘i) Ä‘Äƒng kÃ½
   const { status } = req.body;
   try {
     const { rows } = await db.query(
@@ -310,13 +310,14 @@ app.delete('/api/admissions/:id', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Endpoint kiểm tra server có đang chạy không
+// Endpoint kiá»ƒm tra server cÃ³ Ä‘ang cháº¡y khÃ´ng
 app.get('/', (req, res) => {
-  res.send('Zalo Webhook & NSG Backend Server đang chạy (Đã kết nối PostgreSQL)!');
+  res.send('Zalo Webhook & NSG Backend Server Ä‘ang cháº¡y (ÄÃ£ káº¿t ná»‘i PostgreSQL)!');
 });
 
 // Khởi động server
 app.listen(port, () => {
   console.log(`Server đang lắng nghe tại http://localhost:${port}`);
-  console.log('Webhook URL của bạn sẽ là URL công khai của server này + /zalo-webhook');
 });
+module.exports = app;
+
