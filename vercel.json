@@ -1,27 +1,31 @@
-{
+﻿{
   "version": 2,
   "builds": [
     {
-      "src": "index.js",
+      "src": "server/index.js",
       "use": "@vercel/node"
     },
     {
-      "src": "public/**",
+      "src": "server/public/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "index.js"
+      "dest": "/server/index.js"
     },
     {
       "src": "/zalo-webhook",
-      "dest": "index.js"
+      "dest": "/server/index.js"
+    },
+    {
+      "src": "/",
+      "dest": "/server/public/index.html"
     },
     {
       "src": "/(.*)",
-      "dest": "public/$1"
+      "dest": "/server/public/$1"
     }
   ]
 }
