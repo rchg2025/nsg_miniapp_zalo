@@ -184,6 +184,28 @@ app.delete('/api/majors/:id', async (req, res) => {
 });
 
 // ================= NGÆ¯á»œI DÃ™NG (USERS) =================
+// ================= ADMIN & THÀNH VIÊN =================
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body;
+  const adminUser = process.env.ADMIN_USERNAME || 'admin';
+  const adminPass = process.env.ADMIN_PASSWORD || 'admin123';
+  
+  if (username === adminUser && password === adminPass) {
+    res.json({ success: true, token: 'fake-jwt-token-xyz' });
+  } else {
+    res.status(401).json({ success: false, error: 'Sai tài khoản hoặc mật khẩu' });
+  }
+});
+
+app.get('/api/users', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT * FROM users ORDER BY created_at DESC');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // 3. API ÄÄƒng kÃ½/Cáº­p nháº­t thÃ´ng tin ngÆ°á»i dÃ¹ng tá»« Zalo
 app.post('/api/users', async (req, res) => {
   const { zalo_id, name, avatar } = req.body;
@@ -320,5 +342,7 @@ app.listen(port, () => {
   console.log(`Server đang lắng nghe tại http://localhost:${port}`);
 });
 module.exports = app;
+
+
 
 
