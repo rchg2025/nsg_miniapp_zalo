@@ -1,0 +1,392 @@
+/* Page layout with proper spacing for status bar and bottom navigation */
+.page {
+  padding: 0 16px 96px 16px;
+  margin-top: env(safe-area-inset-top, 44px); /* Add safe area for status bar */
+  min-height: calc(100vh - env(safe-area-inset-top, 44px) - 96px);
+}
+
+/* HomePage layout with full width */
+.page-home {
+  padding: 0 0 96px 0; /* No horizontal padding for full width */
+  margin-top: env(safe-area-inset-top, 44px);
+  min-height: calc(100vh - env(safe-area-inset-top, 44px) - 96px);
+}
+
+/* Alternative page layout for pages with header */
+.page-with-header {
+  padding: 16px 16px 96px 16px;
+  margin-top: env(safe-area-inset-top, 44px);
+  min-height: calc(100vh - env(safe-area-inset-top, 44px) - 96px);
+}
+
+/* Custom dropdown/select styles */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6,9 12,15 18,9'></polyline></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px !important;
+  cursor: pointer;
+  min-height: 44px; /* Touch-friendly height */
+  font-size: 16px; /* Prevent zoom on iOS */
+  line-height: 1.25;
+}
+
+select:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1) !important;
+  outline: none;
+}
+
+select:disabled {
+  background-color: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+select option {
+  background: white;
+  color: #374151;
+  padding: 12px 16px;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+select option:checked {
+  background: #3b82f6;
+  color: white;
+}
+
+/* Fix for mobile iOS/Android */
+@supports (-webkit-touch-callout: none) {
+  select {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* Android specific fixes */
+select::-ms-expand {
+  display: none;
+}
+
+/* Full page layout without bottom navigation */
+.page-fullscreen {
+  padding: 0;
+  margin-top: env(safe-area-inset-top, 44px);
+  min-height: calc(100vh - env(safe-area-inset-top, 44px));
+}
+
+.section-container {
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.zaui-list-item {
+  cursor: pointer;
+}
+
+/* Cursor pointer utility */
+.cursor-pointer {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cursor-pointer:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* News Card Slide Styles */
+.news-slide-container {
+  overflow-x: auto;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  
+  &::-webkit-scrollbar {
+    display: none; /* WebKit */
+  }
+}
+
+/* Scrollbar Hide Utility */
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  
+  &::-webkit-scrollbar {
+    display: none; /* WebKit */
+  }
+}
+
+.news-card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+}
+
+.news-image-overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.1) 60%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+}
+
+/* Text truncation utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* News Page Styles */
+.news-content {
+  line-height: 1.6;
+  
+  h3 {
+    color: #1f2937;
+    font-weight: 600;
+    margin: 20px 0 10px 0;
+    font-size: 1.1em;
+  }
+  
+  p {
+    margin-bottom: 12px;
+    color: #4b5563;
+  }
+  
+  ul {
+    margin: 12px 0;
+    padding-left: 20px;
+    
+    li {
+      margin-bottom: 6px;
+      color: #4b5563;
+    }
+  }
+  
+  strong {
+    color: #1f2937;
+    font-weight: 600;
+  }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Responsive grid */
+.grid {
+  display: grid;
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.gap-3 {
+  gap: 0.75rem;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+/* Custom button styles for news page */
+.news-category-badge {
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 500;
+}
+
+.hot-badge {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+/* Zalo Login Modal Styles */
+.zalo-login-modal {
+  .zaui-modal-content {
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  
+  .zaui-modal-body {
+    padding: 0;
+  }
+}
+
+/* Safe area adjustments for different devices */
+@supports (padding: max(0px)) {
+  .page {
+    margin-top: max(env(safe-area-inset-top, 44px), 44px);
+  }
+  
+  .page-with-header {
+    margin-top: max(env(safe-area-inset-top, 44px), 44px);
+  }
+  
+  .page-fullscreen {
+    margin-top: max(env(safe-area-inset-top, 44px), 44px);
+  }
+}
+
+/* Header spacing fix */
+.zaui-header {
+  position: fixed;
+  top: env(safe-area-inset-top, 44px);
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+/* Content spacing when header is present */
+.with-header {
+  margin-top: calc(env(safe-area-inset-top, 44px) + 56px);
+}
+
+/* Tab styles */
+.zaui-tabs {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.zaui-tab-button {
+  font-size: 14px;
+  padding: 12px 16px;
+}
+
+/* Loading and empty states */
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Bottom Navigation Styles */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Profile page specific styles */
+.gradient-bg {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+/* Schedule page styles */
+.schedule-item {
+  transition: all 0.2s ease-in-out;
+}
+
+.schedule-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Avatar styles */
+.user-avatar {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* --- Fallback scroll handling for news editor page --- */
+.news-editor-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-editor-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Force scroll if some webview blocks overflow */
+.news-editor-scroll.force-scroll {
+  height: calc(100vh - 56px); /* approximate header height */
+  overflow-y: auto !important;
+}
+
+.news-editor-actions {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+  padding: 12px 16px;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.04);
+  z-index: 40;
+}
+
+@supports not (position: sticky) {
+  .news-editor-actions {
+    position: static;
+    box-shadow: none;
+  }
+}
+
+/* Pulse animation for logout button */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 15px 35px rgba(239, 68, 68, 0.4);
+  }
+}
+
+.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}

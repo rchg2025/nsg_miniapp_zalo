@@ -1,0 +1,7 @@
+/* Sử dụng Tailwind's @apply để tạo ra các style cho nội dung bài viết */
+.prose p {
+    @apply mb-4 text-gray-700 leading-relaxed;
+}
+.prose h2 {
+    @apply text-xl font-bold mt-6 mb-2;
+}

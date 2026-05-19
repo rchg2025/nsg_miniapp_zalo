@@ -1,0 +1,418 @@
+import { Page, Box, Text, Button } from "zmp-ui";
+import { useNavigate } from "react-router";
+import React, { useEffect, useState } from "react";
+import { Header } from "@/components/header";
+import { getImageUrl, handleImageError } from "@/utils/image-utils";
+
+// Interfaces
+interface NewsItemType {
+  id: string | number;
+  title: string;
+  summary?: string;
+  content?: string;
+  category: string;
+  date: string;
+  isHot?: boolean;
+  image?: string;
+  imageUrl?: string;
+  status?: string;
+}
+
+interface MajorType {
+  id: string;
+  name: string;
+  code: string;
+  description: string;
+  image?: string;
+  duration?: string;
+  status?: string;
+  isActive?: boolean;
+}
+
+interface StatsType {
+  majors: number;
+  news: number;
+  announcements: number;
+  students: number;
+}
+
+// Component Slide Sự kiện
+const EventSlider: React.FC<{ events: NewsItemType[]; onEventClick: (event: NewsItemType) => void }> = ({ events, onEventClick }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    if (events.length > 1) {
+      const timer = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % events.length);
+      }, 4000);
+      return () => clearInterval(timer);
+    }
+    return undefined;
+  }, [events.length]);
+
+  if (events.length === 0) return null;
+
+  return (
+    <Box className="mb-4">
+      <Box className="relative h-48 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl overflow-hidden shadow-lg mx-4">
+        {events.map((event, index) => (
+          <Box
+            key={event.id}
+            className={`absolute inset-0 transition-opacity duration-500 ${
+              index === currentSlide ? 'opacity-100' : 'opacity-0'
+            }`}
+            onClick={() => onEventClick(event)}
+          >
+            <img
+              src={getImageUrl(event, event.title)}
+              alt={event.title}
+              className="w-full h-full object-cover"
+              onError={(e) => handleImageError(e, event.title)}
+            />
+            <Box className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <Box className="absolute bottom-0 left-0 right-0 p-4 text-white">
+              <Text.Title className="text-white text-lg font-bold mb-1 line-clamp-2">
+                {event.title}
+              </Text.Title>
+              <Text className="text-white/90 text-sm line-clamp-1">
+                {event.summary}
+              </Text>
+            </Box>
+          </Box>
+        ))}
+        
+        {/* Dots indicator */}
+        {events.length > 1 && (
+          <Box className="absolute bottom-2 right-4 flex gap-1">
+            {events.map((_, index) => (
+              <Box
+                key={index}
+                className={`h-2 rounded-full transition-all ${
+                  index === currentSlide ? 'w-6 bg-white' : 'w-2 bg-white/50'
+                }`}
+              />
+            ))}
+          </Box>
+        )}
+      </Box>
+    </Box>
+  );
+};
+
+// Component Chuyên mục nhanh
+const QuickMenuSection: React.FC = () => {
+  const navigate = useNavigate();
+  
+  const menuItems = [
+    { icon: "📝", label: "Tin tức", color: "text-blue-600", bg: "bg-blue-50", route: "/news?category=news" },
+    { icon: "📢", label: "Thông báo", color: "text-red-600", bg: "bg-red-50", route: "/news?category=announcement" },
+    { icon: "🎉", label: "Sự kiện", color: "text-purple-600", bg: "bg-purple-50", route: "/news?category=event" },
+    { icon: "🎓", label: "Ngành học", color: "text-green-600", bg: "bg-green-50", route: "/majors" },
+    { icon: "📋", label: "Đăng ký", color: "text-orange-600", bg: "bg-orange-50", route: "/admission-registration" },
+    { icon: "👤", label: "Cá nhân", color: "text-gray-600", bg: "bg-gray-50", route: "/profile" },
+  ];
+
+  return (
+    <Box className="mb-6 px-4">
+      <Text.Title className="text-lg font-bold mb-3">Chuyên mục</Text.Title>
+      <Box className="grid grid-cols-3 gap-3">
+        {menuItems.map((item, index) => (
+          <Box
+            key={index}
+            className={`${item.bg} rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-transform`}
+            onClick={() => {
+              console.log('📍 Navigating to:', item.route);
+              navigate(item.route);
+            }}
+          >
+            <Text className={`text-3xl mb-2`}>{item.icon}</Text>
+            <Text className={`${item.color} text-sm font-medium text-center`}>
+              {item.label}
+            </Text>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
+// Component Ngành đào tạo
+const MajorsSection: React.FC<{ majors: MajorType[] }> = ({ majors }) => {
+  const navigate = useNavigate();
+
+  if (majors.length === 0) {
+    return null;
+  }
+
+  return (
+    <Box className="mb-6 px-4">
+      <Box className="flex items-center justify-between mb-3">
+        <Text.Title className="text-lg font-bold">Ngành đào tạo</Text.Title>
+        <Button size="small" variant="tertiary" onClick={() => {
+          console.log('📍 Navigating to: /majors');
+          navigate('/majors');
+        }}>
+          Xem tất cả →
+        </Button>
+      </Box>
+      
+      <Box className="grid grid-cols-2 gap-3">
+        {majors.slice(0, 4).map((major) => (
+          <Box
+            key={major.id}
+            className="bg-white rounded-xl shadow overflow-hidden cursor-pointer hover:shadow-lg transition-all"
+            onClick={() => {
+              console.log('📍 Navigating to: /majors/' + major.id);
+              navigate(`/majors/${major.id}`);
+            }}
+          >
+            {/* Ảnh đại diện ngành */}
+            <Box className="h-24 overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600">
+              {major.image ? (
+                <img
+                  src={getImageUrl(major, major.name)}
+                  alt={major.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => handleImageError(e, major.name)}
+                />
+              ) : (
+                <Box className="w-full h-full flex items-center justify-center">
+                  <Text className="text-4xl text-white font-bold">{major.code.charAt(0)}</Text>
+                </Box>
+              )}
+            </Box>
+            <Box className="p-3">
+              <Text className="font-bold text-sm line-clamp-2 mb-1">{major.name}</Text>
+              <Text className="text-xs text-gray-500">{major.code}</Text>
+            </Box>
+          </Box>
+        ))}
+      </Box>
+    </Box>
+  );
+};
+
+// Component Tin tức compact
+const NewsCompactSection: React.FC<{ 
+  title: string; 
+  icon: string; 
+  color: string; 
+  news: NewsItemType[];
+  onSeeAll: () => void;
+  onNewsClick: (news: NewsItemType) => void;
+}> = ({ title, icon, color, news, onSeeAll, onNewsClick }) => {
+  
+  console.log(`📰 ${title} - Số lượng:`, news.length);
+  
+  return (
+    <Box className="mb-6 px-4">
+      <Box className="flex items-center justify-between mb-3">
+        <Text.Title className={`${color} flex items-center gap-2 text-lg font-bold`}>
+          <span className="text-xl">{icon}</span> {title}
+        </Text.Title>
+        <Button size="small" variant="tertiary" onClick={() => {
+          console.log('📍 Xem tất cả:', title);
+          onSeeAll();
+        }}>
+          Xem tất cả →
+        </Button>
+      </Box>
+
+      {news.length > 0 ? (
+        <Box className="space-y-3">
+          {news.slice(0, 3).map((item) => (
+            <Box
+              key={item.id}
+              className="bg-white rounded-xl shadow p-3 cursor-pointer hover:shadow-lg transition-all flex gap-3"
+              onClick={() => {
+                console.log('📍 Xem chi tiết tin:', item.id);
+                onNewsClick(item);
+              }}
+            >
+              <Box className="w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                <img
+                  src={getImageUrl(item, item.title)}
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                  onError={(e) => handleImageError(e, item.title)}
+                />
+              </Box>
+              <Box className="flex-1 min-w-0">
+                <Text className="font-medium text-sm line-clamp-2 mb-1">
+                  {item.title}
+                </Text>
+                <Text className="text-xs text-gray-500">
+                  {item.date}
+                </Text>
+              </Box>
+            </Box>
+          ))}
+        </Box>
+      ) : (
+        <Box className="text-center py-6 bg-gray-50 rounded-xl">
+          <Text className="text-gray-500 text-sm">Chưa có tin tức nào</Text>
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+// Main HomePage Component
+const HomePage: React.FC = () => {
+  const navigate = useNavigate();
+  const [stats, setStats] = useState<StatsType>({
+    majors: 0,
+    news: 0,
+    announcements: 0,
+    students: 0
+  });
+  const [majors, setMajors] = useState<MajorType[]>([]);
+  const [newsData, setNewsData] = useState<{
+    events: NewsItemType[];
+    news: NewsItemType[];
+    announcements: NewsItemType[];
+  }>({
+    events: [],
+    news: [],
+    announcements: []
+  });
+
+  useEffect(() => {
+    // Load dữ liệu
+    const loadData = () => {
+      try {
+        // Load tin tức - Ưu tiên adminNewsList (dữ liệu mới nhất từ admin)
+        let allNews: NewsItemType[] = [];
+        const adminNews = localStorage.getItem('adminNewsList');
+        const appNews = localStorage.getItem('app_news_data');
+        
+        if (adminNews) {
+          allNews = JSON.parse(adminNews);
+          console.log('� Load tin tức từ adminNewsList:', allNews.length);
+          // Đồng bộ sang app_news_data
+          localStorage.setItem('app_news_data', adminNews);
+        } else if (appNews) {
+          allNews = JSON.parse(appNews);
+          console.log('📰 Load tin tức từ app_news_data:', allNews.length);
+        }
+        
+        console.log('🔍 Đang load tin tức từ localStorage...');
+        console.log('📰 Tổng số tin tức:', allNews.length);
+        console.log('📊 Dữ liệu tin tức:', allNews);
+          
+        // Lọc theo đúng category của trang news
+        const events = allNews.filter(n => n.category === 'event' && n.status === 'published').slice(0, 5);
+        const news = allNews.filter(n => n.category === 'news' && n.status === 'published');
+        const announcements = allNews.filter(n => n.category === 'announcement' && n.status === 'published');
+
+        console.log('✅ Phân loại tin tức:', {
+          'Sự kiện': events.length,
+          'Tin tức': news.length,
+          'Thông báo': announcements.length
+        });
+
+        setNewsData({ events, news, announcements });
+        
+        // Cập nhật stats
+        setStats(prev => ({
+          ...prev,
+          news: news.length,
+          announcements: announcements.length
+        }));
+
+        // Load ngành đào tạo - Ưu tiên adminMajorsList
+        let allMajors: MajorType[] = [];
+        const adminMajors = localStorage.getItem('adminMajorsList');
+        const appMajors = localStorage.getItem('app_majors_data');
+        
+        if (adminMajors) {
+          allMajors = JSON.parse(adminMajors);
+          console.log('🎓 Load ngành từ adminMajorsList:', allMajors.length);
+          // Đồng bộ sang app_majors_data
+          localStorage.setItem('app_majors_data', adminMajors);
+        } else if (appMajors) {
+          allMajors = JSON.parse(appMajors);
+          console.log('🎓 Load ngành từ app_majors_data:', allMajors.length);
+        }
+        
+        console.log('🔍 Đang load ngành đào tạo từ localStorage...');
+        console.log('🎓 Tổng số ngành:', allMajors.length);
+        console.log('📊 Dữ liệu ngành:', allMajors);
+        
+        // Hiển thị tất cả ngành học (bỏ filter status)
+        setMajors(allMajors);
+        setStats(prev => ({ ...prev, majors: allMajors.length }));
+        
+        console.log('✅ Số ngành hiển thị:', allMajors.length);
+      } catch (error) {
+        console.error('❌ Lỗi khi tải dữ liệu:', error);
+      }
+    };
+
+    loadData();
+    
+    // Listen for storage changes để tự động cập nhật khi admin thay đổi
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'adminNewsList' || e.key === 'adminMajorsList') {
+        console.log('🔄 Phát hiện thay đổi từ admin, đang reload...');
+        loadData();
+      }
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  const handleNewsClick = (newsItem: NewsItemType) => {
+    navigate(`/news/${newsItem.id}`);
+  };
+
+  return (
+    <Page className="page-home bg-gray-50">
+      <Header />
+      
+      <Box className="pb-20 pt-2">
+        {/* 1. Slide Sự kiện */}
+        <EventSlider events={newsData.events} onEventClick={handleNewsClick} />
+
+        {/* 2. Chuyên mục nhanh */}
+        <QuickMenuSection />
+
+        {/* 3. Ngành đào tạo */}
+        {majors.length > 0 && <MajorsSection majors={majors} />}
+
+        {/* 4. Thông báo */}
+        <NewsCompactSection
+          title="Thông báo"
+          icon="�"
+          color="text-red-600"
+          news={newsData.announcements}
+          onSeeAll={() => navigate('/news?category=announcement')}
+          onNewsClick={handleNewsClick}
+        />
+
+        {/* 5. Tin tức */}
+        <NewsCompactSection
+          title="Tin tức"
+          icon="�"
+          color="text-blue-600"
+          news={newsData.news}
+          onSeeAll={() => navigate('/news?category=news')}
+          onNewsClick={handleNewsClick}
+        />
+
+        {/* 6. Sự kiện */}
+        <NewsCompactSection
+          title="Sự kiện"
+          icon="🎉"
+          color="text-purple-600"
+          news={newsData.events}
+          onSeeAll={() => navigate('/news?category=event')}
+          onNewsClick={handleNewsClick}
+        />
+      </Box>
+    </Page>
+  );
+};
+
+export default HomePage;

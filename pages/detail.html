@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết tin tức</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
+    <link rel="stylesheet" href="./detail.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Header tùy chỉnh với nút back -->
+     <header class="bg-white shadow-md sticky top-0 left-0 right-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center">
+            <button onclick="goBack()" class="text-gray-800 mr-4">
+                <i class='bx bx-arrow-back text-2xl'></i>
+            </button>
+            <h1 id="header-title" class="text-lg font-bold text-gray-800 truncate">Chi tiết tin tức</h1>
+        </div>
+    </header>
+
+    <main id="news-detail-content" class="p-4 bg-white"></main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/zmp-sdk@latest/zmp-sdk.min.js"></script>
+    <script src="../utils/data.js"></script>
+    <script src="./detail.js"></script>
+</body>
+</html>

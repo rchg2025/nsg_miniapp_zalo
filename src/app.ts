@@ -1,0 +1,31 @@
+// ZaUI stylesheet
+import "zmp-ui/zaui.css";
+// Tailwind stylesheet
+import "@/css/tailwind.scss";
+// Your stylesheet
+import "@/css/app.scss";
+
+// React core
+import React from "react";
+import { createRoot } from "react-dom/client";
+
+// Mount the app
+import Layout from "@/components/layout";
+import { migrateStoredData } from "@/utils/data-normalization";
+
+// Expose app configuration
+import appConfig from "../app-config.json";
+
+if (!window.APP_CONFIG) {
+  window.APP_CONFIG = appConfig as any;
+}
+
+// One-time data normalization migration
+try {
+  migrateStoredData();
+} catch (e) {
+  console.warn('Data migration failed', e);
+}
+
+const root = createRoot(document.getElementById("app")!);
+root.render(React.createElement(Layout));
