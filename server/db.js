@@ -12,7 +12,7 @@ const pool = new Pool({
 const initDB = async () => {
   const client = await pool.connect();
   try {
-    const createTablesQuery = \
+    const createTablesQuery = `
       -- 1. Người dùng
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -84,7 +84,7 @@ const initDB = async () => {
         zalo_id VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-    \;
+    `;
     await client.query(createTablesQuery);
     
     // Đảm bảo ALTER TABLE cho database cũ
