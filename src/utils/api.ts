@@ -1,4 +1,15 @@
 ﻿// Cáº¥u hÃ¬nh URL cá»§a Backend Vercel mÃ  báº¡n cung cáº¥p
+const formatToHCMTime = (dateStr: string) => {
+  if (!dateStr) return new Date().toISOString();
+  try {
+    const d = new Date(dateStr);
+    // Áp dụng múi giờ UTC+7
+    return new Date(d.getTime() + (7 * 60 * 60 * 1000)).toISOString();
+  } catch(e) {
+    return new Date().toISOString();
+  }
+};
+
 export const API_BASE_URL = 'https://nsg-miniapp-zalo-ipia.vercel.app/api';
 
 /**
@@ -32,7 +43,7 @@ export const getNews = async () => {
   const data = await fetchAPI('/news');
   return data.map((item: any) => ({
     ...item,
-    date: item.created_at || new Date().toISOString(),
+    date: formatToHCMTime(item.created_at),
     image: item.image_url || 'https://via.placeholder.com/300x150',
     imageUrl: item.image_url || 'https://via.placeholder.com/300x150',
     summary: item.content ? item.content.substring(0, 100) + '...' : '',
@@ -77,5 +88,6 @@ export const deleteAdmission = (id: string) => fetchAPI(`/admissions/${id}`, { m
 // --- USERS (NgÆ°á»i dÃ¹ng, Ä‘á»“ng bá»™ khi login Zalo) ---
 export const syncZaloUser = (userData: { zalo_id: string; name: string; avatar: string }) => 
   fetchAPI('/users', { method: 'POST', body: JSON.stringify(userData) });
+
 
 

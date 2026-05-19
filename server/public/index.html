@@ -73,7 +73,71 @@
           </div>
         </div>
 
-        <!-- USERS TAB -->
+                        <!-- TIN TỨC TAB -->
+                <div id="news" class="tab-content hidden">
+                    <div class="flex justify-between mb-4">
+                        <h2 class="text-2xl font-bold">Quản lý Tin Tức</h2>
+                        <button onclick="document.getElementById('news-modal').classList.remove('hidden')" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"><i class="fa fa-plus"></i> Đăng tin mới</button>
+                    </div>
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-100 border-b">
+                                <tr>
+                                    <th class="p-4">Hình ảnh</th>
+                                    <th class="p-4">Tiêu đề</th>
+                                    <th class="p-4">Chuyên mục</th>
+                                    <th class="p-4">Ngày đăng</th>
+                                    <th class="p-4 text-right">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="news-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- NGÀNH HỌC TAB -->
+                <div id="majors" class="tab-content hidden">
+                    <div class="flex justify-between mb-4">
+                        <h2 class="text-2xl font-bold">Quản lý Ngành Học</h2>
+                        <button onclick="document.getElementById('major-modal').classList.remove('hidden')" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"><i class="fa fa-plus"></i> Thêm Ngành</button>
+                    </div>
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-100 border-b">
+                                <tr>
+                                    <th class="p-4">Mã Ngành</th>
+                                    <th class="p-4">Tên Ngành</th>
+                                    <th class="p-4">Thông tin</th>
+                                    <th class="p-4 text-right">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="majors-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- THÔNG BÁO TAB -->
+                <div id="notifications" class="tab-content hidden">
+                    <div class="flex justify-between mb-4">
+                        <h2 class="text-2xl font-bold">Quản lý Thông Báo</h2>
+                        <button onclick="document.getElementById('noti-modal').classList.remove('hidden')" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"><i class="fa fa-plus"></i> Soạn Thông báo</button>
+                    </div>
+                    <div class="bg-white rounded-lg shadow overflow-hidden">
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-100 border-b">
+                                <tr>
+                                    <th class="p-4">Tiêu đề</th>
+                                    <th class="p-4">Nội dung</th>
+                                    <th class="p-4">Loại</th>
+                                    <th class="p-4 text-right">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="noti-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+<!-- USERS TAB -->
         <div id="users" class="tab-content">
           <div class="flex justify-between items-center mb-6">
             <h3 class="text-2xl font-bold text-gray-800">Quản Lý Thành Viên (Zalo Users)</h3>
@@ -190,4 +254,5 @@
   <script src="app.js"></script>
 </body>
 </html>
+
 

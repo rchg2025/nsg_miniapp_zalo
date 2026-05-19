@@ -71,6 +71,9 @@ function switchTab(tabId) {
     if(tabId === 'dashboard') loadDashboard();
     if(tabId === 'users') fetchUsers();
     if(tabId === 'settings') loadSettings();
+    if(tabId === 'news') fetchNews();
+    if(tabId === 'majors') fetchAdminMajors();
+    if(tabId === 'notifications') fetchAdminNotis();
 }
 
 let allUsers = [];
@@ -204,3 +207,62 @@ async function loadDashboard() {
     } catch (e) { console.error(e) }
 }
 
+
+
+// CMS Logic
+async function fetchNews() {
+    try {
+        const res = await fetch(API_BASE + '/news');
+        const data = await res.json();
+        const tbody = document.getElementById('news-tbody');
+        if(!tbody) return;
+        let html = '';
+        data.forEach(n => {
+            html += '<tr class="border-b hover:bg-gray-50">';
+            html += '<td class="p-4"><img src="'+ (n.image_url || 'https://via.placeholder.com/50') +'" class="w-16 h-10 object-cover rounded"></td>';
+            html += '<td class="p-4 font-bold">' + n.title + '</td>';
+            html += '<td class="p-4">' + n.category + '</td>';
+            html += '<td class="p-4">' + new Date(n.created_at).toLocaleDateString('vi-VN') + '</td>';
+            html += '<td class="p-4 text-right"><button onclick="deleteNews('+ n.id +')" class="text-red-500"><i class="fa fa-trash"></i> Xóa</button></td>';
+            html += '</tr>';
+        });
+        tbody.innerHTML = html;
+        localStorage.setItem('adminNewsList', JSON.stringify(data)); // Kích hoạt sự kiện storage cho mini app
+    } catch(e) {}
+}
+
+async function saveNews() {
+    const title = document.getElementById('news-title').value;
+    const image_url = document.getElementById('news-image').value;
+    const category = document.getElementById('news-category').value;
+    const content = document.getElementById('news-content').value;
+    try {
+        await fetch(API_BASE + '/news', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, image_url, category, content })
+        });
+        document.getElementById('news-modal').classList.add('hidden');
+        document.getElementById('news-title').value = '';
+        document.getElementById('news-content').value = '';
+        fetchNews();
+    } catch(e) { alert('Lỗi đăng bài'); }
+}
+
+async function deleteNews(id) {
+    if(!confirm('Xóa bản tin này?')) return;
+    try {
+        await fetch(API_BASE + '/news/' + id, { method: 'DELETE' });
+        fetchNews();
+    } catch(e) {}
+}
+
+async function fetchAdminMajors() {
+    try {
+        const res = await fetch(API_BASE + '/majors');
+        const data = await res.json();
+        localStorage.setItem('adminMajorsList', JSON.stringify(data));
+        // Todo: Render UI for majors
+    } catch(e) {}
+}
+async function fetchAdminNotis() { }
