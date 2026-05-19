@@ -47,13 +47,13 @@ function NewsDetail() {
       const updated = savedNews.filter((savedId: string) => savedId !== id);
       localStorage.setItem('user_saved_news', JSON.stringify(updated));
       setIsSaved(false);
-      console.log('âœ… ÄÃ£ bá» lÆ°u tin:', id);
+      console.log('✅ Đã bỏ lưu tin:', id);
     } else {
       // Add to saved
       savedNews.push(id);
       localStorage.setItem('user_saved_news', JSON.stringify(savedNews));
       setIsSaved(true);
-      console.log('âœ… ÄÃ£ lÆ°u tin:', id);
+      console.log('✅ Đã lưu tin:', id);
     }
   };
 
@@ -61,18 +61,18 @@ function NewsDetail() {
     return (
       <Page>
         <Header 
-          title="KhÃ´ng tÃ¬m tháº¥y bÃ i viáº¿t"
+          title="Không tìm thấy bài viết"
           showBackIcon={true}
           onBackClick={() => navigate(-1)}
           className="bg-blue-600 text-white"
         />
         <Box className="p-4 text-center">
-          <Text>BÃ i viáº¿t khÃ´ng tá»“n táº¡i hoáº·c Ä‘Ã£ bá»‹ xÃ³a.</Text>
+          <Text>Bài viết không tồn tại hoặc đã bị xóa.</Text>
           <Button 
             className="mt-4 bg-blue-600 text-white"
             onClick={() => navigate("/news")}
           >
-            Quay láº¡i tin tá»©c
+            Quay lại tin tức
           </Button>
         </Box>
       </Page>
@@ -82,13 +82,13 @@ function NewsDetail() {
   const getCategoryInfo = (category: string) => {
     switch (category) {
       case "announcement": 
-        return { label: "ThÃ´ng bÃ¡o", color: "bg-red-100 text-red-600" };
+        return { label: "Thông báo", color: "bg-red-100 text-red-600" };
       case "news": 
-        return { label: "Tin tá»©c", color: "bg-blue-100 text-blue-600" };
+        return { label: "Tin tức", color: "bg-blue-100 text-blue-600" };
       case "admission": 
-        return { label: "NgÃ nh tuyá»ƒn sinh", color: "bg-green-100 text-green-600" };
+        return { label: "Ngành tuyển sinh", color: "bg-green-100 text-green-600" };
       default: 
-        return { label: "KhÃ¡c", color: "bg-gray-100 text-gray-600" };
+        return { label: "Khác", color: "bg-gray-100 text-gray-600" };
     }
   };
 
@@ -97,7 +97,7 @@ function NewsDetail() {
   return (
     <Page className="bg-gray-50">
       <Header 
-        title="Chi tiáº¿t tin tá»©c"
+        title="Chi tiết tin tức"
         showBackIcon={true}
         onBackClick={() => navigate(-1)}
         className="bg-blue-600 text-white"
@@ -113,7 +113,7 @@ function NewsDetail() {
             </Box>
             {newsDetail.isHot && (
               <Box className="bg-red-500 text-white px-2 py-1 rounded text-xs font-medium">
-                ðŸ”¥ Ná»•i báº­t
+                🔥 Nổi bật
               </Box>
             )}
           </Box>
@@ -134,8 +134,8 @@ function NewsDetail() {
               {newsDetail.author}
             </Box>
             <Box className="flex items-center">
-              <Text className="mr-1">ðŸ‘ï¸</Text>
-              {newsDetail.views} lÆ°á»£t xem
+              <Text className="mr-1">👁️</Text>
+              {newsDetail.views} lượt xem
             </Box>
           </Box>
         </Box>
@@ -149,22 +149,22 @@ function NewsDetail() {
           {/* Additional content based on category */}
           {newsDetail.category === "announcement" && (
             <Box className="mt-6 p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
-              <Text.Title className="text-red-700 mb-2">ðŸ“¢ ThÃ´ng tin quan trá»ng</Text.Title>
+              <Text.Title className="text-red-700 mb-2">📢 Thông tin quan trọng</Text.Title>
               <Text className="text-red-600 text-sm">
-                â€¢ Thá»i gian ná»™p há»“ sÆ¡: 15/03 - 30/08/2025<br/>
-                â€¢ Äá»‹a Ä‘iá»ƒm: PhÃ²ng ÄÃ o táº¡o - Táº§ng 2<br/>
-                â€¢ Hotline: 028.3xxx.xxxx
+                • Thời gian nộp hồ sơ: 15/03 - 30/08/2025<br/>
+                • Địa điểm: Phòng Đào tạo - Tầng 2<br/>
+                • Hotline: 028.3xxx.xxxx
               </Text>
             </Box>
           )}
           
           {newsDetail.category === "admission" && (
             <Box className="mt-6 p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-              <Text.Title className="text-green-700 mb-2">ðŸŽ“ ThÃ´ng tin ngÃ nh há»c</Text.Title>
+              <Text.Title className="text-green-700 mb-2">🎓 Thông tin ngành học</Text.Title>
               <Text className="text-green-600 text-sm">
-                â€¢ Thá»i gian Ä‘Ã o táº¡o: 3 nÄƒm<br/>
-                â€¢ Tá»· lá»‡ cÃ³ viá»‡c lÃ m: 95%<br/>
-                â€¢ Há»c phÃ­: 18.000.000 VND/nÄƒm
+                • Thời gian đào tạo: 3 năm<br/>
+                • Tỷ lệ có việc làm: 95%<br/>
+                • Học phí: 18.000.000 VND/năm
               </Text>
             </Box>
           )}
@@ -184,7 +184,7 @@ function NewsDetail() {
               onClick={handleSaveNews}
             >
               <Icon icon={isSaved ? "zi-star-solid" : "zi-bookmark"} className="mr-2" />
-              {isSaved ? "ÄÃ£ lÆ°u" : "LÆ°u tin"}
+              {isSaved ? "Đã lưu" : "Lưu tin"}
             </Button>
             <Button
               variant="secondary"
@@ -192,7 +192,7 @@ function NewsDetail() {
               className="flex-1 border-blue-200 text-blue-600 hover:bg-blue-50"
               onClick={() => navigate("/news")}
             >
-              ðŸ“° Tin tá»©c khÃ¡c
+              📰 Tin tức khác
             </Button>
             <Button
               variant="secondary"
@@ -200,14 +200,14 @@ function NewsDetail() {
               className="flex-1 border-blue-200 text-blue-600 hover:bg-blue-50"
               onClick={() => navigate(-1)}
             >
-              â† Quay láº¡i
+              ← Quay lại
             </Button>
           </Box>
         </Box>
 
         {/* Related News */}
         <Box className="bg-white rounded-lg shadow-sm p-4">
-          <Text.Title className="text-blue-600 mb-3">Tin tá»©c liÃªn quan</Text.Title>
+          <Text.Title className="text-blue-600 mb-3">Tin tức liên quan</Text.Title>
           <Box className="space-y-3">
             {allNews
               .filter(item => item.id !== newsDetail.id && item.category === newsDetail.category)
@@ -218,7 +218,7 @@ function NewsDetail() {
                   className="flex items-start space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer transition-colors border-l-4 border-blue-500"
                   onClick={() => navigate(`/news/${related.id}`)}
                 >
-                  <Text className="text-blue-500 mt-1">ðŸ“„</Text>
+                  <Text className="text-blue-500 mt-1">📄</Text>
                   <Box className="flex-1">
                     <Text className="text-sm font-medium text-gray-800 line-clamp-2">{related.title}</Text>
                     <Text className="text-xs text-gray-500 mt-1">{related.date}</Text>

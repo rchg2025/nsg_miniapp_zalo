@@ -47,7 +47,7 @@ export type Permission = typeof PERMISSIONS[keyof typeof PERMISSIONS];
 export enum EducationLevel {
   COLLEGE = 'college', // Cao đẳng
   VOCATIONAL = 'vocational', // Trung cấp
-  BRIDGE_COLLEGE = 'bridge_college' // Cao đẳng liên thông
+  BRIDGE_COLLEGE = 'bridge_college' // Cao đẳng li�n th�ng
 }
 
 export interface Major {
@@ -56,12 +56,12 @@ export interface Major {
   code: string;
   description: string;
   image: string;
-  duration: string; // Thời gian đào tạo
+  duration: string; // Thời gian đ�o tạo
   educationLevels: EducationLevel[];
-  requirements: string[]; // Điều kiện đào tạo
+  requirements: string[]; // Điều kiện đ�o tạo
   careerProspects: string[]; // Cơ hội nghề nghiệp
-  website?: string; // Website liên quan
-  contactInfo?: string; // Thông tin liên hệ
+  website?: string; // Website li�n quan
+  contactInfo?: string; // Th�ng tin li�n hệ
   tuitionFee: number;
   isActive: boolean;
   createdAt: string;

@@ -1,20 +1,20 @@
 /**
- * Data Exporter - Xuất dữ liệu từ localStorage để deploy lên server
+ * Data Exporter - Xuất dữ liệu từ localStorage để deploy l�n server
  */
 
 export class DataExporter {
   /**
-   * Xuất toàn bộ dữ liệu từ localStorage
+   * Xuất to�n bộ dữ liệu từ localStorage
    */
   static exportAllData() {
     const data = {
       // Tin tức
       news: this.getLocalStorageData('adminNewsList') || this.getLocalStorageData('app_news_data') || [],
       
-      // Ngành học  
+      // Ng�nh học  
       majors: this.getLocalStorageData('adminMajorsList') || this.getLocalStorageData('app_majors_data') || [],
       
-      // Đơn đăng ký
+      // Đơn đăng k�
       applications: this.getLocalStorageData('admissionRegistrations') || this.getLocalStorageData('app_admission_applications') || [],
       
       // Metadata
@@ -27,7 +27,7 @@ export class DataExporter {
   }
 
   /**
-   * Helper để lấy và parse dữ liệu từ localStorage
+   * Helper để lấy v� parse dữ liệu từ localStorage
    */
   private static getLocalStorageData(key: string) {
     try {

@@ -47,7 +47,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
     educationLevel: editData?.educationLevel || EducationLevel.COLLEGE,
     graduationYear: editData?.graduationYear || "",
     previousSchool: editData?.previousSchool || "",
-    academicRecord: editData?.academicRecord || "Khá",
+    academicRecord: editData?.academicRecord || "Kh�",
     notes: editData?.notes || "",
     status: editData?.status || "pending"
   });
@@ -56,7 +56,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
 
   const handleSave = async () => {
     if (!formData.studentName.trim() || !formData.phoneNumber.trim() || !formData.email.trim()) {
-      alert("Vui lòng nhập đầy đủ thông tin bắt buộc");
+      alert("Vui l�ng nhập đầy đủ th�ng tin bắt buộc");
       return;
     }
 
@@ -90,7 +90,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
         educationLevel: EducationLevel.COLLEGE,
         graduationYear: "",
         previousSchool: "",
-        academicRecord: "Khá",
+        academicRecord: "Kh�",
         notes: "",
         status: "pending"
       });
@@ -111,7 +111,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
       educationLevel: editData?.educationLevel || EducationLevel.COLLEGE,
       graduationYear: editData?.graduationYear || "",
       previousSchool: editData?.previousSchool || "",
-      academicRecord: editData?.academicRecord || "Khá",
+      academicRecord: editData?.academicRecord || "Kh�",
       notes: editData?.notes || "",
       status: editData?.status || "pending"
     });
@@ -121,7 +121,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
   return (
     <Modal
       visible={isVisible}
-      title={editData ? "Chỉnh sửa hồ sơ tuyển sinh" : "Thêm hồ sơ tuyển sinh"}
+      title={editData ? "Chỉnh sửa hồ sơ tuyển sinh" : "Th�m hồ sơ tuyển sinh"}
       actions={[
         {
           text: isLoading ? "Đang lưu..." : "Lưu",
@@ -141,7 +141,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
         {/* Student Name */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Họ và tên: <span className="text-red-500">*</span>
+            Họ v� t�n: <span className="text-red-500">*</span>
           </Text>
           <Input
             value={formData.studentName}
@@ -180,7 +180,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
         {/* Date of Birth */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Ngày sinh:
+            Ng�y sinh:
           </Text>
           <input
             type="date"
@@ -198,7 +198,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
           <Input
             value={formData.address}
             onChange={(e) => setFormData({...formData, address: e.target.value})}
-            placeholder="Địa chỉ thường trú"
+            placeholder="Địa chỉ thường tr�"
             className="w-full"
           />
         </Box>
@@ -206,12 +206,12 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
         {/* Major */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Ngành đăng ký:
+            Ng�nh đăng k�:
           </Text>
           <Input
             value={formData.majorName}
             onChange={(e) => setFormData({...formData, majorName: e.target.value})}
-            placeholder="VD: Công nghệ Thông tin"
+            placeholder="VD: C�ng nghệ Th�ng tin"
             className="w-full"
           />
         </Box>
@@ -219,7 +219,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
         {/* Education Level */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Hệ đào tạo:
+            Hệ đ�o tạo:
           </Text>
           <select
             value={formData.educationLevel}
@@ -228,7 +228,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
           >
             <option value={EducationLevel.COLLEGE}>Cao đẳng</option>
             <option value={EducationLevel.VOCATIONAL}>Trung cấp</option>
-            <option value={EducationLevel.BRIDGE_COLLEGE}>Cao đẳng liên thông</option>
+            <option value={EducationLevel.BRIDGE_COLLEGE}>Cao đẳng li�n th�ng</option>
           </select>
         </Box>
 
@@ -253,7 +253,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
           <Input
             value={formData.previousSchool}
             onChange={(e) => setFormData({...formData, previousSchool: e.target.value})}
-            placeholder="Tên trường đã tốt nghiệp"
+            placeholder="T�n trường đ� tốt nghiệp"
             className="w-full"
           />
         </Box>
@@ -270,8 +270,8 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
           >
             <option value="Xuất sắc">Xuất sắc</option>
             <option value="Giỏi">Giỏi</option>
-            <option value="Khá">Khá</option>
-            <option value="Trung bình">Trung bình</option>
+            <option value="Kh�">Kh�</option>
+            <option value="Trung b�nh">Trung b�nh</option>
           </select>
         </Box>
 
@@ -279,17 +279,17 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
         {editData && (
           <Box>
             <Text className="text-sm font-medium text-gray-700 mb-2">
-              Trạng thái:
+              Trạng th�i:
             </Text>
             <select
               value={formData.status}
               onChange={(e) => setFormData({...formData, status: e.target.value})}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="pending">Chờ xét duyệt</option>
-              <option value="approved">Đã duyệt</option>
+              <option value="pending">Chờ x�t duyệt</option>
+              <option value="approved">Đ� duyệt</option>
               <option value="rejected">Từ chối</option>
-              <option value="contacted">Đã liên hệ</option>
+              <option value="contacted">Đ� li�n hệ</option>
             </select>
           </Box>
         )}
@@ -297,12 +297,12 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
         {/* Notes */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Ghi chú:
+            Ghi ch�:
           </Text>
           <textarea
             value={formData.notes}
             onChange={(e) => setFormData({...formData, notes: e.target.value})}
-            placeholder="Ghi chú thêm..."
+            placeholder="Ghi ch� th�m..."
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none"
           />
@@ -310,7 +310,7 @@ export function AdmissionModal({ isVisible, onClose, onSave, editData }: Admissi
 
         {isLoading && (
           <Box className="text-center py-2">
-            <Text className="text-blue-600 text-sm">Đang xử lý...</Text>
+            <Text className="text-blue-600 text-sm">Đang xử l�...</Text>
           </Box>
         )}
       </Box>

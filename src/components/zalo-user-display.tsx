@@ -26,7 +26,7 @@ export const ZaloUserDisplay: React.FC<ZaloUserDisplayProps> = ({
     return (
       <Box className="flex items-center space-x-2">
         <Avatar size={compact ? 32 : 40} />
-        <Text className="text-gray-500">Khách</Text>
+        <Text className="text-gray-500">Kh�ch</Text>
       </Box>
     );
   }

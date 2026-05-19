@@ -36,7 +36,7 @@ interface StatsType {
   students: number;
 }
 
-// Component Slide Sá»± kiá»‡n
+// Component Slide Sự kiện
 const EventSlider: React.FC<{ events: NewsItemType[]; onEventClick: (event: NewsItemType) => void }> = ({ events, onEventClick }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -99,29 +99,29 @@ const EventSlider: React.FC<{ events: NewsItemType[]; onEventClick: (event: News
   );
 };
 
-// Component ChuyÃªn má»¥c nhanh
+// Component Chuy�n mục nhanh
 const QuickMenuSection: React.FC = () => {
   const navigate = useNavigate();
   
   const menuItems = [
-    { icon: "ðŸ“", label: "Tin tá»©c", color: "text-blue-600", bg: "bg-blue-50", route: "/news?category=news" },
-    { icon: "ðŸ“¢", label: "ThÃ´ng bÃ¡o", color: "text-red-600", bg: "bg-red-50", route: "/news?category=announcement" },
-    { icon: "ðŸŽ‰", label: "Sá»± kiá»‡n", color: "text-purple-600", bg: "bg-purple-50", route: "/news?category=event" },
-    { icon: "ðŸŽ“", label: "NgÃ nh há»c", color: "text-green-600", bg: "bg-green-50", route: "/majors" },
-    { icon: "ðŸ“‹", label: "ÄÄƒng kÃ½", color: "text-orange-600", bg: "bg-orange-50", route: "/admission-registration" },
-    { icon: "ðŸ‘¤", label: "CÃ¡ nhÃ¢n", color: "text-gray-600", bg: "bg-gray-50", route: "/profile" },
+    { icon: "📝", label: "Tin tức", color: "text-blue-600", bg: "bg-blue-50", route: "/news?category=news" },
+    { icon: "📢", label: "Th�ng b�o", color: "text-red-600", bg: "bg-red-50", route: "/news?category=announcement" },
+    { icon: "🎉", label: "Sự kiện", color: "text-purple-600", bg: "bg-purple-50", route: "/news?category=event" },
+    { icon: "🎓", label: "Ng�nh học", color: "text-green-600", bg: "bg-green-50", route: "/majors" },
+    { icon: "📋", label: "Đăng k�", color: "text-orange-600", bg: "bg-orange-50", route: "/admission-registration" },
+    { icon: "👤", label: "C� nh�n", color: "text-gray-600", bg: "bg-gray-50", route: "/profile" },
   ];
 
   return (
     <Box className="mb-6 px-4">
-      <Text.Title className="text-lg font-bold mb-3">ChuyÃªn má»¥c</Text.Title>
+      <Text.Title className="text-lg font-bold mb-3">Chuy�n mục</Text.Title>
       <Box className="grid grid-cols-3 gap-3">
         {menuItems.map((item, index) => (
           <Box
             key={index}
             className={`${item.bg} rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-transform`}
             onClick={() => {
-              console.log('ðŸ“ Navigating to:', item.route);
+              console.log('📍 Navigating to:', item.route);
               navigate(item.route);
             }}
           >
@@ -136,7 +136,7 @@ const QuickMenuSection: React.FC = () => {
   );
 };
 
-// Component NgÃ nh Ä‘Ã o táº¡o
+// Component Ng�nh đ�o tạo
 const MajorsSection: React.FC<{ majors: MajorType[] }> = ({ majors }) => {
   const navigate = useNavigate();
 
@@ -147,12 +147,12 @@ const MajorsSection: React.FC<{ majors: MajorType[] }> = ({ majors }) => {
   return (
     <Box className="mb-6 px-4">
       <Box className="flex items-center justify-between mb-3">
-        <Text.Title className="text-lg font-bold">NgÃ nh Ä‘Ã o táº¡o</Text.Title>
+        <Text.Title className="text-lg font-bold">Ng�nh đ�o tạo</Text.Title>
         <Button size="small" variant="tertiary" onClick={() => {
-          console.log('ðŸ“ Navigating to: /majors');
+          console.log('📍 Navigating to: /majors');
           navigate('/majors');
         }}>
-          Xem táº¥t cáº£ â†’
+          Xem tất cả →
         </Button>
       </Box>
       
@@ -162,11 +162,11 @@ const MajorsSection: React.FC<{ majors: MajorType[] }> = ({ majors }) => {
             key={major.id}
             className="bg-white rounded-xl shadow overflow-hidden cursor-pointer hover:shadow-lg transition-all"
             onClick={() => {
-              console.log('ðŸ“ Navigating to: /majors/' + major.id);
+              console.log('📍 Navigating to: /majors/' + major.id);
               navigate(`/majors/${major.id}`);
             }}
           >
-            {/* áº¢nh Ä‘áº¡i diá»‡n ngÃ nh */}
+            {/* Ảnh đại diện ng�nh */}
             <Box className="h-24 overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600">
               {major.image ? (
                 <img
@@ -192,7 +192,7 @@ const MajorsSection: React.FC<{ majors: MajorType[] }> = ({ majors }) => {
   );
 };
 
-// Component Tin tá»©c compact
+// Component Tin tức compact
 const NewsCompactSection: React.FC<{ 
   title: string; 
   icon: string; 
@@ -202,7 +202,7 @@ const NewsCompactSection: React.FC<{
   onNewsClick: (news: NewsItemType) => void;
 }> = ({ title, icon, color, news, onSeeAll, onNewsClick }) => {
   
-  console.log(`ðŸ“° ${title} - Sá»‘ lÆ°á»£ng:`, news.length);
+  console.log(`📰 ${title} - Số lượng:`, news.length);
   
   return (
     <Box className="mb-6 px-4">
@@ -211,10 +211,10 @@ const NewsCompactSection: React.FC<{
           <span className="text-xl">{icon}</span> {title}
         </Text.Title>
         <Button size="small" variant="tertiary" onClick={() => {
-          console.log('ðŸ“ Xem táº¥t cáº£:', title);
+          console.log('📍 Xem tất cả:', title);
           onSeeAll();
         }}>
-          Xem táº¥t cáº£ â†’
+          Xem tất cả →
         </Button>
       </Box>
 
@@ -225,7 +225,7 @@ const NewsCompactSection: React.FC<{
               key={item.id}
               className="bg-white rounded-xl shadow p-3 cursor-pointer hover:shadow-lg transition-all flex gap-3"
               onClick={() => {
-                console.log('ðŸ“ Xem chi tiáº¿t tin:', item.id);
+                console.log('📍 Xem chi tiết tin:', item.id);
                 onNewsClick(item);
               }}
             >
@@ -250,7 +250,7 @@ const NewsCompactSection: React.FC<{
         </Box>
       ) : (
         <Box className="text-center py-6 bg-gray-50 rounded-xl">
-          <Text className="text-gray-500 text-sm">ChÆ°a cÃ³ tin tá»©c nÃ o</Text>
+          <Text className="text-gray-500 text-sm">Chưa c� tin tức n�o</Text>
         </Box>
       )}
     </Box>
@@ -278,7 +278,7 @@ const HomePage: React.FC = () => {
   });
 
   useEffect(() => {
-    // Load dá»¯ liá»‡u
+    // Load dữ liệu
         const loadData = async () => {
       try {
         const { getNews, getMajors } = await import('@/utils/api');
@@ -306,10 +306,10 @@ const HomePage: React.FC = () => {
 
     loadData();
     
-    // Listen for storage changes Ä‘á»ƒ tá»± Ä‘á»™ng cáº­p nháº­t khi admin thay Ä‘á»•i
+    // Listen for storage changes để tự động cập nhật khi admin thay đổi
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'adminNewsList' || e.key === 'adminMajorsList') {
-        console.log('ðŸ”„ PhÃ¡t hiá»‡n thay Ä‘á»•i tá»« admin, Ä‘ang reload...');
+        console.log('🔄 Ph�t hiện thay đổi từ admin, đang reload...');
         loadData();
       }
     };
@@ -327,39 +327,39 @@ const HomePage: React.FC = () => {
       <Header />
       
       <Box className="pb-20 pt-2">
-        {/* 1. Slide Sá»± kiá»‡n */}
+        {/* 1. Slide Sự kiện */}
         <EventSlider events={newsData.events} onEventClick={handleNewsClick} />
 
-        {/* 2. ChuyÃªn má»¥c nhanh */}
+        {/* 2. Chuy�n mục nhanh */}
         <QuickMenuSection />
 
-        {/* 3. NgÃ nh Ä‘Ã o táº¡o */}
+        {/* 3. Ng�nh đ�o tạo */}
         {majors.length > 0 && <MajorsSection majors={majors} />}
 
-        {/* 4. ThÃ´ng bÃ¡o */}
+        {/* 4. Th�ng b�o */}
         <NewsCompactSection
-          title="ThÃ´ng bÃ¡o"
-          icon="ï¿½"
+          title="Th�ng b�o"
+          icon="�"
           color="text-red-600"
           news={newsData.announcements}
           onSeeAll={() => navigate('/news?category=announcement')}
           onNewsClick={handleNewsClick}
         />
 
-        {/* 5. Tin tá»©c */}
+        {/* 5. Tin tức */}
         <NewsCompactSection
-          title="Tin tá»©c"
-          icon="ï¿½"
+          title="Tin tức"
+          icon="�"
           color="text-blue-600"
           news={newsData.news}
           onSeeAll={() => navigate('/news?category=news')}
           onNewsClick={handleNewsClick}
         />
 
-        {/* 6. Sá»± kiá»‡n */}
+        {/* 6. Sự kiện */}
         <NewsCompactSection
-          title="Sá»± kiá»‡n"
-          icon="ðŸŽ‰"
+          title="Sự kiện"
+          icon="🎉"
           color="text-purple-600"
           news={newsData.events}
           onSeeAll={() => navigate('/news?category=event')}

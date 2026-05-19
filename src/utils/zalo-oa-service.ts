@@ -1,5 +1,5 @@
 /**
- * Zalo OA Service - Quản lý tương tác với Official Account
+ * Zalo OA Service - Quản l� tương t�c với Official Account
  */
 
 import { followOA, openChat } from 'zmp-sdk/apis';
@@ -7,7 +7,7 @@ import { OA_CONFIG } from '@/config/oa-config';
 
 export class ZaloOAService {
   /**
-   * Quan tâm OA của trường
+   * Quan t�m OA của trường
    */
   static async followOA(): Promise<{
     success: boolean;
@@ -21,33 +21,33 @@ export class ZaloOAService {
         id: OA_CONFIG.OA_ID
       });
       
-      // Lưu trạng thái follow
+      // Lưu trạng th�i follow
       localStorage.setItem("oa_followed", "true");
       
-      console.log('✅ [OA] Follow OA thành công');
+      console.log('✅ [OA] Follow OA th�nh c�ng');
       return {
         success: true,
-        message: "✅ Đã quan tâm Zalo OA thành công!"
+        message: "✅ Đ� quan t�m Zalo OA th�nh c�ng!"
       };
     } catch (error: any) {
       console.error('❌ [OA] Follow OA failed:', error);
       
-      // Kiểm tra các loại lỗi khác nhau
-      let errorMessage = "❌ Không thể quan tâm Zalo OA.";
+      // Kiểm tra c�c loại lỗi kh�c nhau
+      let errorMessage = "❌ Kh�ng thể quan t�m Zalo OA.";
       
       if (error.code === -1) {
-        errorMessage += "\n• Có thể do OA ID không đúng hoặc OA không tồn tại";
+        errorMessage += "\n� C� thể do OA ID kh�ng đ�ng hoặc OA kh�ng tồn tại";
       } else if (error.code === -2) {
-        errorMessage += "\n• Người dùng từ chối thao tác";
+        errorMessage += "\n� Người d�ng từ chối thao t�c";
       } else if (error.message?.includes('network')) {
-        errorMessage += "\n• Lỗi kết nối mạng";
+        errorMessage += "\n� Lỗi kết nối mạng";
       } else {
-        errorMessage += `\n• Chi tiết: ${error.message || 'Lỗi không xác định'}`;
+        errorMessage += `\n� Chi tiết: ${error.message || 'Lỗi kh�ng x�c định'}`;
       }
       
-      errorMessage += "\n\n🔄 Thử các cách khác:";
-      errorMessage += `\n• Gọi điện: ${OA_CONFIG.CONTACT_INFO.phone}`;
-      errorMessage += `\n• Website: ${OA_CONFIG.CONTACT_INFO.website}`;
+      errorMessage += "\n\n🔄 Thử c�c c�ch kh�c:";
+      errorMessage += `\n� Gọi điện: ${OA_CONFIG.CONTACT_INFO.phone}`;
+      errorMessage += `\n� Website: ${OA_CONFIG.CONTACT_INFO.website}`;
       
       return {
         success: false,
@@ -74,31 +74,31 @@ export class ZaloOAService {
         message: OA_CONFIG.DEFAULT_MESSAGES.support
       });
       
-      console.log('✅ [OA] Open chat thành công');
+      console.log('✅ [OA] Open chat th�nh c�ng');
       return {
         success: true,
-        message: "✅ Đã mở chat hỗ trợ thành công!"
+        message: "✅ Đ� mở chat hỗ trợ th�nh c�ng!"
       };
     } catch (error: any) {
       console.error('❌ [OA] Open chat failed:', error);
       
-      // Kiểm tra các loại lỗi khác nhau
-      let errorMessage = "❌ Không thể mở chat hỗ trợ.";
+      // Kiểm tra c�c loại lỗi kh�c nhau
+      let errorMessage = "❌ Kh�ng thể mở chat hỗ trợ.";
       
       if (error.code === -1) {
-        errorMessage += "\n• Có thể do OA ID không đúng hoặc OA không tồn tại";
+        errorMessage += "\n� C� thể do OA ID kh�ng đ�ng hoặc OA kh�ng tồn tại";
       } else if (error.code === -2) {
-        errorMessage += "\n• Người dùng từ chối mở chat";
+        errorMessage += "\n� Người d�ng từ chối mở chat";
       } else if (error.message?.includes('network')) {
-        errorMessage += "\n• Lỗi kết nối mạng";
+        errorMessage += "\n� Lỗi kết nối mạng";
       } else {
-        errorMessage += `\n• Chi tiết: ${error.message || 'Lỗi không xác định'}`;
+        errorMessage += `\n� Chi tiết: ${error.message || 'Lỗi kh�ng x�c định'}`;
       }
       
-      errorMessage += "\n\n🔄 Thử các cách khác:";
-      errorMessage += `\n• Gọi điện: ${OA_CONFIG.CONTACT_INFO.phone}`;
-      errorMessage += `\n• Email: ${OA_CONFIG.CONTACT_INFO.email}`;
-      errorMessage += `\n• Website: ${OA_CONFIG.CONTACT_INFO.website}`;
+      errorMessage += "\n\n🔄 Thử c�c c�ch kh�c:";
+      errorMessage += `\n� Gọi điện: ${OA_CONFIG.CONTACT_INFO.phone}`;
+      errorMessage += `\n� Email: ${OA_CONFIG.CONTACT_INFO.email}`;
+      errorMessage += `\n� Website: ${OA_CONFIG.CONTACT_INFO.website}`;
       
       return {
         success: false,
@@ -109,21 +109,21 @@ export class ZaloOAService {
   }
 
   /**
-   * Kiểm tra trạng thái follow OA
+   * Kiểm tra trạng th�i follow OA
    */
   static isOAFollowed(): boolean {
     return localStorage.getItem("oa_followed") === "true";
   }
 
   /**
-   * Đặt lại trạng thái follow OA
+   * Đặt lại trạng th�i follow OA
    */
   static resetFollowStatus(): void {
     localStorage.removeItem("oa_followed");
   }
 
   /**
-   * Test kết nối với OA (không thực hiện thao tác thực)
+   * Test kết nối với OA (kh�ng thực hiện thao t�c thực)
    */
   static async testOAConnection(): Promise<{
     oaId: string;
@@ -136,16 +136,16 @@ export class ZaloOAService {
     // Kiểm tra OA ID format
     const isValidOAId = OA_CONFIG.OA_ID && OA_CONFIG.OA_ID.length > 0;
     if (!isValidOAId) {
-      recommendations.push("❌ OA ID không hợp lệ hoặc trống");
+      recommendations.push("❌ OA ID kh�ng hợp lệ hoặc trống");
     }
     
-    // Kiểm tra môi trường
+    // Kiểm tra m�i trường
     const isInZaloApp = navigator.userAgent.includes('ZaloApp');
     if (!isInZaloApp) {
-      recommendations.push("⚠️ Đang test ngoài ứng dụng Zalo, một số chức năng có thể không hoạt động");
+      recommendations.push("⚠️ Đang test ngo�i ứng dụng Zalo, một số chức năng c� thể kh�ng hoạt động");
     }
     
-    // Kiểm tra các API có sẵn
+    // Kiểm tra c�c API c� sẵn
     let canFollow = false;
     let canChat = false;
     
@@ -155,7 +155,7 @@ export class ZaloOAService {
         canFollow = true;
         recommendations.push("✅ followOA API khả dụng");
       } else {
-        recommendations.push("❌ followOA API không khả dụng");
+        recommendations.push("❌ followOA API kh�ng khả dụng");
       }
       
       // Test openChat API
@@ -163,7 +163,7 @@ export class ZaloOAService {
         canChat = true;
         recommendations.push("✅ openChat API khả dụng");
       } else {
-        recommendations.push("❌ openChat API không khả dụng");
+        recommendations.push("❌ openChat API kh�ng khả dụng");
       }
     } catch (error) {
       recommendations.push(`❌ Lỗi khi test API: ${error}`);

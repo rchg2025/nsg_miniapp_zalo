@@ -28,14 +28,14 @@ function ZaloPermissionTestPage() {
   };
 
   const getUserInfo = async () => {
-    addLog("👤 Lấy thông tin người dùng...");
+    addLog("👤 Lấy th�ng tin người d�ng...");
     try {
       const info = await ZaloUserService.getUserInfo();
       setUserInfo(info);
       if (info) {
-        addLog(`✅ Thành công: ${info.name} (${info.id})`);
+        addLog(`✅ Th�nh c�ng: ${info.name} (${info.id})`);
       } else {
-        addLog("❌ Không lấy được thông tin");
+        addLog("❌ Kh�ng lấy được th�ng tin");
       }
     } catch (error) {
       addLog(`❌ Lỗi: ${error}`);
@@ -43,7 +43,7 @@ function ZaloPermissionTestPage() {
   };
 
   const testPhonePermissionSteps = async () => {
-    addLog("📞 Test quy trình số điện thoại chi tiết...");
+    addLog("📞 Test quy tr�nh số điện thoại chi tiết...");
     try {
       const result = await ZaloUserService.getPhoneNumberWithSteps();
       
@@ -51,7 +51,7 @@ function ZaloPermissionTestPage() {
       result.steps.forEach(step => addLog(step));
       
       if (result.success) {
-        addLog(`🎉 THÀNH CÔNG: ${result.phone}`);
+        addLog(`🎉 TH�NH C�NG: ${result.phone}`);
       } else {
         addLog(`💥 THẤT BẠI: ${result.error}`);
       }
@@ -124,7 +124,7 @@ function ZaloPermissionTestPage() {
               className="flex flex-col items-center p-3"
             >
               <Icon icon="zi-delete" className="mb-1" />
-              <Text className="text-xs">Xóa logs</Text>
+              <Text className="text-xs">X�a logs</Text>
             </Button>
           </Box>
 
@@ -142,26 +142,26 @@ function ZaloPermissionTestPage() {
 
         {/* Current Status */}
         <Box className="bg-white rounded-lg shadow-sm p-4 mb-4">
-          <Text.Title className="text-green-600 mb-4">📊 Trạng thái hiện tại</Text.Title>
+          <Text.Title className="text-green-600 mb-4">📊 Trạng th�i hiện tại</Text.Title>
           
           {permissions && (
             <Box className="mb-4">
               <Text className="font-medium">Quyền truy cập:</Text>
               <Text className="text-sm text-gray-600">
-                • UserInfo: {permissions.userInfo ? "✅" : "❌"}{'\n'}
-                • Phone: {permissions.phone ? "✅" : "❌"}
+                � UserInfo: {permissions.userInfo ? "✅" : "❌"}{'\n'}
+                � Phone: {permissions.phone ? "✅" : "❌"}
               </Text>
             </Box>
           )}
 
           {userInfo && (
             <Box className="mb-4">
-              <Text className="font-medium">Thông tin user:</Text>
+              <Text className="font-medium">Th�ng tin user:</Text>
               <Text className="text-sm text-gray-600">
-                • ID: {userInfo.id}{'\n'}
-                • Tên: {userInfo.name}{'\n'}
-                • Avatar: {userInfo.avatar ? "Có" : "Không"}{'\n'}
-                • Phone: {userInfo.phone || "Chưa có"}
+                � ID: {userInfo.id}{'\n'}
+                � T�n: {userInfo.name}{'\n'}
+                � Avatar: {userInfo.avatar ? "C�" : "Kh�ng"}{'\n'}
+                � Phone: {userInfo.phone || "Chưa c�"}
               </Text>
             </Box>
           )}
@@ -173,7 +173,7 @@ function ZaloPermissionTestPage() {
           
           <Box className="bg-gray-50 rounded p-3 max-h-96 overflow-y-auto">
             {logs.length === 0 ? (
-              <Text className="text-gray-500 text-sm">Chưa có logs...</Text>
+              <Text className="text-gray-500 text-sm">Chưa c� logs...</Text>
             ) : (
               logs.map((log, index) => (
                 <Text key={index} className="text-xs font-mono text-gray-700 block mb-1">
@@ -191,10 +191,10 @@ function ZaloPermissionTestPage() {
           </Text.Title>
           <Text className="text-sm text-blue-700">
             1. Bấm "Kiểm tra quyền" để xem quyền hiện tại{'\n'}
-            2. Bấm "Lấy User Info" để lấy thông tin cơ bản{'\n'}
-            3. Bấm "Test Phone Steps" để xem quy trình chi tiết{'\n'}
+            2. Bấm "Lấy User Info" để lấy th�ng tin cơ bản{'\n'}
+            3. Bấm "Test Phone Steps" để xem quy tr�nh chi tiết{'\n'}
             4. Bấm "Test Component Phone" để test UI component{'\n'}
-            5. Xem logs để theo dõi quá trình
+            5. Xem logs để theo d�i qu� tr�nh
           </Text>
         </Box>
 

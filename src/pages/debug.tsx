@@ -42,19 +42,19 @@ function DebugPage() {
   const createSampleData = () => {
     console.log('🚀 Tạo dữ liệu mẫu thực tế NSG...');
     
-    // Xóa dữ liệu cũ
+    // X�a dữ liệu cũ
     localStorage.removeItem('app_news_data');
     localStorage.removeItem('adminNewsList');
     localStorage.removeItem('app_majors_data');
     localStorage.removeItem('adminMajorsList');
 
-    // Tạo tin tức mẫu thực tế - 4 bài cho mỗi danh mục
+    // Tạo tin tức mẫu thực tế - 4 b�i cho mỗi danh mục
     const categories = [
-      { key: 'announcement', name: 'Thông báo' },
+      { key: 'announcement', name: 'Th�ng b�o' },
       { key: 'admission', name: 'Tuyển sinh' },
       { key: 'event', name: 'Sự kiện' },
-      { key: 'achievement', name: 'Thành tích' },
-      { key: 'education', name: 'Giáo dục' },
+      { key: 'achievement', name: 'Th�nh t�ch' },
+      { key: 'education', name: 'Gi�o dục' },
       { key: 'activity', name: 'Hoạt động' }
     ];
 
@@ -70,52 +70,52 @@ function DebugPage() {
         switch (category.key) {
           case 'announcement':
             title = [
-              "Thông báo tuyển sinh năm học 2025-2026",
-              "Thông báo lịch thi học kỳ 1 năm học 2024-2025", 
-              "Thông báo nghỉ lễ Quốc khánh 2/9",
-              "Thông báo điều chỉnh học phí năm học 2025"
+              "Th�ng b�o tuyển sinh năm học 2025-2026",
+              "Th�ng b�o lịch thi học kỳ 1 năm học 2024-2025", 
+              "Th�ng b�o nghỉ lễ Quốc kh�nh 2/9",
+              "Th�ng b�o điều chỉnh học ph� năm học 2025"
             ][i-1];
             summary = [
-              "Tuyển sinh các ngành: CNTT, Kế toán, QLKD, Điện tử viễn thông, Cơ khí, Du lịch với nhiều ưu đãi hấp dẫn.",
-              "Lịch thi chi tiết cho từng ngành đào tạo, thời gian và địa điểm thi cụ thể.",
-              "Nghỉ lễ từ 2/9 đến 4/9, sinh viên lưu ý sắp xếp lịch học phù hợp.",
-              "Học phí điều chỉnh nhẹ, duy trì chất lượng đào tạo cao nhất."
+              "Tuyển sinh c�c ng�nh: CNTT, Kế to�n, QLKD, Điện tử viễn th�ng, Cơ kh�, Du lịch với nhiều ưu đ�i hấp dẫn.",
+              "Lịch thi chi tiết cho từng ng�nh đ�o tạo, thời gian v� địa điểm thi cụ thể.",
+              "Nghỉ lễ từ 2/9 đến 4/9, sinh vi�n lưu � sắp xếp lịch học ph� hợp.",
+              "Học ph� điều chỉnh nhẹ, duy tr� chất lượng đ�o tạo cao nhất."
             ][i-1];
             isHot = i === 1;
             break;
           case 'admission':
             title = [
-              "Tuyển sinh Cao đẳng Công nghệ Thông tin 2025",
-              "Thông tin tuyển sinh ngành Kế toán", 
-              "Hướng dẫn đăng ký xét tuyển online",
-              "Chính sách học bổng cho sinh viên xuất sắc"
+              "Tuyển sinh Cao đẳng C�ng nghệ Th�ng tin 2025",
+              "Th�ng tin tuyển sinh ng�nh Kế to�n", 
+              "Hướng dẫn đăng k� x�t tuyển online",
+              "Ch�nh s�ch học bổng cho sinh vi�n xuất sắc"
             ][i-1];
             summary = [
-              "Ngành CNTT: 3 năm đào tạo, thực hành 70%, cam kết việc làm sau tốt nghiệp.",
-              "Ngành Kế toán: Đào tạo theo chuẩn quốc tế, liên kết doanh nghiệp.",
-              "Đăng ký online 24/7, hồ sơ xét tuyển đơn giản, kết quả nhanh chóng.",
-              "Học bổng từ 30-100% học phí cho sinh viên xuất sắc."
+              "Ng�nh CNTT: 3 năm đ�o tạo, thực h�nh 70%, cam kết việc l�m sau tốt nghiệp.",
+              "Ng�nh Kế to�n: Đ�o tạo theo chuẩn quốc tế, li�n kết doanh nghiệp.",
+              "Đăng k� online 24/7, hồ sơ x�t tuyển đơn giản, kết quả nhanh ch�ng.",
+              "Học bổng từ 30-100% học ph� cho sinh vi�n xuất sắc."
             ][i-1];
             isHot = i <= 2;
             break;
           case 'achievement':
             title = [
-              "Sinh viên NSG đạt giải Nhất cuộc thi lập trình",
-              "Trường NSG được công nhận chất lượng giáo dục",
-              "Đội tuyển Robotics NSG vô địch khu vực",
-              "100% sinh viên CNTT có việc làm sau tốt nghiệp"
+              "Sinh vi�n NSG đạt giải Nhất cuộc thi lập tr�nh",
+              "Trường NSG được c�ng nhận chất lượng gi�o dục",
+              "Đội tuyển Robotics NSG v� địch khu vực",
+              "100% sinh vi�n CNTT c� việc l�m sau tốt nghiệp"
             ][i-1];
             summary = [
-              "3 sinh viên CNTT đạt giải Nhất, Nhì, Ba cuộc thi lập trình TP.HCM 2024.",
-              "NSG được Bộ GD&ĐT công nhận đạt chuẩn chất lượng giáo dục cao đẳng.",
-              "Đội Robotics NSG vượt qua 20 đội thi, giành chức vô địch khu vực Nam Bộ.",
-              "Tất cả 120 sinh viên CNTT khóa 2021-2024 đều có việc làm với mức lương hấp dẫn."
+              "3 sinh vi�n CNTT đạt giải Nhất, Nh�, Ba cuộc thi lập tr�nh TP.HCM 2024.",
+              "NSG được Bộ GD&ĐT c�ng nhận đạt chuẩn chất lượng gi�o dục cao đẳng.",
+              "Đội Robotics NSG vượt qua 20 đội thi, gi�nh chức v� địch khu vực Nam Bộ.",
+              "Tất cả 120 sinh vi�n CNTT kh�a 2021-2024 đều c� việc l�m với mức lương hấp dẫn."
             ][i-1];
             isHot = true;
             break;
           default:
             title = `${category.name} - ${i === 1 ? 'Tin nổi bật' : 'Tin tức số ' + i}`;
-            summary = `Nội dung tóm tắt về ${category.name.toLowerCase()} của trường NSG.`;
+            summary = `Nội dung t�m tắt về ${category.name.toLowerCase()} của trường NSG.`;
             isHot = i === 1;
         }
         
@@ -123,9 +123,9 @@ function DebugPage() {
           id: newsId++,
           title,
           summary,
-          content: `Nội dung chi tiết về ${title.toLowerCase()}. Trường Cao đẳng Bách khoa Nam Sài Gòn luôn cập nhật thông tin mới nhất để phục vụ sinh viên và phụ huynh.`,
+          content: `Nội dung chi tiết về ${title.toLowerCase()}. Trường Cao đẳng B�ch khoa Nam S�i G�n lu�n cập nhật th�ng tin mới nhất để phục vụ sinh vi�n v� phụ huynh.`,
           category: category.key,
-          author: "Ban Giám hiệu",
+          author: "Ban Gi�m hiệu",
           date: new Date(2024, 8, 25 - i).toISOString().split('T')[0],
           status: "published",
           isHot,
@@ -136,17 +136,17 @@ function DebugPage() {
       }
     });
 
-    // Tạo dữ liệu ngành đào tạo thực tế NSG
+    // Tạo dữ liệu ng�nh đ�o tạo thực tế NSG
     const sampleMajors = [
       {
         id: "cntt",
-        name: "Công nghệ Thông tin",
+        name: "C�ng nghệ Th�ng tin",
         code: "CNTT",
-        description: "Đào tạo nhân lực công nghệ thông tin chất lượng cao, đáp ứng nhu cầu chuyển đổi số",
+        description: "Đ�o tạo nh�n lực c�ng nghệ th�ng tin chất lượng cao, đ�p ứng nhu cầu chuyển đổi số",
         duration: "3 năm",
         tuitionFee: 18000000,
-        subjects: ["Lập trình C/C++", "Java", "Database", "Web Development", "Mobile App", "AI & Machine Learning"],
-        careerProspects: ["Lập trình viên", "Phân tích hệ thống", "Quản trị mạng", "Chuyên gia bảo mật", "Data Scientist"],
+        subjects: ["Lập tr�nh C/C++", "Java", "Database", "Web Development", "Mobile App", "AI & Machine Learning"],
+        careerProspects: ["Lập tr�nh vi�n", "Ph�n t�ch hệ thống", "Quản trị mạng", "Chuy�n gia bảo mật", "Data Scientist"],
         admissionScore: 15.0,
         quota: 120,
         enrolled: 118,
@@ -157,13 +157,13 @@ function DebugPage() {
       },
       {
         id: "ketoan",
-        name: "Kế toán",
+        name: "Kế to�n",
         code: "KT",
-        description: "Đào tạo nhân lực kế toán - kiểm toán chuyên nghiệp, thành thạo phần mềm kế toán hiện đại",
+        description: "Đ�o tạo nh�n lực kế to�n - kiểm to�n chuy�n nghiệp, th�nh thạo phần mềm kế to�n hiện đại",
         duration: "2.5 năm",
         tuitionFee: 15000000,
-        subjects: ["Nguyên lý kế toán", "Kế toán tài chính", "Kế toán quản trị", "Kiểm toán", "Thuế", "Excel & MISA"],
-        careerProspects: ["Kế toán viên", "Kiểm toán viên", "Trưởng phòng kế toán", "Chuyên viên thuế", "Tư vấn tài chính"],
+        subjects: ["Nguy�n l� kế to�n", "Kế to�n t�i ch�nh", "Kế to�n quản trị", "Kiểm to�n", "Thuế", "Excel & MISA"],
+        careerProspects: ["Kế to�n vi�n", "Kiểm to�n vi�n", "Trưởng ph�ng kế to�n", "Chuy�n vi�n thuế", "Tư vấn t�i ch�nh"],
         admissionScore: 14.5,
         quota: 100,
         enrolled: 95,
@@ -174,13 +174,13 @@ function DebugPage() {
       },
       {
         id: "qlkd",
-        name: "Quản lý Kinh doanh",
+        name: "Quản l� Kinh doanh",
         code: "QLKD",
-        description: "Đào tạo nhà quản lý doanh nghiệp tài năng, có tư duy kinh doanh sáng tạo",
+        description: "Đ�o tạo nh� quản l� doanh nghiệp t�i năng, c� tư duy kinh doanh s�ng tạo",
         duration: "3 năm",
         tuitionFee: 16000000,
-        subjects: ["Quản trị học", "Marketing", "Tài chính doanh nghiệp", "Quản lý nhân sự", "Khởi nghiệp", "Digital Marketing"],
-        careerProspects: ["Quản lý dự án", "Chuyên viên Marketing", "Nhân viên kinh doanh", "Quản lý nhân sự", "Khởi nghiệp"],
+        subjects: ["Quản trị học", "Marketing", "T�i ch�nh doanh nghiệp", "Quản l� nh�n sự", "Khởi nghiệp", "Digital Marketing"],
+        careerProspects: ["Quản l� dự �n", "Chuy�n vi�n Marketing", "Nh�n vi�n kinh doanh", "Quản l� nh�n sự", "Khởi nghiệp"],
         admissionScore: 14.0,
         quota: 80,
         enrolled: 76,
@@ -191,13 +191,13 @@ function DebugPage() {
       },
       {
         id: "dientu",
-        name: "Điện tử Viễn thông",
+        name: "Điện tử Viễn th�ng",
         code: "ĐTVT",
-        description: "Đào tạo kỹ thuật viên điện tử - viễn thông, chuyên sâu về IoT và hệ thống thông minh",
+        description: "Đ�o tạo kỹ thuật vi�n điện tử - viễn th�ng, chuy�n s�u về IoT v� hệ thống th�ng minh",
         duration: "3 năm",
         tuitionFee: 17000000,
-        subjects: ["Mạch điện tử", "Vi xử lý", "Truyền thông số", "IoT", "Hệ thống nhúng", "5G Technology"],
-        careerProspects: ["Kỹ sư điện tử", "Chuyên viên viễn thông", "Thiết kế mạch", "Kỹ sư IoT", "Bảo trì hệ thống"],
+        subjects: ["Mạch điện tử", "Vi xử l�", "Truyền th�ng số", "IoT", "Hệ thống nh�ng", "5G Technology"],
+        careerProspects: ["Kỹ sư điện tử", "Chuy�n vi�n viễn th�ng", "Thiết kế mạch", "Kỹ sư IoT", "Bảo tr� hệ thống"],
         admissionScore: 15.5,
         quota: 60,
         enrolled: 58,
@@ -208,13 +208,13 @@ function DebugPage() {
       },
       {
         id: "cokhi",
-        name: "Cơ khí",
+        name: "Cơ kh�",
         code: "CK",
-        description: "Đào tạo kỹ thuật viên cơ khí chính xác, thành thạo công nghệ CAD/CAM và gia công CNC",
+        description: "Đ�o tạo kỹ thuật vi�n cơ kh� ch�nh x�c, th�nh thạo c�ng nghệ CAD/CAM v� gia c�ng CNC",
         duration: "3 năm",
         tuitionFee: 16500000,
         subjects: ["Vẽ kỹ thuật", "Cơ học", "CAD/CAM", "CNC", "Vật liệu", "Automation"],
-        careerProspects: ["Kỹ sư cơ khí", "Thiết kế sản phẩm", "Vận hành CNC", "Quản lý sản xuất", "Kỹ sư tự động hóa"],
+        careerProspects: ["Kỹ sư cơ kh�", "Thiết kế sản phẩm", "Vận h�nh CNC", "Quản l� sản xuất", "Kỹ sư tự động h�a"],
         admissionScore: 14.8,
         quota: 70,
         enrolled: 65,
@@ -225,13 +225,13 @@ function DebugPage() {
       },
       {
         id: "dulich",
-        name: "Du lịch - Khách sạn",
+        name: "Du lịch - Kh�ch sạn",
         code: "DL",
-        description: "Đào tạo nhân lực du lịch chuyên nghiệp, thành thạo ngoại ngữ và kỹ năng dịch vụ",
+        description: "Đ�o tạo nh�n lực du lịch chuy�n nghiệp, th�nh thạo ngoại ngữ v� kỹ năng dịch vụ",
         duration: "2.5 năm",
         tuitionFee: 14500000,
-        subjects: ["Quản trị khách sạn", "Hướng dẫn du lịch", "Tiếng Anh chuyên ngành", "Dịch vụ lữ hành", "Marketing du lịch"],
-        careerProspects: ["Hướng dẫn viên", "Nhân viên khách sạn", "Tư vấn du lịch", "Quản lý resort", "Tiếp viên hàng không"],
+        subjects: ["Quản trị kh�ch sạn", "Hướng dẫn du lịch", "Tiếng Anh chuy�n ng�nh", "Dịch vụ lữ h�nh", "Marketing du lịch"],
+        careerProspects: ["Hướng dẫn vi�n", "Nh�n vi�n kh�ch sạn", "Tư vấn du lịch", "Quản l� resort", "Tiếp vi�n h�ng kh�ng"],
         admissionScore: 13.5,
         quota: 50,
         enrolled: 48,
@@ -246,7 +246,7 @@ function DebugPage() {
     const sampleBanners = [
       {
         id: Date.now().toString(),
-        title: "Chào mừng năm học mới 2025",
+        title: "Ch�o mừng năm học mới 2025",
         imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800",
         link: "/news",
         status: "active",
@@ -254,12 +254,12 @@ function DebugPage() {
       }
     ];
 
-    // Tạo một số thông báo mẫu
+    // Tạo một số th�ng b�o mẫu
     const sampleNotifications = [
       {
         id: 1,
-        title: "Thông báo tuyển sinh mới",
-        message: "Đã có thông báo tuyển sinh năm học 2025-2026",
+        title: "Th�ng b�o tuyển sinh mới",
+        message: "Đ� c� th�ng b�o tuyển sinh năm học 2025-2026",
         type: "announcement",
         read: false,
         createdAt: new Date().toISOString()
@@ -267,14 +267,14 @@ function DebugPage() {
       {
         id: 2, 
         title: "Sự kiện sắp diễn ra",
-        message: "Lễ khai giảng năm học mới sẽ diễn ra vào tuần tới",
+        message: "Lễ khai giảng năm học mới sẽ diễn ra v�o tuần tới",
         type: "event",
         read: false,
         createdAt: new Date(Date.now() - 86400000).toISOString()
       }
     ];
 
-    // Save to localStorage - sync cả admin và app data
+    // Save to localStorage - sync cả admin v� app data
     localStorage.setItem('app_news_data', JSON.stringify(sampleNews));
     localStorage.setItem('adminNewsList', JSON.stringify(sampleNews));
     localStorage.setItem('app_majors_data', JSON.stringify(sampleMajors));
@@ -282,12 +282,12 @@ function DebugPage() {
     localStorage.setItem('app_banners_data', JSON.stringify(sampleBanners));
     localStorage.setItem('notifications', JSON.stringify(sampleNotifications));
 
-    console.log('✅ Đã tạo dữ liệu mẫu thành công!');
-    console.log(`📊 Tin tức: ${sampleNews.length} bài`);
-    console.log(`📊 Ngành đào tạo: ${sampleMajors.length} ngành`);
-    console.log(`📊 Thông báo: ${sampleNotifications.length} thông báo`);
+    console.log('✅ Đ� tạo dữ liệu mẫu th�nh c�ng!');
+    console.log(`📊 Tin tức: ${sampleNews.length} b�i`);
+    console.log(`📊 Ng�nh đ�o tạo: ${sampleMajors.length} ng�nh`);
+    console.log(`📊 Th�ng b�o: ${sampleNotifications.length} th�ng b�o`);
     
-    alert(`✅ Đã tạo dữ liệu mẫu thực tế NSG!\n\n📰 ${sampleNews.length} tin tức (4 bài/danh mục)\n🎓 ${sampleMajors.length} ngành đào tạo\n🔔 ${sampleNotifications.length} thông báo\n\nDữ liệu đã được đồng bộ với trang admin!`);
+    alert(`✅ Đ� tạo dữ liệu mẫu thực tế NSG!\n\n📰 ${sampleNews.length} tin tức (4 b�i/danh mục)\n🎓 ${sampleMajors.length} ng�nh đ�o tạo\n🔔 ${sampleNotifications.length} th�ng b�o\n\nDữ liệu đ� được đồng bộ với trang admin!`);
     window.location.reload();
   };
 
@@ -296,7 +296,7 @@ function DebugPage() {
     localStorage.removeItem('app_majors_data');
     localStorage.removeItem('app_banners_data');
     localStorage.removeItem('adminUsersList');
-    alert('🗑️ Đã xóa tất cả dữ liệu!');
+    alert('🗑️ Đ� x�a tất cả dữ liệu!');
     window.location.reload();
   };
 
@@ -306,7 +306,7 @@ function DebugPage() {
 
   const handleLogData = () => {
     DataExporter.logDataForCopy();
-    alert('📋 Dữ liệu đã được log ra console! Mở DevTools để copy.');
+    alert('📋 Dữ liệu đ� được log ra console! Mở DevTools để copy.');
   };
 
   const generateProductionDataFile = () => {
@@ -319,7 +319,7 @@ function DebugPage() {
 
 export const PRODUCTION_DATA = ${JSON.stringify(data, null, 2)};
 
-// Dữ liệu mẫu fallback nếu production data chưa có
+// Dữ liệu mẫu fallback nếu production data chưa c�
 export const FALLBACK_DATA = {
   news: [],
   majors: [],
@@ -351,7 +351,7 @@ export const FALLBACK_DATA = {
 
       <Box className="p-4 space-y-4">
         <Box className="bg-white rounded-lg p-4">
-          <Text.Title className="mb-4">🔧 Công cụ Debug</Text.Title>
+          <Text.Title className="mb-4">🔧 C�ng cụ Debug</Text.Title>
           <Box className="space-y-3">
             <Button 
               fullWidth
@@ -367,7 +367,7 @@ export const FALLBACK_DATA = {
               className="bg-red-50 text-red-600 border-red-200"
               onClick={clearAllData}
             >
-              Xóa tất cả dữ liệu
+              X�a tất cả dữ liệu
             </Button>
           </Box>
         </Box>
@@ -404,12 +404,12 @@ export const FALLBACK_DATA = {
         </Box>
 
         <Box className="bg-white rounded-lg p-4">
-          <Text.Title className="mb-4">📊 Thống kê dữ liệu</Text.Title>
+          <Text.Title className="mb-4">📊 Thống k� dữ liệu</Text.Title>
           <Box className="space-y-2 text-sm">
-            <Text>📰 Tin tức: {debugData.newsData ? debugData.newsData.length : 0} bài</Text>
-            <Text>🎓 Ngành học: {debugData.majorsData ? debugData.majorsData.length : 0} ngành</Text>
+            <Text>📰 Tin tức: {debugData.newsData ? debugData.newsData.length : 0} b�i</Text>
+            <Text>🎓 Ng�nh học: {debugData.majorsData ? debugData.majorsData.length : 0} ng�nh</Text>
             <Text>🖼️ Banner: {debugData.bannersData ? debugData.bannersData.length : 0} banner</Text>
-            <Text>👥 Người dùng: {debugData.adminUsersList ? debugData.adminUsersList.length : 0} user</Text>
+            <Text>👥 Người d�ng: {debugData.adminUsersList ? debugData.adminUsersList.length : 0} user</Text>
           </Box>
         </Box>
 

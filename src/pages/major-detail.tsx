@@ -34,24 +34,24 @@ function MajorDetailPage() {
   const getMajorIcon = (majorCode: string) => {
     const code = majorCode.toLowerCase();
     if (code.includes('cntt') || code.includes('it') || code.includes('tin')) {
-      return 'ðŸ’»';
+      return '💻';
     }
     if (code.includes('kt') || code.includes('kinh') || code.includes('tai')) {
-      return 'ðŸ’¼';
+      return '💼';
     }
     if (code.includes('xd') || code.includes('xay') || code.includes('dung')) {
-      return 'ðŸ—ï¸';
+      return '🏗️';
     }
     if (code.includes('co') || code.includes('may') || code.includes('dien')) {
-      return 'âš™ï¸';
+      return '⚙️';
     }
     if (code.includes('y') || code.includes('duoc') || code.includes('sk')) {
-      return 'âš•ï¸';
+      return '⚕️';
     }
     if (code.includes('ngoai') || code.includes('anh') || code.includes('nn')) {
-      return 'ðŸŒ';
+      return '🌍';
     }
-    return 'ðŸŽ“';
+    return '🎓';
   };
 
   useEffect(() => {
@@ -89,7 +89,7 @@ loadMajorDetail();
 
   const handleRegister = () => {
     if (major) {
-      console.log('ðŸŽ¯ Navigating to registration with major:', major.name, major.id);  
+      console.log('🎯 Navigating to registration with major:', major.name, major.id);  
       navigate(`/admission-registration?majorId=${major.id}&majorName=${encodeURIComponent(major.name)}`);
     }
   };
@@ -98,13 +98,13 @@ loadMajorDetail();
     return (
       <Page className="bg-gray-50">
         <Header 
-          title="Chi tiáº¿t ngÃ nh há»c"
+          title="Chi tiết ngành học"
           showBackIcon={true}
           onBackClick={() => navigate(-1)}
           className="bg-blue-600 text-white"
         />
         <Box className="p-4 text-center">
-          <Text>Äang táº£i...</Text>
+          <Text>Đang tải...</Text>
         </Box>
       </Page>
     );
@@ -114,19 +114,19 @@ loadMajorDetail();
     return (
       <Page className="bg-gray-50">
         <Header 
-          title="Chi tiáº¿t ngÃ nh há»c"
+          title="Chi tiết ngành học"
           showBackIcon={true}
           onBackClick={() => navigate(-1)}
           className="bg-blue-600 text-white"
         />
         <Box className="p-4 text-center">
           <Icon icon="zi-info-circle" size={48} className="text-gray-400 mb-4" />
-          <Text className="text-gray-500">KhÃ´ng tÃ¬m tháº¥y thÃ´ng tin ngÃ nh há»c</Text>
+          <Text className="text-gray-500">Không tìm thấy thông tin ngành học</Text>
           <Button 
             className="mt-4"
             onClick={() => navigate("/majors")}
           >
-            Quay láº¡i danh sÃ¡ch ngÃ nh
+            Quay lại danh sách ngành
           </Button>
         </Box>
       </Page>
@@ -164,7 +164,7 @@ loadMajorDetail();
                     {major.name}
                   </Text.Title>
                   <Text className="text-blue-100 text-sm">
-                    MÃ£ ngÃ nh: {major.code}
+                    Mã ngành: {major.code}
                   </Text>
                 </Box>
               </Box>
@@ -178,12 +178,12 @@ loadMajorDetail();
         <Box className="grid grid-cols-2 gap-3">
           <Box className="bg-white rounded-lg p-4 shadow-sm">
             <Icon icon="zi-setting" className="text-blue-600 mb-2" />
-            <Text className="text-sm text-gray-500">Thá»i gian Ä‘Ã o táº¡o</Text>
+            <Text className="text-sm text-gray-500">Thời gian đào tạo</Text>
             <Text.Title className="text-lg">{major.duration}</Text.Title>
           </Box>
           <Box className="bg-white rounded-lg p-4 shadow-sm">
             <Icon icon="zi-plus-circle" className="text-green-600 mb-2" />
-            <Text className="text-sm text-gray-500">Há»c phÃ­/nÄƒm</Text>
+            <Text className="text-sm text-gray-500">Học phí/năm</Text>
             <Text.Title className="text-lg text-green-600">
               {formatCurrency(major.tuitionFee)}
             </Text.Title>
@@ -194,7 +194,7 @@ loadMajorDetail();
       {/* Description */}
       <Box className="mx-4 mb-4 bg-white rounded-lg shadow-sm p-4">
         <Text.Title className="text-lg font-bold mb-3 text-gray-800">
-          ðŸ“ MÃ´ táº£ ngÃ nh há»c
+          📝 Mô tả ngành học
         </Text.Title>
         <Text className="text-gray-700 leading-relaxed">
           {major.description}
@@ -204,13 +204,13 @@ loadMajorDetail();
       {/* Education Level */}
       <Box className="mx-4 mb-4 bg-white rounded-lg shadow-sm p-4">
         <Text.Title className="text-lg font-bold mb-3 text-gray-800">
-          ðŸŽ“ Há»‡ Ä‘Ã o táº¡o
+          🎓 Hệ đào tạo
         </Text.Title>
         <Box className="flex flex-wrap gap-2">
           <Box className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
-            {major.educationLevel === 'caodang' ? 'Cao Ä‘áº³ng' : 
-             major.educationLevel === 'trungcap' ? 'Trung cáº¥p' :
-             major.educationLevel === 'caodang-lienthong' ? 'Cao Ä‘áº³ng liÃªn thÃ´ng' : 
+            {major.educationLevel === 'caodang' ? 'Cao đẳng' : 
+             major.educationLevel === 'trungcap' ? 'Trung cấp' :
+             major.educationLevel === 'caodang-lienthong' ? 'Cao đẳng liên thông' : 
              major.educationLevel}
           </Box>
         </Box>
@@ -219,7 +219,7 @@ loadMajorDetail();
       {/* Subjects */}
       <Box className="mx-4 mb-4 bg-white rounded-lg shadow-sm p-4">
         <Text.Title className="text-lg font-bold mb-3 text-gray-800">
-          ðŸ“š MÃ´n há»c chÃ­nh
+          📚 Môn học chính
         </Text.Title>
         <Box className="space-y-2">
           {major.subjects && major.subjects.length > 0 ? (
@@ -230,7 +230,7 @@ loadMajorDetail();
               </Box>
             ))
           ) : (
-            <Text className="text-gray-500">ChÆ°a cÃ³ thÃ´ng tin mÃ´n há»c.</Text>
+            <Text className="text-gray-500">Chưa có thông tin môn học.</Text>
           )}
         </Box>
       </Box>
@@ -238,7 +238,7 @@ loadMajorDetail();
       {/* Career Prospects */}
       <Box className="mx-4 mb-4 bg-white rounded-lg shadow-sm p-4">
         <Text.Title className="text-lg font-bold mb-3 text-gray-800">
-          ðŸš€ CÆ¡ há»™i nghá» nghiá»‡p
+          🚀 Cơ hội nghề nghiệp
         </Text.Title>
         <Box className="space-y-2">
           {major.careerProspects && major.careerProspects.length > 0 ? (
@@ -249,7 +249,7 @@ loadMajorDetail();
               </Box>
             ))
           ) : (
-            <Text className="text-gray-500">ChÆ°a cÃ³ thÃ´ng tin cÆ¡ há»™i nghá» nghiá»‡p.</Text>
+            <Text className="text-gray-500">Chưa có thông tin cơ hội nghề nghiệp.</Text>
           )}
         </Box>
       </Box>
@@ -258,7 +258,7 @@ loadMajorDetail();
       {major.website && (
         <Box className="mx-4 mb-4 bg-white rounded-lg shadow-sm p-4">
           <Text.Title className="text-lg font-bold mb-3 text-gray-800">
-            ðŸ“‹ ChÆ°Æ¡ng trÃ¬nh chi tiáº¿t
+            📋 Chương trình chi tiết
           </Text.Title>
           <Button 
             variant="secondary"
@@ -267,7 +267,7 @@ loadMajorDetail();
             onClick={() => window.open(major.website, "_blank")}
           >
             <Icon icon="zi-calendar" className="mr-2" />
-            Xem chÆ°Æ¡ng trÃ¬nh Ä‘Ã o táº¡o chi tiáº¿t
+            Xem chương trình đào tạo chi tiết
           </Button>
         </Box>
       )}
@@ -283,7 +283,7 @@ loadMajorDetail();
               onClick={handleRegister}
             >
               <Icon icon="zi-edit" className="mr-2" />
-              ÄÄƒng kÃ½ ngÃ nh nÃ y
+              Đăng ký ngành này
             </Button>
             <Box className="grid grid-cols-2 gap-3">
               <Button 
@@ -291,7 +291,7 @@ loadMajorDetail();
                 onClick={() => navigate("/majors")}
               >
                 <Icon icon="zi-arrow-left" className="mr-1" />
-                Quay láº¡i
+                Quay lại
               </Button>
               <Button 
                 variant="secondary"

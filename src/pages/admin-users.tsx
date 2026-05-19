@@ -54,7 +54,7 @@ function AdminUsersPage() {
   const handleSubmit = () => {
     if (!formData.name || !formData.phone) {
       openSnackbar({
-        text: "Vui lòng nhập đầy đủ họ tên và số điện thoại",
+        text: "Vui l�ng nhập đầy đủ họ t�n v� số điện thoại",
         type: "error",
         duration: 3000
       });
@@ -69,7 +69,7 @@ function AdminUsersPage() {
           status: editingUser.status
         });
         openSnackbar({
-          text: "Cập nhật người dùng thành công",
+          text: "Cập nhật người d�ng th�nh c�ng",
           type: "success",
           duration: 2000
         });
@@ -80,7 +80,7 @@ function AdminUsersPage() {
           status: "active"
         });
         openSnackbar({
-          text: "Thêm người dùng thành công",
+          text: "Th�m người d�ng th�nh c�ng",
           type: "success", 
           duration: 2000
         });
@@ -91,7 +91,7 @@ function AdminUsersPage() {
     } catch (error) {
       console.error("Error saving user:", error);
       openSnackbar({
-        text: "Có lỗi xảy ra khi lưu thông tin",
+        text: "C� lỗi xảy ra khi lưu th�ng tin",
         type: "error",
         duration: 3000
       });
@@ -120,7 +120,7 @@ function AdminUsersPage() {
     loadUsers();
     
     openSnackbar({
-      text: `Đã ${newStatus === "active" ? "kích hoạt" : "vô hiệu hóa"} người dùng ${user.name}`,
+      text: `Đ� ${newStatus === "active" ? "k�ch hoạt" : "v� hiệu h�a"} người d�ng ${user.name}`,
       type: "success",
       duration: 2000
     });
@@ -140,9 +140,9 @@ function AdminUsersPage() {
 
   // Role mapping for display
   const roleLabels = {
-    student: "Sinh viên",
-    teacher: "Giảng viên", 
-    admin: "Quản trị viên"
+    student: "Sinh vi�n",
+    teacher: "Giảng vi�n", 
+    admin: "Quản trị vi�n"
   };
 
   const roleColors = {
@@ -154,7 +154,7 @@ function AdminUsersPage() {
   return (
     <Page className="page">
       <Header
-        title="Quản lý người dùng"
+        title="Quản l� người d�ng"
         showBackIcon={true}
         onBackClick={() => navigate("/admin")}
       />
@@ -162,7 +162,7 @@ function AdminUsersPage() {
       <Box className="p-4 space-y-4">
         {/* Statistics */}
         <Box className="bg-white rounded-lg p-4 shadow-sm">
-          <Text className="text-lg font-semibold mb-2">Thống kê</Text>
+          <Text className="text-lg font-semibold mb-2">Thống k�</Text>
           <Box className="grid grid-cols-2 gap-4">
             <Box className="text-center">
               <Text className="text-2xl font-bold text-blue-600">{users.length}</Text>
@@ -178,13 +178,13 @@ function AdminUsersPage() {
               <Text className="text-2xl font-bold text-blue-500">
                 {users.filter(u => u.role === "student").length}
               </Text>
-              <Text className="text-sm text-gray-600">Sinh viên</Text>
+              <Text className="text-sm text-gray-600">Sinh vi�n</Text>
             </Box>
             <Box className="text-center">
               <Text className="text-2xl font-bold text-orange-600">
                 {users.filter(u => u.role === "teacher").length}
               </Text>
-              <Text className="text-sm text-gray-600">Giảng viên</Text>
+              <Text className="text-sm text-gray-600">Giảng vi�n</Text>
             </Box>
           </Box>
         </Box>
@@ -192,34 +192,34 @@ function AdminUsersPage() {
         {/* Controls */}
         <Box className="bg-white rounded-lg p-4 shadow-sm space-y-3">
           <Box className="flex justify-between items-center">
-            <Text className="font-semibold">Danh sách người dùng</Text>
+            <Text className="font-semibold">Danh s�ch người d�ng</Text>
             <Button
               size="small"
               onClick={() => setShowAddForm(true)}
             >
               <Icon icon="zi-plus" className="mr-1" />
-              Thêm mới
+              Th�m mới
             </Button>
           </Box>
           
           {/* Search and Filter */}
           <Box className="space-y-2">
             <Input
-              placeholder="Tìm kiếm theo tên, SĐT, email..."
+              placeholder="T�m kiếm theo t�n, SĐT, email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               prefix={<Icon icon="zi-search" />}
             />
             
             <Select
-              placeholder="Lọc theo vai trò"
+              placeholder="Lọc theo vai tr�"
               value={filterRole}
               onChange={(value) => setFilterRole(value as string)}
             >
-              <Option value="all" title="Tất cả vai trò" />
-              <Option value="student" title="Sinh viên" />
-              <Option value="teacher" title="Giảng viên" />
-              <Option value="admin" title="Quản trị viên" />
+              <Option value="all" title="Tất cả vai tr�" />
+              <Option value="student" title="Sinh vi�n" />
+              <Option value="teacher" title="Giảng vi�n" />
+              <Option value="admin" title="Quản trị vi�n" />
             </Select>
           </Box>
         </Box>
@@ -229,7 +229,7 @@ function AdminUsersPage() {
           <Box className="bg-white rounded-lg p-4 shadow-sm space-y-3">
             <Box className="flex justify-between items-center">
               <Text className="font-semibold">
-                {editingUser ? "Sửa thông tin người dùng" : "Thêm người dùng mới"}
+                {editingUser ? "Sửa th�ng tin người d�ng" : "Th�m người d�ng mới"}
               </Text>
               <Button size="small" variant="tertiary" onClick={resetForm}>
                 <Icon icon="zi-close" />
@@ -238,8 +238,8 @@ function AdminUsersPage() {
             
             <Box className="space-y-3">
               <Input
-                label="Họ và tên *"
-                placeholder="Nhập họ và tên"
+                label="Họ v� t�n *"
+                placeholder="Nhập họ v� t�n"
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
               />
@@ -259,20 +259,20 @@ function AdminUsersPage() {
               />
               
               <Select
-                label="Vai trò"
-                placeholder="Chọn vai trò"
+                label="Vai tr�"
+                placeholder="Chọn vai tr�"
                 value={formData.role}
                 onChange={(value) => setFormData({...formData, role: value as any})}
               >
-                <Option value="student" title="Sinh viên" />
-                <Option value="teacher" title="Giảng viên" />
-                <Option value="admin" title="Quản trị viên" />
+                <Option value="student" title="Sinh vi�n" />
+                <Option value="teacher" title="Giảng vi�n" />
+                <Option value="admin" title="Quản trị vi�n" />
               </Select>
               
               {formData.role === "student" && (
                 <Input
-                  label="Mã sinh viên"
-                  placeholder="Nhập mã sinh viên"
+                  label="M� sinh vi�n"
+                  placeholder="Nhập m� sinh vi�n"
                   value={formData.studentCode}
                   onChange={(e) => setFormData({...formData, studentCode: e.target.value})}
                 />
@@ -287,7 +287,7 @@ function AdminUsersPage() {
               
               <Box className="flex space-x-2">
                 <Button onClick={handleSubmit} fullWidth>
-                  {editingUser ? "Cập nhật" : "Thêm mới"}
+                  {editingUser ? "Cập nhật" : "Th�m mới"}
                 </Button>
                 <Button variant="secondary" onClick={resetForm} fullWidth>
                   Hủy
@@ -307,7 +307,7 @@ function AdminUsersPage() {
                   <Box className={`w-3 h-3 rounded-full ${user.status === "active" ? "bg-green-500" : "bg-gray-400"}`} />
                 }
                 title={user.name}
-                subTitle={`${user.phone} • ${roleLabels[user.role]} • ${user.status === "active" ? "Hoạt động" : "Vô hiệu hóa"}`}
+                subTitle={`${user.phone} � ${roleLabels[user.role]} � ${user.status === "active" ? "Hoạt động" : "V� hiệu h�a"}`}
                 suffix={
                   <Box className="flex space-x-1">
                     <Button size="small" variant="tertiary" onClick={() => handleEdit(user)}>
@@ -329,7 +329,7 @@ function AdminUsersPage() {
           {filteredUsers.length === 0 && (
             <Box className="p-8 text-center">
               <Icon icon="zi-user" className="text-4xl text-gray-400 mb-2" />
-              <Text className="text-gray-600">Không tìm thấy người dùng nào</Text>
+              <Text className="text-gray-600">Kh�ng t�m thấy người d�ng n�o</Text>
             </Box>
           )}
         </Box>

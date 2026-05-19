@@ -3,7 +3,18 @@
   "private": true,
   "version": "1.0.0",
   "description": "Ứng dụng Zalo Mini App chính thức của Trường Cao đẳng Bách khoa Nam Sài Gòn. Kết nối sinh viên, phụ huynh và nhà trường với thông tin tuyển sinh, tin tức, thông báo quan trọng và các dịch vụ hỗ trợ học tập. Website: https://nsg.edu.vn",
-  "keywords": ["zalo-mini-app", "giáo dục", "cao đẳng", "bách khoa", "tuyển sinh", "tin tức trường", "Nam Sài Gòn", "NSG", "education", "college"],
+  "keywords": [
+    "zalo-mini-app",
+    "giáo dục",
+    "cao đẳng",
+    "bách khoa",
+    "tuyển sinh",
+    "tin tức trường",
+    "Nam Sài Gòn",
+    "NSG",
+    "education",
+    "college"
+  ],
   "homepage": "https://nsg.edu.vn",
   "repository": "https://github.com/nsg-edu-vn/zalo-mini-app",
   "license": "UNLICENSED",
@@ -22,7 +33,9 @@
     "deploy": "zmp deploy"
   },
   "dependencies": {
+    "googleapis": "^171.4.0",
     "jotai": "^2.12.1",
+    "multer": "^2.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zmp-sdk": "latest",

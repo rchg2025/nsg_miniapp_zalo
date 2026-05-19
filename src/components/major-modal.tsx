@@ -24,7 +24,7 @@ export function MajorModal({ isVisible, onClose, onSave, editData }: MajorModalP
 
   const handleSave = async () => {
     if (!formData.name.trim() || !formData.code.trim() || !formData.tuitionFee) {
-      alert("Vui lòng nhập đầy đủ thông tin bắt buộc");
+      alert("Vui l�ng nhập đầy đủ th�ng tin bắt buộc");
       return;
     }
 
@@ -87,7 +87,7 @@ export function MajorModal({ isVisible, onClose, onSave, editData }: MajorModalP
   return (
     <Modal
       visible={isVisible}
-      title={editData ? "Chỉnh sửa ngành đào tạo" : "Thêm ngành đào tạo mới"}
+      title={editData ? "Chỉnh sửa ng�nh đ�o tạo" : "Th�m ng�nh đ�o tạo mới"}
       actions={[
         {
           text: isLoading ? "Đang lưu..." : "Lưu",
@@ -107,12 +107,12 @@ export function MajorModal({ isVisible, onClose, onSave, editData }: MajorModalP
         {/* Name */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Tên ngành: <span className="text-red-500">*</span>
+            T�n ng�nh: <span className="text-red-500">*</span>
           </Text>
           <Input
             value={formData.name}
             onChange={(e) => setFormData({...formData, name: e.target.value})}
-            placeholder="VD: Công nghệ Thông tin"
+            placeholder="VD: C�ng nghệ Th�ng tin"
             className="w-full"
           />
         </Box>
@@ -120,7 +120,7 @@ export function MajorModal({ isVisible, onClose, onSave, editData }: MajorModalP
         {/* Code */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Mã ngành: <span className="text-red-500">*</span>
+            M� ng�nh: <span className="text-red-500">*</span>
           </Text>
           <Input
             value={formData.code}
@@ -133,12 +133,12 @@ export function MajorModal({ isVisible, onClose, onSave, editData }: MajorModalP
         {/* Description */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Mô tả:
+            M� tả:
           </Text>
           <textarea
             value={formData.description}
             onChange={(e) => setFormData({...formData, description: e.target.value})}
-            placeholder="Mô tả ngành đào tạo..."
+            placeholder="M� tả ng�nh đ�o tạo..."
             rows={3}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none"
           />
@@ -147,7 +147,7 @@ export function MajorModal({ isVisible, onClose, onSave, editData }: MajorModalP
         {/* Tuition Fee */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Học phí (VNĐ/năm): <span className="text-red-500">*</span>
+            Học ph� (VNĐ/năm): <span className="text-red-500">*</span>
           </Text>
           <Input
             type="number"
@@ -161,7 +161,7 @@ export function MajorModal({ isVisible, onClose, onSave, editData }: MajorModalP
         {/* Duration */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Thời gian đào tạo:
+            Thời gian đ�o tạo:
           </Text>
           <select
             value={formData.duration}
@@ -179,7 +179,7 @@ export function MajorModal({ isVisible, onClose, onSave, editData }: MajorModalP
         {/* Education Levels */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Hệ đào tạo:
+            Hệ đ�o tạo:
           </Text>
           <Box className="space-y-2">
             {Object.values(EducationLevel).map((level) => (
@@ -193,7 +193,7 @@ export function MajorModal({ isVisible, onClose, onSave, editData }: MajorModalP
                 <Text className="text-sm text-gray-700">
                   {level === EducationLevel.COLLEGE ? "Cao đẳng" :
                    level === EducationLevel.VOCATIONAL ? "Trung cấp" :
-                   level === EducationLevel.BRIDGE_COLLEGE ? "Cao đẳng liên thông" : level}
+                   level === EducationLevel.BRIDGE_COLLEGE ? "Cao đẳng li�n th�ng" : level}
                 </Text>
               </label>
             ))}
@@ -210,14 +210,14 @@ export function MajorModal({ isVisible, onClose, onSave, editData }: MajorModalP
               className="rounded"
             />
             <Text className="text-sm font-medium text-gray-700">
-              Kích hoạt ngành đào tạo
+              K�ch hoạt ng�nh đ�o tạo
             </Text>
           </label>
         </Box>
 
         {isLoading && (
           <Box className="text-center py-2">
-            <Text className="text-blue-600 text-sm">Đang xử lý...</Text>
+            <Text className="text-blue-600 text-sm">Đang xử l�...</Text>
           </Box>
         )}
       </Box>

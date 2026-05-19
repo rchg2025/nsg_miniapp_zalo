@@ -38,10 +38,10 @@ function AdminBannersPage() {
       
       loadBanners();
       resetForm();
-      alert(editingBanner ? 'Cập nhật banner thành công!' : 'Thêm banner thành công!');
+      alert(editingBanner ? 'Cập nhật banner th�nh c�ng!' : 'Th�m banner th�nh c�ng!');
     } catch (error) {
       console.error('Error saving banner:', error);
-      alert('Có lỗi xảy ra khi lưu banner!');
+      alert('C� lỗi xảy ra khi lưu banner!');
     }
   };
 
@@ -59,10 +59,10 @@ function AdminBannersPage() {
   };
 
   const handleDelete = (bannerId: string) => {
-    if (confirm('Bạn có chắc chắn muốn xóa banner này?')) {
+    if (confirm('Bạn c� chắc chắn muốn x�a banner n�y?')) {
       DataManager.deleteBanner(bannerId);
       loadBanners();
-      alert('Xóa banner thành công!');
+      alert('X�a banner th�nh c�ng!');
     }
   };
 
@@ -105,7 +105,7 @@ function AdminBannersPage() {
   return (
     <Page className="page-with-header bg-gray-50">
       <Header 
-        title="Quản lý Banner Tuyển sinh"
+        title="Quản l� Banner Tuyển sinh"
         showBackIcon={true}
         onBackClick={() => navigate('/admin')}
         className="bg-purple-600 text-white"
@@ -115,30 +115,30 @@ function AdminBannersPage() {
         {/* Add/Edit Form */}
         <Box className="bg-white rounded-lg p-4 mb-6 shadow-sm border">
           <Text.Title className="mb-4 text-purple-700">
-            {isEditing ? '✏️ Chỉnh sửa Banner' : '➕ Thêm Banner Mới'}
+            {isEditing ? '✏️ Chỉnh sửa Banner' : '➕ Th�m Banner Mới'}
           </Text.Title>
           
           <Box className="space-y-4">
             <Box>
-              <Text className="text-sm font-medium mb-2">Tiêu đề *</Text>
+              <Text className="text-sm font-medium mb-2">Ti�u đề *</Text>
               <Input
-                placeholder="Nhập tiêu đề banner..."
+                placeholder="Nhập ti�u đề banner..."
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
               />
             </Box>
 
             <Box>
-              <Text className="text-sm font-medium mb-2">Mô tả</Text>
+              <Text className="text-sm font-medium mb-2">M� tả</Text>
               <Input
-                placeholder="Nhập mô tả ngắn..."
+                placeholder="Nhập m� tả ngắn..."
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               />
             </Box>
 
             <Box>
-              <Text className="text-sm font-medium mb-2">URL Hình ảnh *</Text>
+              <Text className="text-sm font-medium mb-2">URL H�nh ảnh *</Text>
               <Input
                 placeholder="https://example.com/image.jpg"
                 value={formData.imageUrl}
@@ -159,7 +159,7 @@ function AdminBannersPage() {
             </Box>
 
             <Box>
-              <Text className="text-sm font-medium mb-2">Link đích (tùy chọn)</Text>
+              <Text className="text-sm font-medium mb-2">Link đ�ch (t�y chọn)</Text>
               <Input
                 placeholder="/majors hoặc /admission-registration"
                 value={formData.linkUrl}
@@ -179,7 +179,7 @@ function AdminBannersPage() {
               </Box>
 
               <Box>
-                <Text className="text-sm font-medium mb-2">Trạng thái</Text>
+                <Text className="text-sm font-medium mb-2">Trạng th�i</Text>
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as 'active' | 'inactive' }))}
@@ -198,7 +198,7 @@ function AdminBannersPage() {
                 onClick={handleSubmit}
                 disabled={!formData.title.trim() || !formData.imageUrl.trim()}
               >
-                {isEditing ? 'Cập nhật' : 'Thêm mới'}
+                {isEditing ? 'Cập nhật' : 'Th�m mới'}
               </Button>
               
               {isEditing && (
@@ -215,11 +215,11 @@ function AdminBannersPage() {
 
         {/* Banner List */}
         <Box className="space-y-4">
-          <Text.Title className="text-gray-800">📋 Danh sách Banner ({banners.length})</Text.Title>
+          <Text.Title className="text-gray-800">📋 Danh s�ch Banner ({banners.length})</Text.Title>
           
           {banners.length === 0 ? (
             <Box className="text-center py-8 bg-white rounded-lg border">
-              <Text className="text-gray-500">Chưa có banner nào</Text>
+              <Text className="text-gray-500">Chưa c� banner n�o</Text>
             </Box>
           ) : (
             banners.map((banner) => (

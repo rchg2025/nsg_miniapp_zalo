@@ -84,6 +84,32 @@ const initDB = async () => {
         zalo_id VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+      -- 8. Danh mục chuyên mục (Tin tức / Sự kiện)
+      CREATE TABLE IF NOT EXISTS categories (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        slug VARCHAR(255) UNIQUE NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      -- 9. Hệ đào tạo (Cao đẳng, Trung cấp, Liên thông...)
+      CREATE TABLE IF NOT EXISTS training_systems (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+
+      -- 10. Thành viên hệ thống (đăng nhập backend)
+      CREATE TABLE IF NOT EXISTS system_users (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(100) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        display_name VARCHAR(255),
+        role VARCHAR(50) DEFAULT 'editor',
+        is_active BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `;
     await client.query(createTablesQuery);
     

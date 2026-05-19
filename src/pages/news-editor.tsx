@@ -24,7 +24,7 @@ function NewsEditorPage() {
     title: "",
     summary: "",
     content: "",
-    category: "Thông báo",
+    category: "Th�ng b�o",
     image: "",
     isHot: false,
     status: "draft"
@@ -42,11 +42,11 @@ function NewsEditorPage() {
     if (isEditing) {
       // Mock load existing news data
       setFormData({
-        title: "Thông báo tuyển sinh năm học 2025-2026",
-        summary: "Trường Cao đẳng Bách khoa Nam Sài Gòn thông báo kế hoạch tuyển sinh năm học mới với nhiều chính sách ưu đãi cho học sinh xuất sắc.",
+        title: "Th�ng b�o tuyển sinh năm học 2025-2026",
+        summary: "Trường Cao đẳng B�ch khoa Nam S�i G�n th�ng b�o kế hoạch tuyển sinh năm học mới với nhiều ch�nh s�ch ưu đ�i cho học sinh xuất sắc.",
         content: `<div class="news-content">
-          <p>Trường Cao đẳng Bách khoa Nam Sài Gòn thông báo chính thức về kế hoạch tuyển sinh năm học 2025-2026.</p>
-          <h3>1. Chỉ tiêu tuyển sinh</h3>
+          <p>Trường Cao đẳng B�ch khoa Nam S�i G�n th�ng b�o ch�nh thức về kế hoạch tuyển sinh năm học 2025-2026.</p>
+          <h3>1. Chỉ ti�u tuyển sinh</h3>
           <ul>
             <li>Lớp 10: 300 học sinh (12 lớp)</li>
             <li>Lớp 11 chuyển trường: 30 học sinh</li>
@@ -63,8 +63,8 @@ function NewsEditorPage() {
   const categories = [
     "Tuyển sinh",
     "Sự kiện", 
-    "Thành tích",
-    "Thông báo",
+    "Th�nh t�ch",
+    "Th�ng b�o",
     "Học tập",
     "Hoạt động"
   ];
@@ -78,7 +78,7 @@ function NewsEditorPage() {
 
   const handleSave = async (publishNow = false) => {
     if (!formData.title.trim()) {
-      alert("Vui lòng nhập tiêu đề tin tức");
+      alert("Vui l�ng nhập ti�u đề tin tức");
       return;
     }
 
@@ -103,12 +103,12 @@ function NewsEditorPage() {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      alert(isEditing ? "Cập nhật tin tức thành công!" : "Tạo tin tức thành công!");
+      alert(isEditing ? "Cập nhật tin tức th�nh c�ng!" : "Tạo tin tức th�nh c�ng!");
       navigate("/admin");
       
     } catch (error) {
       console.error('Error saving news:', error);
-      alert("Có lỗi xảy ra, vui lòng thử lại!");
+      alert("C� lỗi xảy ra, vui l�ng thử lại!");
     } finally {
       setIsLoading(false);
     }
@@ -156,7 +156,7 @@ function NewsEditorPage() {
   return (
   <Page className="news-editor-page bg-gray-50">
       <Header
-        title={isEditing ? "Chỉnh sửa tin tức" : "Thêm tin tức mới"}
+        title={isEditing ? "Chỉnh sửa tin tức" : "Th�m tin tức mới"}
         showBackIcon={true}
         onBackClick={() => navigate(-1)}
         className="bg-blue-600 text-white flex-none"
@@ -166,9 +166,9 @@ function NewsEditorPage() {
         <Box className="p-4 space-y-6 pb-32">
           {/* Title */}
           <Box>
-            <Text className="text-sm font-medium text-gray-700 mb-2">Tiêu đề *</Text>
+            <Text className="text-sm font-medium text-gray-700 mb-2">Ti�u đề *</Text>
             <Input
-              placeholder="Nhập tiêu đề tin tức"
+              placeholder="Nhập ti�u đề tin tức"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
               className="w-full"
@@ -176,9 +176,9 @@ function NewsEditorPage() {
           </Box>
           {/* Summary */}
           <Box>
-            <Text className="text-sm font-medium text-gray-700 mb-2">Tóm tắt *</Text>
+            <Text className="text-sm font-medium text-gray-700 mb-2">T�m tắt *</Text>
             <Input.TextArea
-              placeholder="Nhập tóm tắt nội dung (1-2 câu)"
+              placeholder="Nhập t�m tắt nội dung (1-2 c�u)"
               value={formData.summary}
               onChange={(e) => handleInputChange('summary', e.target.value)}
               rows={3}
@@ -202,9 +202,9 @@ function NewsEditorPage() {
           </Box>
           {/* Image URL */}
           <Box>
-            <Text className="text-sm font-medium text-gray-700 mb-2">Hình ảnh</Text>
+            <Text className="text-sm font-medium text-gray-700 mb-2">H�nh ảnh</Text>
             <Input
-              placeholder="URL hình ảnh hoặc để trống"
+              placeholder="URL h�nh ảnh hoặc để trống"
               value={formData.image}
               onChange={(e) => handleInputChange('image', e.target.value)}
               className="w-full"
@@ -226,23 +226,23 @@ function NewsEditorPage() {
           <Box>
             <Text className="text-sm font-medium text-gray-700 mb-2">Nội dung chi tiết *</Text>
             <Input.TextArea
-              placeholder="Nhập nội dung chi tiết tin tức (có thể sử dụng HTML cơ bản)"
+              placeholder="Nhập nội dung chi tiết tin tức (c� thể sử dụng HTML cơ bản)"
               value={formData.content}
               onChange={(e) => handleInputChange('content', e.target.value)}
               rows={8}
               className="w-full"
             />
             <Text className="text-xs text-gray-500 mt-1">
-              Có thể sử dụng HTML: &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;
+              C� thể sử dụng HTML: &lt;h3&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt;
             </Text>
           </Box>
           {/* Options */}
           <Box className="bg-white rounded-lg p-4">
-            <Text className="font-medium text-gray-800 mb-3">Tùy chọn</Text>
+            <Text className="font-medium text-gray-800 mb-3">T�y chọn</Text>
             <Box className="flex items-center justify-between mb-3">
               <Box>
                 <Text className="text-sm font-medium text-gray-700">Tin nổi bật</Text>
-                <Text className="text-xs text-gray-500">Hiển thị ở đầu danh sách</Text>
+                <Text className="text-xs text-gray-500">Hiển thị ở đầu danh s�ch</Text>
               </Box>
               <Switch
                 checked={formData.isHot}
@@ -251,9 +251,9 @@ function NewsEditorPage() {
             </Box>
             <Box className="flex items-center justify-between">
               <Box>
-                <Text className="text-sm font-medium text-gray-700">Trạng thái</Text>
+                <Text className="text-sm font-medium text-gray-700">Trạng th�i</Text>
                 <Text className="text-xs text-gray-500">
-                  {formData.status === 'published' ? 'Đã xuất bản' : 'Bản thảo'}
+                  {formData.status === 'published' ? 'Đ� xuất bản' : 'Bản thảo'}
                 </Text>
               </Box>
               <Switch
@@ -267,10 +267,10 @@ function NewsEditorPage() {
             <Text className="font-medium text-gray-800 mb-3">Xem trước</Text>
             <Box className="border rounded-lg p-3 bg-gray-50">
               <Text.Title className="text-sm font-semibold mb-1">
-                {formData.title || "Tiêu đề tin tức"}
+                {formData.title || "Ti�u đề tin tức"}
               </Text.Title>
               <Text className="text-xs text-gray-600 mb-2">
-                {formData.summary || "Tóm tắt nội dung"}
+                {formData.summary || "T�m tắt nội dung"}
               </Text>
               <Box className="flex items-center justify-between">
                 <Text className="text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
@@ -301,7 +301,7 @@ function NewsEditorPage() {
               loading={isLoading}
               disabled={!formData.title.trim()}
             >
-              Lưu nháp
+              Lưu nh�p
             </Button>
             {hasPermission(PERMISSIONS.NEWS_PUBLISH) && (
               <Button

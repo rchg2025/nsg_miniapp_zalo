@@ -60,13 +60,13 @@ function AdminMajorsPage() {
 
   const handleCreateMajor = () => {
     if (!formData.name || !formData.code || !formData.description) {
-      alert('Vui lòng nhập đầy đủ thông tin cơ bản');
+      alert('Vui l�ng nhập đầy đủ th�ng tin cơ bản');
       return;
     }
 
     // Check if code already exists
     if (majorsList.some(m => m.code === formData.code)) {
-      alert('Mã ngành đã tồn tại');
+      alert('M� ng�nh đ� tồn tại');
       return;
     }
 
@@ -154,7 +154,7 @@ function AdminMajorsPage() {
   };
 
   const handleDeleteMajor = (id: string) => {
-    if (confirm('Bạn có chắc chắn muốn xóa ngành học này?')) {
+    if (confirm('Bạn c� chắc chắn muốn x�a ng�nh học n�y?')) {
       const updatedMajors = majorsList.filter(major => major.id !== id);
       DataManager.saveMajors(updatedMajors);
       setMajorsList(updatedMajors);
@@ -186,13 +186,13 @@ function AdminMajorsPage() {
     switch (level) {
       case 'caodang': return 'Cao đẳng';
       case 'trungcap': return 'Trung cấp';
-      case 'caodang-lienthong': return 'CĐ Liên thông';
+      case 'caodang-lienthong': return 'CĐ Li�n th�ng';
       default: return 'Cao đẳng';
     }
   };  return (
     <Page className="page-with-header bg-gray-50">
       <Header 
-        title="Quản lý ngành học" 
+        title="Quản l� ng�nh học" 
         showBackIcon={true}
         className="bg-blue-600 text-white"
       />
@@ -212,7 +212,7 @@ function AdminMajorsPage() {
       <Box className="p-4">
         {/* Header actions */}
         <Box className="flex justify-between items-center mb-4">
-          <Text.Title>Danh sách ngành học ({majorsList.length})</Text.Title>
+          <Text.Title>Danh s�ch ng�nh học ({majorsList.length})</Text.Title>
           <Button 
             variant="primary"
             size="small"
@@ -222,7 +222,7 @@ function AdminMajorsPage() {
               setShowCreateModal(true);
             }}
           >
-            + Thêm ngành
+            + Th�m ng�nh
           </Button>
         </Box>
 
@@ -238,13 +238,13 @@ function AdminMajorsPage() {
             <Text className="text-lg font-bold text-blue-600">
               {majorsList.reduce((sum, m) => sum + (Number(m.quota) || 0), 0)}
             </Text>
-            <Text className="text-xs text-gray-500">Chỉ tiêu</Text>
+            <Text className="text-xs text-gray-500">Chỉ ti�u</Text>
           </Box>
           <Box className="bg-white p-3 rounded text-center">
             <Text className="text-lg font-bold text-purple-600">
               {majorsList.reduce((sum, m) => sum + (Number(m.enrolled) || 0), 0)}
             </Text>
-            <Text className="text-xs text-gray-500">Đã tuyển</Text>
+            <Text className="text-xs text-gray-500">Đ� tuyển</Text>
           </Box>
           <Box className="bg-white p-3 rounded text-center">
             <Text className="text-lg font-bold text-orange-600">
@@ -266,7 +266,7 @@ function AdminMajorsPage() {
             <List.Item
               key={major.id}
               title={`${major.name} (${major.code})`}
-              subTitle={`${getEducationLevelText(major.educationLevel)} • ${major.duration} • ${formatCurrency(major.tuitionFee)} • ${major.enrolled}/${major.quota} sinh viên • ${major.status === 'active' ? 'Đang tuyển' : 'Tạm dừng'}`}
+              subTitle={`${getEducationLevelText(major.educationLevel)} � ${major.duration} � ${formatCurrency(major.tuitionFee)} � ${major.enrolled}/${major.quota} sinh vi�n � ${major.status === 'active' ? 'Đang tuyển' : 'Tạm dừng'}`}
               prefix={
                 major.imageUrl ? (
                   <img 
@@ -288,7 +288,7 @@ function AdminMajorsPage() {
                     onClick={() => toggleStatus(major.id)}
                     className={major.status === 'active' ? "text-orange-600" : "text-green-600"}
                   >
-                    {major.status === 'active' ? 'Tạm dừng' : 'Kích hoạt'}
+                    {major.status === 'active' ? 'Tạm dừng' : 'K�ch hoạt'}
                   </Button>
                   <Button 
                     size="small" 
@@ -303,7 +303,7 @@ function AdminMajorsPage() {
                     onClick={() => handleDeleteMajor(major.id)}
                     className="text-red-600"
                   >
-                    Xóa
+                    X�a
                   </Button>
                 </Box>
               }
@@ -313,7 +313,7 @@ function AdminMajorsPage() {
 
         {majorsList.length === 0 && (
           <Box className="text-center py-8">
-            <Text className="text-gray-500">Chưa có ngành học nào</Text>
+            <Text className="text-gray-500">Chưa c� ng�nh học n�o</Text>
           </Box>
         )}
       </Box>
@@ -321,7 +321,7 @@ function AdminMajorsPage() {
       {/* Create/Edit Modal */}
       <Modal
         visible={showCreateModal}
-        title={editingMajor ? "Chỉnh sửa ngành học" : "Thêm ngành học mới"}
+        title={editingMajor ? "Chỉnh sửa ng�nh học" : "Th�m ng�nh học mới"}
         onClose={() => {
           setShowCreateModal(false);
           setEditingMajor(null);
@@ -334,7 +334,7 @@ function AdminMajorsPage() {
             highLight: false,
           },
           {
-            text: editingMajor ? "Cập nhật" : "Thêm mới",
+            text: editingMajor ? "Cập nhật" : "Th�m mới",
             highLight: true,
             onClick: editingMajor ? handleUpdateMajor : handleCreateMajor,
           },
@@ -343,15 +343,15 @@ function AdminMajorsPage() {
         <Box className="space-y-4 max-h-96 overflow-y-auto">
           <Box className="grid grid-cols-2 gap-3">
             <Box>
-              <Text className="mb-2 font-medium">Tên ngành</Text>
+              <Text className="mb-2 font-medium">T�n ng�nh</Text>
               <Input
-                placeholder="Công nghệ Thông tin"
+                placeholder="C�ng nghệ Th�ng tin"
                 value={formData.name}
                 onChange={(e) => setFormData({...formData, name: e.target.value})}
               />
             </Box>
             <Box>
-              <Text className="mb-2 font-medium">Mã ngành</Text>
+              <Text className="mb-2 font-medium">M� ng�nh</Text>
               <Input
                 placeholder="CNTT01"
                 value={formData.code}
@@ -361,9 +361,9 @@ function AdminMajorsPage() {
           </Box>
 
           <Box>
-            <Text className="mb-2 font-medium">Mô tả ngành học</Text>
+            <Text className="mb-2 font-medium">M� tả ng�nh học</Text>
             <Input.TextArea
-              placeholder="Mô tả chi tiết về ngành học"
+              placeholder="M� tả chi tiết về ng�nh học"
               value={formData.description}
               onChange={(e) => setFormData({...formData, description: e.target.value})}
               rows={3}
@@ -380,11 +380,11 @@ function AdminMajorsPage() {
               >
                 <option value="caodang">Cao đẳng</option>
                 <option value="trungcap">Trung cấp</option>
-                <option value="caodang-lienthong">Cao đẳng liên thông</option>
+                <option value="caodang-lienthong">Cao đẳng li�n th�ng</option>
               </select>
             </Box>
             <Box>
-              <Text className="mb-2 font-medium">Thời gian đào tạo</Text>
+              <Text className="mb-2 font-medium">Thời gian đ�o tạo</Text>
               <select
                 value={formData.duration}
                 onChange={(e) => setFormData({...formData, duration: e.target.value})}
@@ -398,7 +398,7 @@ function AdminMajorsPage() {
               </select>
             </Box>
             <Box>
-              <Text className="mb-2 font-medium">Học phí (VNĐ/năm)</Text>
+              <Text className="mb-2 font-medium">Học ph� (VNĐ/năm)</Text>
               <Input
                 type="number"
                 placeholder="15000000"
@@ -409,9 +409,9 @@ function AdminMajorsPage() {
           </Box>
 
           <Box>
-            <Text className="mb-2 font-medium">Môn học chính (cách nhau bằng dấu phẩy)</Text>
+            <Text className="mb-2 font-medium">M�n học ch�nh (c�ch nhau bằng dấu phẩy)</Text>
             <Input.TextArea
-              placeholder="Lập trình C/C++, Java, Database, Mạng máy tính"
+              placeholder="Lập tr�nh C/C++, Java, Database, Mạng m�y t�nh"
               value={formData.subjects}
               onChange={(e) => setFormData({...formData, subjects: e.target.value})}
               rows={2}
@@ -419,9 +419,9 @@ function AdminMajorsPage() {
           </Box>
 
           <Box>
-            <Text className="mb-2 font-medium">Cơ hội nghề nghiệp (cách nhau bằng dấu phẩy)</Text>
+            <Text className="mb-2 font-medium">Cơ hội nghề nghiệp (c�ch nhau bằng dấu phẩy)</Text>
             <Input.TextArea
-              placeholder="Lập trình viên, Quản trị hệ thống, Chuyên viên IT"
+              placeholder="Lập tr�nh vi�n, Quản trị hệ thống, Chuy�n vi�n IT"
               value={formData.careerProspects}
               onChange={(e) => setFormData({...formData, careerProspects: e.target.value})}
               rows={2}
@@ -440,7 +440,7 @@ function AdminMajorsPage() {
               />
             </Box>
             <Box>
-              <Text className="mb-2 font-medium">Chỉ tiêu tuyển sinh</Text>
+              <Text className="mb-2 font-medium">Chỉ ti�u tuyển sinh</Text>
               <Input
                 type="number"
                 placeholder="50"
@@ -472,7 +472,7 @@ function AdminMajorsPage() {
               )}
             </Box>
             <Box>
-              <Text className="mb-2 font-medium">Website liên quan</Text>
+              <Text className="mb-2 font-medium">Website li�n quan</Text>
               <Input
                 placeholder="https://cntt.nsg.edu.vn"
                 value={formData.website}
@@ -489,7 +489,7 @@ function AdminMajorsPage() {
           </Box>
 
           <Box>
-            <Text className="mb-2 font-medium">Trạng thái</Text>
+            <Text className="mb-2 font-medium">Trạng th�i</Text>
             <select
               value={formData.status}
               onChange={(e) => setFormData({...formData, status: e.target.value as 'active' | 'inactive'})}

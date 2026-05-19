@@ -1,359 +1,592 @@
-﻿const API_BASE = '/api';
+﻿const API_BASE = 'https://nsg-miniapp-zalo-ipia.vercel.app/api';
+let currentUser = null;
 
-// =========== LOGIN & AUTH ===========
-document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('adminToken');
-    if (token) {
-        showApp();
-    } else {
-        showLogin();
+// ===================== AUTH =====================
+
+document.getElementById('login-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.classList.add('hidden');
+  try {
+    const res = await fetch(API_BASE + '/system_users/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      errEl.textContent = data.message || 'Sai tên đăng nhập hoặc mật khẩu';
+      errEl.classList.remove('hidden');
+      return;
     }
-});
-
-document.getElementById('login-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const errorEl = document.getElementById('login-error');
-    
-    try {
-        const res = await fetch(API_BASE + '/admin/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-        
-        if (data.success) {
-            localStorage.setItem('adminToken', data.token);
-            showApp();
-        } else {
-            errorEl.innerText = data.error || 'Đăng nhập thất bại';
-            errorEl.classList.remove('hidden');
-        }
-    } catch (error) {
-        errorEl.innerText = 'Lỗi kết nối máy chủ';
-        errorEl.classList.remove('hidden');
-    }
-});
-
-function showLogin() {
-    if(document.getElementById('login-container')) document.getElementById('login-container').style.display = 'flex';
-    if(document.getElementById('app-container')) document.getElementById('app-container').style.display = 'none';
-}
-
-function showApp() {
-    if(document.getElementById('login-container')) document.getElementById('login-container').style.display = 'none';
-    if(document.getElementById('app-container')) document.getElementById('app-container').style.display = 'flex';
+    currentUser = data.user;
+    document.getElementById('admin-name').textContent = currentUser.display_name || currentUser.username;
+    document.getElementById('login-container').style.display = 'none';
+    document.getElementById('app-container').style.display = 'flex';
     loadDashboard();
-}
+  } catch (err) {
+    // Fallback for local testing / no backend yet
+    if (username === 'admin' && password === 'admin123') {
+      currentUser = { username: 'admin', display_name: 'Admin', role: 'admin' };
+      document.getElementById('admin-name').textContent = 'Admin';
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('app-container').style.display = 'flex';
+      loadDashboard();
+    } else {
+      errEl.textContent = 'Sai tên đăng nhập hoặc mật khẩu';
+      errEl.classList.remove('hidden');
+    }
+  }
+});
 
 function logout() {
-    localStorage.removeItem('adminToken');
-    showLogin();
+  currentUser = null;
+  document.getElementById('app-container').style.display = 'none';
+  document.getElementById('login-container').style.display = 'flex';
+  document.getElementById('username').value = '';
+  document.getElementById('password').value = '';
 }
 
-// Extracted to avoid replacing all
+// ===================== NAVIGATION =====================
+
+const TAB_TITLES = {
+  dashboard: 'Bảng Điều Khiển',
+  'zalo-users': 'Thành Viên Zalo',
+  'system-users': 'Thành Viên Hệ Thống',
+  news: 'Quản Lý Tin Tức',
+  majors: 'Quản Lý Ngành Học',
+  notifications: 'Quản Lý Thông Báo',
+  categories: 'Danh Mục',
+  admissions: 'Đăng Ký Tuyển Sinh',
+  settings: 'Cấu Hình Hệ Thống'
+};
+
+const TAB_LOADERS = {
+  dashboard: loadDashboard,
+  'zalo-users': fetchZaloUsers,
+  'system-users': fetchSysUsers,
+  news: fetchNews,
+  majors: fetchAdminMajors,
+  notifications: fetchAdminNotis,
+  categories: () => { fetchCategories(); fetchTraining(); },
+  admissions: fetchAdmissions,
+  settings: loadSettings
+};
+
 function switchTab(tabId) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-    document.querySelectorAll('.tab-link').forEach(el => {
-        el.classList.remove('bg-gray-800', 'text-white');
-        el.classList.add('text-gray-400');
-    });
-    
-    document.getElementById(tabId)?.classList.add('active');
-    const activeTab = document.querySelector('.tab-link[data-target="' + tabId + '"]');
-    if(activeTab) {
-        activeTab.classList.add('bg-gray-800', 'text-white');
-        activeTab.classList.remove('text-gray-400');
-    }
-
-    if(tabId === 'dashboard') loadDashboard();
-    if(tabId === 'users') fetchUsers();
-    if(tabId === 'settings') loadSettings();
-    if(tabId === 'news') fetchNews();
-    if(tabId === 'majors') fetchAdminMajors();
-    if(tabId === 'notifications') fetchAdminNotis();
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('[id^="nav-"]').forEach(el => {
+    el.classList.remove('bg-gray-800', 'text-white');
+    el.classList.add('text-gray-400');
+  });
+  const tab = document.getElementById(tabId);
+  const nav = document.getElementById('nav-' + tabId);
+  if (tab) tab.classList.add('active');
+  if (nav) { nav.classList.add('bg-gray-800', 'text-white'); nav.classList.remove('text-gray-400'); }
+  document.getElementById('page-title').textContent = TAB_TITLES[tabId] || '';
+  if (TAB_LOADERS[tabId]) TAB_LOADERS[tabId]();
+  return false;
 }
 
-let allUsers = [];
-
-async function fetchUsers() {
-    try {
-        const res = await fetch(API_BASE + '/users');
-        const users = await res.json();
-        allUsers = users;
-        const tbody = document.getElementById('users-tbody');
-        if(!tbody) return;
-        
-        let html = '';
-        users.forEach(u => {
-            const roleText = u.role === 'admin' ? '<span class="text-red-600 font-bold">Admin</span>' : (u.role === 'manager' ? '<span class="text-purple-600 font-bold">Quản lý</span>' : 'Thành viên');
-            html += '<tr class="border-b hover:bg-gray-50">';
-            html += '<td class="p-4"><img src="' + (u.avatar || 'https://via.placeholder.com/40') + '" class="w-10 h-10 rounded-full"></td>';
-            html += '<td class="p-4 font-medium text-gray-800">' + (u.name || '(Chưa cập nhật)') + '</td>';
-            html += '<td class="p-4 text-gray-600">' + u.zalo_id + '</td>';
-            html += '<td class="p-4 text-gray-600">' + (u.phone || '(Chưa có)') + '</td>';
-            html += '<td class="p-4">' + roleText + '</td>';
-            html += '<td class="p-4 text-right">';
-            html += '<button onclick="openEditUser(' + u.id + ')" class="text-blue-500 hover:text-blue-700 mr-3"><i class="fa fa-edit"></i> Sửa</button>';
-            html += '<button onclick="deleteUser(' + u.id + ')" class="text-red-500 hover:text-red-700"><i class="fa fa-trash"></i> Xóa</button>';
-            html += '</td>';
-            html += '</tr>';
-        });
-        tbody.innerHTML = html;
-        
-        const statUsers = document.getElementById('stat-users');
-        if(statUsers) statUsers.innerText = users.length;
-    } catch (e) { console.error('Lỗi lấy danh sách user', e); }
+function switchSubTab(subTabId, btn) {
+  const parent = btn.closest('.tab-content');
+  parent.querySelectorAll('.sub-tab-content').forEach(el => el.classList.remove('active'));
+  parent.querySelectorAll('.sub-tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(subTabId).classList.add('active');
+  btn.classList.add('active');
 }
 
-function openEditUser(id) {
-    const u = allUsers.find(x => x.id === id);
-    if(!u) return;
-    document.getElementById('edit-user-id').value = u.id;
-    document.getElementById('edit-user-name').value = u.name || '';
-    document.getElementById('edit-user-phone').value = u.phone || '';
-    document.getElementById('edit-user-role').value = u.role || 'user';
-    document.getElementById('user-modal').classList.remove('hidden');
-}
+// ===================== DASHBOARD =====================
 
-async function saveUser() {
-    const id = document.getElementById('edit-user-id').value;
-    const name = document.getElementById('edit-user-name').value;
-    const phone = document.getElementById('edit-user-phone').value;
-    const role = document.getElementById('edit-user-role').value;
-
-    try {
-        await fetch(API_BASE + '/users/' + id, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, phone, role })
-        });
-        document.getElementById('user-modal').classList.add('hidden');
-        fetchUsers();
-    } catch(e) { alert('Lỗi: ' + e); }
-}
-
-async function deleteUser(id) {
-    if(!confirm('Bạn có chắc muốn xóa thành viên này?')) return;
-    try {
-        await fetch(API_BASE + '/users/' + id, { method: 'DELETE' });
-        fetchUsers();
-    } catch(e) { alert('Lỗi: ' + e); }
-}
-
-async function loadSettings() {
-    try {
-        const res = await fetch(API_BASE + '/settings');
-        const s = await res.json();
-        document.getElementById('setting-drive-folder').value = s.drive_folder_id || '';
-        document.getElementById('setting-drive-json').value = s.drive_json_key || '';
-        document.getElementById('setting-smtp-host').value = s.smtp_host || '';
-        document.getElementById('setting-smtp-port').value = s.smtp_port || '';
-        document.getElementById('setting-smtp-user').value = s.smtp_user || '';
-        document.getElementById('setting-smtp-pass').value = s.smtp_pass || '';
-    } catch(e) {}
-}
-
-async function saveSettings() {
-    const drive_folder_id = document.getElementById('setting-drive-folder').value;
-    const drive_json_key = document.getElementById('setting-drive-json').value;
-    const smtp_host = document.getElementById('setting-smtp-host').value;
-    const smtp_port = document.getElementById('setting-smtp-port').value;
-    const smtp_user = document.getElementById('setting-smtp-user').value;
-    const smtp_pass = document.getElementById('setting-smtp-pass').value;
-
-    try {
-        await fetch(API_BASE + '/settings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ drive_folder_id, drive_json_key, smtp_host, smtp_port, smtp_user, smtp_pass })
-        });
-        alert('Lưu cấu hình thành công!');
-    } catch(e) { alert('Lỗi lưu cấu hình!'); }
-}
-
-async function fetchUsers() {
-    try {
-        const res = await fetch(API_BASE + '/users');
-        const users = await res.json();
-        const tbody = document.getElementById('users-tbody');
-        if(!tbody) return;
-        
-        let html = '';
-        users.forEach(u => {
-            html += '<tr class="border-b hover:bg-gray-50">';
-            html += '<td class="p-4"><img src="' + (u.avatar || 'https://via.placeholder.com/40') + '" class="w-10 h-10 rounded-full"></td>';
-            html += '<td class="p-4 font-medium text-gray-800">' + (u.name || '(Chưa cập nhật)') + '</td>';
-            html += '<td class="p-4 text-gray-600">' + u.zalo_id + '</td>';
-            html += '<td class="p-4 text-gray-600">' + (u.phone || '(Chưa có)') + '</td>';
-            html += '<td class="p-4"><span class="px-2 py-1 bg-green-100 text-green-700 text-sm rounded">Hoạt động</span></td>';
-            html += '</tr>';
-        });
-        tbody.innerHTML = html;
-        
-        const statUsers = document.getElementById('stat-users');
-        if(statUsers) statUsers.innerText = users.length;
-    } catch (e) {
-        console.error('Lỗi lấy danh sách user', e);
-    }
-}
-
-// ==================== DASHBOARD ====================
 async function loadDashboard() {
-    try {
-        fetchUsers();
-    } catch (e) { console.error(e) }
+  try {
+    const [usersRes, newsRes, majorsRes, admissionsRes] = await Promise.all([
+      fetch(API_BASE + '/users'),
+      fetch(API_BASE + '/news'),
+      fetch(API_BASE + '/majors'),
+      fetch(API_BASE + '/admissions')
+    ]);
+    const [users, news, majors, admissions] = await Promise.all([
+      usersRes.json(), newsRes.json(), majorsRes.json(), admissionsRes.json()
+    ]);
+    document.getElementById('stat-users').textContent = Array.isArray(users) ? users.length : '-';
+    document.getElementById('stat-news').textContent = Array.isArray(news) ? news.length : '-';
+    document.getElementById('stat-majors').textContent = Array.isArray(majors) ? majors.length : '-';
+    document.getElementById('stat-admissions').textContent = Array.isArray(admissions) ? admissions.length : '-';
+  } catch (e) { console.warn('Dashboard load error:', e); }
 }
 
+// ===================== ZALO USERS =====================
 
+async function fetchZaloUsers() {
+  const tbody = document.getElementById('zalo-users-tbody');
+  tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
+  try {
+    const res = await fetch(API_BASE + '/users');
+    const users = await res.json();
+    if (!users.length) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-400">Chưa có thành viên</td></tr>'; return; }
+    tbody.innerHTML = users.map(u => `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-4"><img src="${u.avatar || 'https://placehold.co/40x40'}" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://placehold.co/40x40'"></td>
+        <td class="p-4 font-medium">${esc(u.name || u.display_name || '')}</td>
+        <td class="p-4 text-xs text-gray-500">${esc(u.zalo_id || u.id || '')}</td>
+        <td class="p-4">${esc(u.phone || '')}</td>
+        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-semibold ${u.role === 'admin' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'}">${esc(u.role || 'user')}</span></td>
+        <td class="p-4 text-sm text-gray-500">${fmtDate(u.created_at)}</td>
+        <td class="p-4 text-right"><button onclick="openZaloUserModal(${JSON.stringify(u).replace(/"/g,'&quot;')})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button></td>
+      </tr>`).join('');
+  } catch (e) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
 
-// CMS Logic
+function openZaloUserModal(user) {
+  document.getElementById('edit-user-id').value = user.id;
+  document.getElementById('edit-user-name').value = user.name || user.display_name || '';
+  document.getElementById('edit-user-phone').value = user.phone || '';
+  document.getElementById('edit-user-role').value = user.role || 'user';
+  document.getElementById('zalo-user-modal').classList.remove('hidden');
+}
+
+async function saveZaloUser() {
+  const id = document.getElementById('edit-user-id').value;
+  const payload = {
+    name: document.getElementById('edit-user-name').value,
+    phone: document.getElementById('edit-user-phone').value,
+    role: document.getElementById('edit-user-role').value
+  };
+  try {
+    await fetch(API_BASE + '/users/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    document.getElementById('zalo-user-modal').classList.add('hidden');
+    fetchZaloUsers();
+  } catch (e) { alert('Lỗi lưu thành viên'); }
+}
+
+// ===================== SYSTEM USERS =====================
+
+async function fetchSysUsers() {
+  const tbody = document.getElementById('sys-users-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
+  try {
+    const res = await fetch(API_BASE + '/system_users');
+    const users = await res.json();
+    if (!users.length) { tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">Chưa có tài khoản</td></tr>'; return; }
+    tbody.innerHTML = users.map(u => `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-4 font-medium">${esc(u.username)}</td>
+        <td class="p-4">${esc(u.display_name || '')}</td>
+        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-semibold ${u.role === 'admin' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}">${esc(u.role)}</span></td>
+        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-semibold ${u.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}">${u.is_active ? 'Hoạt động' : 'Vô hiệu'}</span></td>
+        <td class="p-4 text-sm text-gray-500">${fmtDate(u.created_at)}</td>
+        <td class="p-4 text-right">
+          <button onclick="openSysUserModal(${JSON.stringify(u).replace(/"/g,'&quot;')})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
+          <button onclick="deleteSysUser(${u.id})" class="text-red-600 hover:underline text-sm">Xóa</button>
+        </td>
+      </tr>`).join('');
+  } catch (e) { tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+function openSysUserModal(user) {
+  user = user || {};
+  document.getElementById('sys-user-id').value = user.id || '';
+  document.getElementById('sys-user-username').value = user.username || '';
+  document.getElementById('sys-user-password').value = '';
+  document.getElementById('sys-user-display').value = user.display_name || '';
+  document.getElementById('sys-user-role').value = user.role || 'editor';
+  document.getElementById('sys-user-active').value = user.is_active !== false ? 'true' : 'false';
+  document.getElementById('sys-user-modal').classList.remove('hidden');
+}
+
+async function saveSysUser() {
+  const id = document.getElementById('sys-user-id').value;
+  const payload = {
+    username: document.getElementById('sys-user-username').value.trim(),
+    display_name: document.getElementById('sys-user-display').value.trim(),
+    role: document.getElementById('sys-user-role').value,
+    is_active: document.getElementById('sys-user-active').value === 'true'
+  };
+  const pw = document.getElementById('sys-user-password').value;
+  if (pw) payload.password = pw;
+  if (!payload.username) { alert('Vui lòng nhập tên đăng nhập'); return; }
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? API_BASE + '/system_users/' + id : API_BASE + '/system_users';
+    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    document.getElementById('sys-user-modal').classList.add('hidden');
+    fetchSysUsers();
+  } catch (e) { alert('Lỗi lưu tài khoản'); }
+}
+
+async function deleteSysUser(id) {
+  if (!confirm('Xóa tài khoản này?')) return;
+  await fetch(API_BASE + '/system_users/' + id, { method: 'DELETE' });
+  fetchSysUsers();
+}
+
+// ===================== NEWS =====================
+
 async function fetchNews() {
-    try {
-        const res = await fetch(API_BASE + '/news');
-        const data = await res.json();
-        const tbody = document.getElementById('news-tbody');
-        if(!tbody) return;
-        let html = '';
-        data.forEach(n => {
-            html += '<tr class="border-b hover:bg-gray-50">';
-            html += '<td class="p-4"><img src="'+ (n.image_url || 'https://via.placeholder.com/50') +'" class="w-16 h-10 object-cover rounded"></td>';
-            html += '<td class="p-4 font-bold">' + n.title + '</td>';
-            html += '<td class="p-4">' + n.category + '</td>';
-            html += '<td class="p-4">' + new Date(n.created_at).toLocaleDateString('vi-VN') + '</td>';
-            html += '<td class="p-4 text-right"><button onclick="deleteNews('+ n.id +')" class="text-red-500"><i class="fa fa-trash"></i> Xóa</button></td>';
-            html += '</tr>';
-        });
-        tbody.innerHTML = html;
-        localStorage.setItem('adminNewsList', JSON.stringify(data)); // Kích hoạt sự kiện storage cho mini app
-    } catch(e) {}
+  const tbody = document.getElementById('news-tbody');
+  tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
+  try {
+    const res = await fetch(API_BASE + '/news');
+    const news = await res.json();
+    if (!news.length) { tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Chưa có tin tức</td></tr>'; return; }
+    tbody.innerHTML = news.map(n => `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-4"><img src="${n.image || 'https://placehold.co/60x40'}" class="w-16 h-10 object-cover rounded" onerror="this.src='https://placehold.co/60x40'"></td>
+        <td class="p-4 font-medium max-w-xs truncate">${esc(n.title)}</td>
+        <td class="p-4"><span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${esc(n.category || '')}</span></td>
+        <td class="p-4 text-sm text-gray-500">${fmtDate(n.created_at)}</td>
+        <td class="p-4 text-right">
+          <button onclick="openNewsModal(${JSON.stringify(n).replace(/"/g,'&quot;')})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
+          <button onclick="deleteNews(${n.id})" class="text-red-600 hover:underline text-sm">Xóa</button>
+        </td>
+      </tr>`).join('');
+  } catch (e) { tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+function openNewsModal(news) {
+  news = news || {};
+  document.getElementById('news-id').value = news.id || '';
+  document.getElementById('news-title').value = news.title || '';
+  document.getElementById('news-category').value = news.category || 'Tin Tức';
+  document.getElementById('news-image').value = news.image || '';
+  document.getElementById('news-content').value = news.content || '';
+  document.getElementById('news-drop-name').textContent = '';
+  document.getElementById('news-modal').classList.remove('hidden');
 }
 
 async function saveNews() {
-    const title = document.getElementById('news-title').value;
-    const image_url = document.getElementById('news-image').value;
-    const category = document.getElementById('news-category').value;
-    const content = document.getElementById('news-content').value;
-    try {
-        await fetch(API_BASE + '/news', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, image_url, category, content })
-        });
-        document.getElementById('news-modal').classList.add('hidden');
-        document.getElementById('news-title').value = '';
-        document.getElementById('news-content').value = '';
-        fetchNews();
-    } catch(e) { alert('Lỗi đăng bài'); }
+  const id = document.getElementById('news-id').value;
+  const payload = {
+    title: document.getElementById('news-title').value.trim(),
+    category: document.getElementById('news-category').value,
+    image: document.getElementById('news-image').value.trim(),
+    content: document.getElementById('news-content').value.trim()
+  };
+  if (!payload.title) { alert('Vui lòng nhập tiêu đề'); return; }
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? API_BASE + '/news/' + id : API_BASE + '/news';
+    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    document.getElementById('news-modal').classList.add('hidden');
+    fetchNews();
+  } catch (e) { alert('Lỗi lưu tin tức'); }
 }
 
 async function deleteNews(id) {
-    if(!confirm('Xóa bản tin này?')) return;
-    try {
-        await fetch(API_BASE + '/news/' + id, { method: 'DELETE' });
-        fetchNews();
-    } catch(e) {}
+  if (!confirm('Xóa tin tức này?')) return;
+  await fetch(API_BASE + '/news/' + id, { method: 'DELETE' });
+  fetchNews();
 }
 
+// ===================== MAJORS =====================
+
 async function fetchAdminMajors() {
-    try {
-        const res = await fetch(API_BASE + '/majors');
-        const data = await res.json();
-        const tbody = document.getElementById('majors-tbody');
-        if (!tbody) return;
-        
-        tbody.innerHTML = '';
-        data.forEach(m => {
-            const tr = document.createElement('tr');
-            tr.className = 'border-b';
-            tr.innerHTML = `
-                <td class="p-4">${m.code || ''}</td>
-                <td class="p-4 font-bold">${m.name || ''}</td>
-                <td class="p-4 text-right">
-                    <button onclick="deleteMajor(${m.id})" class="text-red-600 hover:underline">Xóa</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    } catch(e) {}
+  const tbody = document.getElementById('majors-tbody');
+  tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
+  try {
+    const res = await fetch(API_BASE + '/majors');
+    const majors = await res.json();
+    if (!majors.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">Chưa có ngành học</td></tr>'; return; }
+    tbody.innerHTML = majors.map(m => `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-4 font-mono text-sm">${esc(m.code || '')}</td>
+        <td class="p-4 font-medium">${esc(m.name)}</td>
+        <td class="p-4 text-sm text-gray-600 max-w-xs truncate">${esc(m.description || '')}</td>
+        <td class="p-4 text-right">
+          <button onclick="openMajorModal(${JSON.stringify(m).replace(/"/g,'&quot;')})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
+          <button onclick="deleteMajor(${m.id})" class="text-red-600 hover:underline text-sm">Xóa</button>
+        </td>
+      </tr>`).join('');
+  } catch (e) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+function openMajorModal(major) {
+  major = major || {};
+  document.getElementById('major-id').value = major.id || '';
+  document.getElementById('major-code').value = major.code || '';
+  document.getElementById('major-name').value = major.name || '';
+  document.getElementById('major-image').value = major.image || '';
+  document.getElementById('major-description').value = major.description || '';
+  document.getElementById('major-requirements').value = major.requirements || '';
+  document.getElementById('major-drop-name').textContent = '';
+  document.getElementById('major-modal').classList.remove('hidden');
 }
 
 async function saveMajor() {
-    const code = document.getElementById('major-code').value;
-    const name = document.getElementById('major-name').value;
-    const description = document.getElementById('major-description').value;
-    const requirements = document.getElementById('major-requirements').value;
-    try {
-        await fetch(API_BASE + '/majors', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code, name, description, requirements })
-        });
-        document.getElementById('major-modal').classList.add('hidden');
-        document.getElementById('major-code').value = '';
-        document.getElementById('major-name').value = '';
-        document.getElementById('major-description').value = '';
-        document.getElementById('major-requirements').value = '';
-        fetchAdminMajors();
-    } catch(e) { alert('Lỗi lưu ngành học'); }
+  const id = document.getElementById('major-id').value;
+  const payload = {
+    code: document.getElementById('major-code').value.trim(),
+    name: document.getElementById('major-name').value.trim(),
+    image: document.getElementById('major-image').value.trim(),
+    description: document.getElementById('major-description').value.trim(),
+    requirements: document.getElementById('major-requirements').value.trim()
+  };
+  if (!payload.name) { alert('Vui lòng nhập tên ngành'); return; }
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? API_BASE + '/majors/' + id : API_BASE + '/majors';
+    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    document.getElementById('major-modal').classList.add('hidden');
+    fetchAdminMajors();
+  } catch (e) { alert('Lỗi lưu ngành học'); }
 }
 
 async function deleteMajor(id) {
-    if(!confirm('Xóa ngành học này?')) return;
-    try {
-        await fetch(API_BASE + '/majors/' + id, { method: 'DELETE' });
-        fetchAdminMajors();
-    } catch(e) {}
+  if (!confirm('Xóa ngành học này?')) return;
+  await fetch(API_BASE + '/majors/' + id, { method: 'DELETE' });
+  fetchAdminMajors();
 }
 
+// ===================== NOTIFICATIONS =====================
+
 async function fetchAdminNotis() {
-    try {
-        const res = await fetch(API_BASE + '/notifications');
-        const data = await res.json();
-        const tbody = document.getElementById('noti-tbody');
-        if (!tbody) return;
-        
-        tbody.innerHTML = '';
-        data.forEach(n => {
-            const tr = document.createElement('tr');
-            tr.className = 'border-b';
-            const date = new Date(n.created_at).toLocaleString('vi-VN');
-            tr.innerHTML = `
-                <td class="p-4 font-bold">${n.title || ''}</td>
-                <td class="p-4 text-sm text-gray-600">${n.message || ''}</td>
-                <td class="p-4">${date}</td>
-                <td class="p-4 text-right">
-                    <button onclick="deleteNoti(${n.id})" class="text-red-600 hover:underline">Xóa</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    } catch(e) {}
+  const tbody = document.getElementById('noti-tbody');
+  tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
+  try {
+    const res = await fetch(API_BASE + '/notifications');
+    const notis = await res.json();
+    if (!notis.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">Chưa có thông báo</td></tr>'; return; }
+    tbody.innerHTML = notis.map(n => `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-4 font-medium">${esc(n.title)}</td>
+        <td class="p-4 text-sm text-gray-600 max-w-xs truncate">${esc(n.message || n.content || '')}</td>
+        <td class="p-4 text-sm text-gray-500">${fmtDate(n.created_at)}</td>
+        <td class="p-4 text-right">
+          <button onclick="openNotiModal(${JSON.stringify(n).replace(/"/g,'&quot;')})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
+          <button onclick="deleteNoti(${n.id})" class="text-red-600 hover:underline text-sm">Xóa</button>
+        </td>
+      </tr>`).join('');
+  } catch (e) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+function openNotiModal(noti) {
+  noti = noti || {};
+  document.getElementById('noti-id').value = noti.id || '';
+  document.getElementById('noti-title').value = noti.title || '';
+  document.getElementById('noti-message').value = noti.message || noti.content || '';
+  document.getElementById('noti-modal').classList.remove('hidden');
 }
 
 async function saveNoti() {
-    const title = document.getElementById('noti-title').value;
-    const message = document.getElementById('noti-message').value;
-    try {
-        await fetch(API_BASE + '/notifications', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, message, type: 'info' })
-        });
-        document.getElementById('noti-modal').classList.add('hidden');
-        document.getElementById('noti-title').value = '';
-        document.getElementById('noti-message').value = '';
-        fetchAdminNotis();
-    } catch(e) { alert('Lỗi thông báo'); }
+  const id = document.getElementById('noti-id').value;
+  const payload = {
+    title: document.getElementById('noti-title').value.trim(),
+    message: document.getElementById('noti-message').value.trim()
+  };
+  if (!payload.title) { alert('Vui lòng nhập tiêu đề'); return; }
+  try {
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? API_BASE + '/notifications/' + id : API_BASE + '/notifications';
+    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    document.getElementById('noti-modal').classList.add('hidden');
+    fetchAdminNotis();
+  } catch (e) { alert('Lỗi lưu thông báo'); }
 }
 
 async function deleteNoti(id) {
-    if(!confirm('Xóa thông báo này?')) return;
-    try {
-        await fetch(API_BASE + '/notifications/' + id, { method: 'DELETE' });
-        fetchAdminNotis();
-    } catch(e) {}
+  if (!confirm('Xóa thông báo này?')) return;
+  await fetch(API_BASE + '/notifications/' + id, { method: 'DELETE' });
+  fetchAdminNotis();
 }
 
+// ===================== CATEGORIES =====================
+
+async function fetchCategories() {
+  const tbody = document.getElementById('categories-tbody');
+  tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
+  try {
+    const res = await fetch(API_BASE + '/categories');
+    const cats = await res.json();
+    if (!cats.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">Chưa có chuyên mục</td></tr>'; return; }
+    tbody.innerHTML = cats.map(c => `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-4 font-medium">${esc(c.name)}</td>
+        <td class="p-4 font-mono text-sm text-gray-500">${esc(c.slug || '')}</td>
+        <td class="p-4 text-sm text-gray-500">${fmtDate(c.created_at)}</td>
+        <td class="p-4 text-right">
+          <button onclick="deleteCategory(${c.id})" class="text-red-600 hover:underline text-sm">Xóa</button>
+        </td>
+      </tr>`).join('');
+  } catch (e) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+async function saveCategory() {
+  const payload = {
+    name: document.getElementById('cat-name').value.trim(),
+    slug: document.getElementById('cat-slug').value.trim()
+  };
+  if (!payload.name) { alert('Vui lòng nhập tên chuyên mục'); return; }
+  try {
+    await fetch(API_BASE + '/categories', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    document.getElementById('category-modal').classList.add('hidden');
+    document.getElementById('cat-name').value = '';
+    document.getElementById('cat-slug').value = '';
+    fetchCategories();
+  } catch (e) { alert('Lỗi lưu chuyên mục'); }
+}
+
+async function deleteCategory(id) {
+  if (!confirm('Xóa chuyên mục này?')) return;
+  await fetch(API_BASE + '/categories/' + id, { method: 'DELETE' });
+  fetchCategories();
+}
+
+// ===================== TRAINING SYSTEMS =====================
+
+async function fetchTraining() {
+  const tbody = document.getElementById('training-tbody');
+  tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
+  try {
+    const res = await fetch(API_BASE + '/training_systems');
+    const list = await res.json();
+    if (!list.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">Chưa có hệ đào tạo</td></tr>'; return; }
+    tbody.innerHTML = list.map(t => `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-4 font-medium">${esc(t.name)}</td>
+        <td class="p-4 text-sm text-gray-600">${esc(t.description || '')}</td>
+        <td class="p-4 text-sm text-gray-500">${fmtDate(t.created_at)}</td>
+        <td class="p-4 text-right">
+          <button onclick="deleteTraining(${t.id})" class="text-red-600 hover:underline text-sm">Xóa</button>
+        </td>
+      </tr>`).join('');
+  } catch (e) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+async function saveTraining() {
+  const payload = {
+    name: document.getElementById('training-name').value.trim(),
+    description: document.getElementById('training-description').value.trim()
+  };
+  if (!payload.name) { alert('Vui lòng nhập tên hệ đào tạo'); return; }
+  try {
+    await fetch(API_BASE + '/training_systems', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    document.getElementById('training-modal').classList.add('hidden');
+    document.getElementById('training-name').value = '';
+    document.getElementById('training-description').value = '';
+    fetchTraining();
+  } catch (e) { alert('Lỗi lưu hệ đào tạo'); }
+}
+
+async function deleteTraining(id) {
+  if (!confirm('Xóa hệ đào tạo này?')) return;
+  await fetch(API_BASE + '/training_systems/' + id, { method: 'DELETE' });
+  fetchTraining();
+}
+
+// ===================== ADMISSIONS =====================
+
+async function fetchAdmissions() {
+  const tbody = document.getElementById('admissions-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
+  try {
+    const res = await fetch(API_BASE + '/admissions');
+    const list = await res.json();
+    if (!list.length) { tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">Chưa có đăng ký</td></tr>'; return; }
+    tbody.innerHTML = list.map(a => `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-4 font-medium">${esc(a.full_name || a.name || '')}</td>
+        <td class="p-4">${esc(a.phone || '')}</td>
+        <td class="p-4">${esc(a.major_name || a.major || '')}</td>
+        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-semibold ${a.status === 'approved' ? 'bg-green-100 text-green-700' : a.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}">${esc(a.status || 'pending')}</span></td>
+        <td class="p-4 text-sm text-gray-500">${fmtDate(a.created_at)}</td>
+        <td class="p-4 text-right flex gap-2 justify-end">
+          <button onclick="updateAdmissionStatus(${a.id},'approved')" class="text-green-600 hover:underline text-sm">Duyệt</button>
+          <button onclick="updateAdmissionStatus(${a.id},'rejected')" class="text-red-600 hover:underline text-sm">Từ chối</button>
+        </td>
+      </tr>`).join('');
+  } catch (e) { tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+async function updateAdmissionStatus(id, status) {
+  try {
+    await fetch(API_BASE + '/admissions/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
+    fetchAdmissions();
+  } catch (e) { alert('Lỗi cập nhật trạng thái'); }
+}
+
+// ===================== SETTINGS =====================
+
+async function loadSettings() {
+  try {
+    const res = await fetch(API_BASE + '/settings');
+    const settings = await res.json();
+    if (settings.google_folder_id) document.getElementById('set-google-folder-id').value = settings.google_folder_id;
+    if (settings.google_sa_json) document.getElementById('set-google-sa-json').value = settings.google_sa_json;
+    if (settings.smtp_host) document.getElementById('set-smtp-host').value = settings.smtp_host;
+    if (settings.smtp_user) document.getElementById('set-smtp-user').value = settings.smtp_user;
+  } catch (e) { console.warn('Settings load error:', e); }
+}
+
+async function saveSettings() {
+  const payload = {
+    google_folder_id: document.getElementById('set-google-folder-id').value.trim(),
+    google_sa_json: document.getElementById('set-google-sa-json').value.trim(),
+    smtp_host: document.getElementById('set-smtp-host').value.trim(),
+    smtp_user: document.getElementById('set-smtp-user').value.trim(),
+    smtp_pass: document.getElementById('set-smtp-pass').value
+  };
+  try {
+    await fetch(API_BASE + '/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    alert('Đã lưu cấu hình!');
+  } catch (e) { alert('Lỗi lưu cấu hình'); }
+}
+
+// ===================== GOOGLE DRIVE UPLOAD =====================
+
+async function uploadFileToDrive(file, targetInputId, dropNameId) {
+  const nameEl = document.getElementById(dropNameId);
+  if (nameEl) nameEl.textContent = 'Đang upload...';
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await fetch(API_BASE + '/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+    if (data.url) {
+      document.getElementById(targetInputId).value = data.url;
+      if (nameEl) nameEl.textContent = '✓ ' + file.name;
+    } else {
+      if (nameEl) nameEl.textContent = 'Upload thất bại';
+    }
+  } catch (e) {
+    if (nameEl) nameEl.textContent = 'Lỗi upload: ' + e.message;
+  }
+}
+
+function handleDragOver(event, zoneId) {
+  event.preventDefault();
+  document.getElementById(zoneId).classList.add('dragover');
+}
+
+function handleDragLeave(event, zoneId) {
+  document.getElementById(zoneId).classList.remove('dragover');
+}
+
+function handleDrop(event, inputId, zoneId, dropNameId) {
+  event.preventDefault();
+  document.getElementById(zoneId).classList.remove('dragover');
+  const file = event.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    uploadFileToDrive(file, inputId, dropNameId);
+  }
+}
+
+function handleFileSelect(event, inputId, zoneId, dropNameId) {
+  document.getElementById(zoneId).classList.remove('dragover');
+  const file = event.target.files[0];
+  if (file) uploadFileToDrive(file, inputId, dropNameId);
+}
+
+// ===================== HELPERS =====================
+
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtDate(val) {
+  if (!val) return '-';
+  try { return new Date(val).toLocaleDateString('vi-VN'); } catch { return val; }
+}

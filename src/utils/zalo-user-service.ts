@@ -1,6 +1,6 @@
 /**
- * Zalo User Service - Quản lý thông tin người dùng Zalo
- * Chỉ lấy thông tin cơ bản: tên và ảnh đại diện
+ * Zalo User Service - Quản l� th�ng tin người d�ng Zalo
+ * Chỉ lấy th�ng tin cơ bản: t�n v� ảnh đại diện
  */
 
 import { getUserInfo, authorize } from 'zmp-sdk/apis';
@@ -15,7 +15,7 @@ export class ZaloUserService {
   private static userInfo: ZaloUserInfo | null = null;
 
   /**
-   * Lấy thông tin cơ bản của người dùng (tên, ảnh đại diện)
+   * Lấy th�ng tin cơ bản của người d�ng (t�n, ảnh đại diện)
    */
   static async getUserInfo(): Promise<ZaloUserInfo | null> {
     try {
@@ -25,7 +25,7 @@ export class ZaloUserService {
         autoRequestPermission: true
       });
 
-      // Kiểm tra response có data không
+      // Kiểm tra response c� data kh�ng
       if (response && response.userInfo) {
         const userInfo: ZaloUserInfo = {
           id: response.userInfo.id,
@@ -47,21 +47,21 @@ export class ZaloUserService {
   }
 
   /**
-   * Lấy thông tin đã cache
+   * Lấy th�ng tin đ� cache
    */
   static getCachedUserInfo(): ZaloUserInfo | null {
     return this.userInfo;
   }
 
   /**
-   * Xóa thông tin đã cache
+   * X�a th�ng tin đ� cache
    */
   static clearCachedUserInfo(): void {
     this.userInfo = null;
   }
 
   /**
-   * Kiểm tra xem có quyền truy cập thông tin người dùng không
+   * Kiểm tra xem c� quyền truy cập th�ng tin người d�ng kh�ng
    */
   static async checkPermissions(): Promise<{
     userInfo: boolean;
@@ -70,16 +70,16 @@ export class ZaloUserService {
     try {
       console.log('🔍 [PERMISSIONS] Đang kiểm tra quyền truy cập...');
       
-      // Kiểm tra quyền thông tin cơ bản
+      // Kiểm tra quyền th�ng tin cơ bản
       let hasUserInfo = false;
       let userInfoResponse: any = null;
       
       try {
         userInfoResponse = await getUserInfo({});
         hasUserInfo = !!(userInfoResponse && userInfoResponse.userInfo);
-        console.log('👤 [PERMISSIONS] Quyền thông tin cơ bản:', hasUserInfo);
+        console.log('👤 [PERMISSIONS] Quyền th�ng tin cơ bản:', hasUserInfo);
       } catch (e) {
-        console.log('❌ [PERMISSIONS] Lỗi khi kiểm tra quyền thông tin cơ bản:', e);
+        console.log('❌ [PERMISSIONS] Lỗi khi kiểm tra quyền th�ng tin cơ bản:', e);
         hasUserInfo = false;
       }
 

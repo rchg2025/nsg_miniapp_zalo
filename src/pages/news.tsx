@@ -26,26 +26,26 @@ interface NewsItem {
 // Load news data from localStorage (same source as admin)
 const getNewsData = () => {
   try {
-    console.log('ðŸ”„ Loading news data from localStorage...');
+    console.log('🔄 Loading news data from localStorage...');
     
-    // Æ¯u tiÃªn adminNewsList (dá»¯ liá»‡u má»›i nháº¥t tá»« admin)
+    // Ưu tiên adminNewsList (dữ liệu mới nhất từ admin)
     const adminNews = localStorage.getItem('adminNewsList');
     const appNews = localStorage.getItem('app_news_data');
     
     let savedNews = adminNews || appNews;
     
     if (!savedNews) {
-      console.log('âš ï¸ No news data found in localStorage');
+      console.log('⚠️ No news data found in localStorage');
       return [];
     }
     
-    // Äá»“ng bá»™ dá»¯ liá»‡u
+    // Đồng bộ dữ liệu
     if (adminNews) {
       localStorage.setItem('app_news_data', adminNews);
     }
     
     const allNews = JSON.parse(savedNews);
-    console.log('ðŸ“° Raw news data loaded:', allNews.length, 'articles');
+    console.log('📰 Raw news data loaded:', allNews.length, 'articles');
     
     const processedNews = allNews
       .filter(item => item.status === 'published')
@@ -66,21 +66,21 @@ const getNewsData = () => {
       }))
       .sort((a, b) => new Date(b.createdAt || Date.now()).getTime() - new Date(a.createdAt || Date.now()).getTime());
     
-    console.log('ðŸ“Š Processed news data:', processedNews.length, 'published articles');
+    console.log('📊 Processed news data:', processedNews.length, 'published articles');
     return processedNews;
   } catch (error) {
-    console.error("âŒ Error loading news from localStorage:", error);
+    console.error("❌ Error loading news from localStorage:", error);
     return [];
   }
 };
 
 const categories = [
-  { key: "all", label: "Táº¥t cáº£" },
-  { key: "news", label: "Tá»•ng há»£p" },
-  { key: "announcement", label: "ThÃ´ng bÃ¡o" },
-  { key: "admission", label: "Tuyá»ƒn sinh" },
-  { key: "event", label: "Sá»± kiá»‡n" },
-  { key: "saved", label: "ÄÃ£ lÆ°u" }
+  { key: "all", label: "Tất cả" },
+  { key: "news", label: "Tổng hợp" },
+  { key: "announcement", label: "Thông báo" },
+  { key: "admission", label: "Tuyển sinh" },
+  { key: "event", label: "Sự kiện" },
+  { key: "saved", label: "Đã lưu" }
 ];
 
 function NewsPage() {
@@ -93,7 +93,7 @@ function NewsPage() {
   const [newsData, setNewsData] = useState<NewsItem[]>([]);
   const [savedNewsIds, setSavedNewsIds] = useState<string[]>([]);
   
-  // Mock user ID - trong thá»±c táº¿ sáº½ láº¥y tá»« Zalo authentication
+  // Mock user ID - trong thực tế sẽ lấy từ Zalo authentication
   const currentUserId = "user_1";
 
   // Load news data from localStorage (same source as admin)
@@ -124,13 +124,13 @@ function NewsPage() {
   // Toggle bookmark for a news item
   const toggleBookmark = (newsId: string) => {
     const isSaved = savedNewsIds.includes(newsId);
-    const newsTitle = newsData.find(news => news.id.toString() === newsId)?.title || "tin tá»©c";
+    const newsTitle = newsData.find(news => news.id.toString() === newsId)?.title || "tin tức";
     
     if (isSaved) {
       DataManager.unsaveNewsForUser(currentUserId, newsId);
       setSavedNewsIds(prev => prev.filter(id => id !== newsId));
       openSnackbar({
-        text: `ÄÃ£ bá» lÆ°u "${newsTitle}"`,
+        text: `Đã bỏ lưu "${newsTitle}"`,
         type: "default",
         duration: 2000
       });
@@ -138,7 +138,7 @@ function NewsPage() {
       DataManager.saveNewsForUser(currentUserId, newsId);
       setSavedNewsIds(prev => [...prev, newsId]);
       openSnackbar({
-        text: `ÄÃ£ lÆ°u "${newsTitle}"`,
+        text: `Đã lưu "${newsTitle}"`,
         type: "success", 
         duration: 2000
       });
@@ -186,7 +186,7 @@ function NewsPage() {
   };
 
   const filteredNews = newsData.filter(news => {
-    // Handle "ÄÃ£ lÆ°u" tab specifically
+    // Handle "Đã lưu" tab specifically
     if (activeTab === "saved") {
       const isSaved = savedNewsIds.includes(news.id.toString());
       const matchesSearch = news.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -209,7 +209,7 @@ function NewsPage() {
   return (
     <Page className="page-with-header bg-gray-50">
       <Header 
-        title="Tin tá»©c TrÆ°á»ng Cao Ä‘áº³ng BÃ¡ch khoa Nam SÃ i GÃ²n"
+        title="Tin tức Trường Cao đẳng Bách khoa Nam Sài Gòn"
         showBackIcon={false}
         className="bg-blue-600 text-white"
       />
@@ -217,7 +217,7 @@ function NewsPage() {
       {/* Search Bar */}
       <Box className="p-4 bg-white shadow-sm">
         <Input.Search
-          placeholder="TÃ¬m kiáº¿m tin tá»©c..."
+          placeholder="Tìm kiếm tin tức..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full"
@@ -259,7 +259,7 @@ function NewsPage() {
         <Box className="p-4">
           <Text.Title className="text-red-600 mb-3 flex items-center">
             <Icon icon="zi-star-solid" className="mr-2" />
-            Tin ná»•i báº­t
+            Tin nổi bật
           </Text.Title>
           
           <Box className="space-y-3">
@@ -284,9 +284,9 @@ function NewsPage() {
       {/* News List */}
       <Box className="p-4">
         <Text.Title className="mb-3">
-          {activeTab === "all" ? "Táº¥t cáº£ tin tá»©c" : 
-           activeTab === "saved" ? "Tin tá»©c Ä‘Ã£ lÆ°u" :
-           categories.find(cat => cat.key === activeTab)?.label || "Tin tá»©c"}
+          {activeTab === "all" ? "Tất cả tin tức" : 
+           activeTab === "saved" ? "Tin tức đã lưu" :
+           categories.find(cat => cat.key === activeTab)?.label || "Tin tức"}
         </Text.Title>
         
         <Box className="space-y-3">
@@ -308,8 +308,8 @@ function NewsPage() {
 
         {filteredNews.length === 0 && (
           <EmptyState
-            title="KhÃ´ng tÃ¬m tháº¥y tin tá»©c nÃ o"
-            description="Thá»­ thay Ä‘á»•i tá»« khÃ³a tÃ¬m kiáº¿m hoáº·c danh má»¥c khÃ¡c"
+            title="Không tìm thấy tin tức nào"
+            description="Thử thay đổi từ khóa tìm kiếm hoặc danh mục khác"
           />
         )}
       </Box>
@@ -322,7 +322,7 @@ function NewsPage() {
             variant="secondary"
             className="border-dashed border-gray-300"
           >
-            Xem thÃªm tin tá»©c
+            Xem thêm tin tức
           </Button>
         </Box>
       )}

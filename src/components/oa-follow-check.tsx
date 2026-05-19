@@ -14,7 +14,7 @@ export function OAFollowCheck({ isRequired, onFollowComplete, onCancel }: OAFoll
   const [isFollowed, setIsFollowed] = useState(false);
 
   useEffect(() => {
-    // Kiểm tra trạng thái follow OA từ localStorage
+    // Kiểm tra trạng th�i follow OA từ localStorage
     const followStatus = localStorage.getItem("oa_followed");
     if (followStatus === "true") {
       setIsFollowed(true);
@@ -32,7 +32,7 @@ export function OAFollowCheck({ isRequired, onFollowComplete, onCancel }: OAFoll
         id: "785749141891313000"
       });
       
-      // Lưu trạng thái đã follow
+      // Lưu trạng th�i đ� follow
       localStorage.setItem("oa_followed", "true");
       setIsFollowed(true);
       setShowModal(false);
@@ -41,16 +41,16 @@ export function OAFollowCheck({ isRequired, onFollowComplete, onCancel }: OAFoll
     } catch (error) {
       console.error("Cannot follow OA:", error);
       
-      // Fallback: Mở link OA và giả định user đã follow
+      // Fallback: Mở link OA v� giả định user đ� follow
       try {
         const { openChat } = await import("zmp-sdk/apis");
         await openChat({
           type: "oa",
           id: "785749141891313000",
-          message: "Xin chào! Tôi muốn quan tâm OA của trường để nhận thông tin tuyển sinh."
+          message: "Xin ch�o! T�i muốn quan t�m OA của trường để nhận th�ng tin tuyển sinh."
         });
         
-        // Sau khi mở chat, giả định user đã follow
+        // Sau khi mở chat, giả định user đ� follow
         setTimeout(() => {
           localStorage.setItem("oa_followed", "true");
           setIsFollowed(true);
@@ -89,10 +89,10 @@ export function OAFollowCheck({ isRequired, onFollowComplete, onCancel }: OAFoll
   return (
     <Modal
       visible={showModal}
-      title="Quan tâm OA Trường"
+      title="Quan t�m OA Trường"
       actions={[
         {
-          text: isRequired ? "Quan tâm ngay" : "Quan tâm OA", 
+          text: isRequired ? "Quan t�m ngay" : "Quan t�m OA", 
           highLight: true,
           onClick: handleFollowOA
         },
@@ -114,38 +114,38 @@ export function OAFollowCheck({ isRequired, onFollowComplete, onCancel }: OAFoll
         
         <Text.Title className="text-lg font-bold text-gray-800 mb-3">
           {isRequired 
-            ? "Bắt buộc quan tâm OA để tiếp tục" 
-            : "Quan tâm OA để nhận thông tin mới nhất"
+            ? "Bắt buộc quan t�m OA để tiếp tục" 
+            : "Quan t�m OA để nhận th�ng tin mới nhất"
           }
         </Text.Title>
         
         <Text className="text-gray-600 text-sm leading-relaxed mb-4">
-          Quan tâm OA <strong>Trường Cao đẳng Bách khoa Nam Sài Gòn</strong> để:
+          Quan t�m OA <strong>Trường Cao đẳng B�ch khoa Nam S�i G�n</strong> để:
         </Text>
         
         <Box className="text-left space-y-2 mb-4">
           <Box className="flex items-center space-x-2">
             <Icon icon="zi-check-circle" className="text-green-500 text-sm" />
-            <Text className="text-sm text-gray-700">Nhận thông báo tuyển sinh mới nhất</Text>
+            <Text className="text-sm text-gray-700">Nhận th�ng b�o tuyển sinh mới nhất</Text>
           </Box>
           <Box className="flex items-center space-x-2">
             <Icon icon="zi-check-circle" className="text-green-500 text-sm" />
-            <Text className="text-sm text-gray-700">Tư vấn trực tiếp với nhà trường</Text>
+            <Text className="text-sm text-gray-700">Tư vấn trực tiếp với nh� trường</Text>
           </Box>
           <Box className="flex items-center space-x-2">
             <Icon icon="zi-check-circle" className="text-green-500 text-sm" />
-            <Text className="text-sm text-gray-700">Cập nhật tin tức và sự kiện</Text>
+            <Text className="text-sm text-gray-700">Cập nhật tin tức v� sự kiện</Text>
           </Box>
           <Box className="flex items-center space-x-2">
             <Icon icon="zi-check-circle" className="text-green-500 text-sm" />
-            <Text className="text-sm text-gray-700">Hỗ trợ thủ tục đăng ký học</Text>
+            <Text className="text-sm text-gray-700">Hỗ trợ thủ tục đăng k� học</Text>
           </Box>
         </Box>
         
         {isRequired && (
           <Box className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
             <Text className="text-yellow-800 text-xs">
-              ⚠️ Bạn cần quan tâm OA để sử dụng đầy đủ các chức năng của ứng dụng
+              ⚠️ Bạn cần quan t�m OA để sử dụng đầy đủ c�c chức năng của ứng dụng
             </Text>
           </Box>
         )}

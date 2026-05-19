@@ -50,17 +50,17 @@ const ProfilePageV2: React.FC = () => {
       });
       console.log('[PROFILE V2] Follow OA result:', result);
       
-      alert('✅ Đã quan tâm OA thành công!\n\n🎉 Bạn sẽ nhận được thông báo mới nhất từ trường qua Zalo OA.');
+      alert(' � quan t�m OA th�nh c�ng!\n\n<� B�n s� nh�n ��c th�ng b�o m�i nh�t t� tr��ng qua Zalo OA.');
     } catch (error: any) {
       console.error('[PROFILE V2] Follow OA error:', error);
       // Fallback to contact info if API fails
-      alert(`📞 Liên hệ trực tiếp với trường:
+      alert(`=� Li�n h� tr�c ti�p v�i tr��ng:
       
-• Hotline: 0981146179  
-• Website: namsaigon.edu.vn
-• Email: info@namsaigon.edu.vn
+" Hotline: 0981146179  
+" Website: namsaigon.edu.vn
+" Email: info@namsaigon.edu.vn
 
-� Hoặc tìm kiếm "Trường Cao đẳng Bách khoa Nam Sài Gòn" trong Zalo để quan tâm OA.`);
+� Ho�c t�m ki�m "Tr��ng Cao �ng B�ch khoa Nam S�i G�n" trong Zalo � quan t�m OA.`);
     }
   };
 
@@ -83,20 +83,20 @@ const ProfilePageV2: React.FC = () => {
     } catch (error: any) {
       console.error('[PROFILE V2] Open chat error:', error);
       // Fallback to contact info if API fails
-      alert(`📞 Liên hệ hỗ trợ ngay:
+      alert(`=� Li�n h� h� tr� ngay:
       
-• Hotline: 0981146179
-• Website: namsaigon.edu.vn  
-• Email: info@namsaigon.edu.vn
+" Hotline: 0981146179
+" Website: namsaigon.edu.vn  
+" Email: info@namsaigon.edu.vn
 
-💬 Hoặc nhắn tin cho OA "Trường Cao đẳng Bách khoa Nam Sài Gòn" trong Zalo.`);
+=� Ho�c nh�n tin cho OA "Tr��ng Cao �ng B�ch khoa Nam S�i G�n" trong Zalo.`);
     }
   };
 
   if (loading) {
     return (
       <Page className="page">
-        <Header title="Cá nhân" />
+        <Header title="C� nh�n" />
         <Box className="p-4">
           <Box className="bg-gray-100 rounded-lg p-4 animate-pulse">
             <Box className="flex items-center mb-4">
@@ -107,7 +107,7 @@ const ProfilePageV2: React.FC = () => {
               </Box>
             </Box>
           </Box>
-          <Text className="text-center mt-4 text-gray-500">Đang tải thông tin...</Text>
+          <Text className="text-center mt-4 text-gray-500">ang t�i th�ng tin...</Text>
         </Box>
       </Page>
     );
@@ -116,16 +116,16 @@ const ProfilePageV2: React.FC = () => {
   if (error) {
     return (
       <Page className="page">
-        <Header title="Cá nhân" />
+        <Header title="C� nh�n" />
         <Box className="p-4">
           <Box className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <Text className="text-red-600 font-medium mb-2">❌ Có lỗi xảy ra</Text>
+            <Text className="text-red-600 font-medium mb-2">L C� l�i x�y ra</Text>
             <Text className="text-red-500 text-sm mb-4">{error}</Text>
             <Button 
               variant="primary"
               onClick={() => window.location.reload()}
             >
-              Thử lại
+              Th� l�i
             </Button>
           </Box>
         </Box>
@@ -135,7 +135,7 @@ const ProfilePageV2: React.FC = () => {
 
   return (
     <Page className="page">
-      <Header title="Cá nhân" />
+      <Header title="C� nh�n" />
       
       <Box className="p-4">
         {/* User Info Card */}
@@ -148,13 +148,13 @@ const ProfilePageV2: React.FC = () => {
             />
             <Box className="ml-4">
               <Text className="text-lg font-semibold text-gray-800 mb-1">
-                {userInfo?.name || 'Người dùng'}
+                {userInfo?.name || 'Ng��i d�ng'}
               </Text>
               <Text className="text-sm text-gray-500">
                 ID: {userInfo?.id || 'N/A'}
               </Text>
               <Text className="text-xs text-green-600 mt-1">
-                ✅ Đã đăng nhập Zalo
+                 � ng nh�p Zalo
               </Text>
             </Box>
           </Box>
@@ -162,7 +162,7 @@ const ProfilePageV2: React.FC = () => {
 
         {/* Quick Actions */}
         <Box className="bg-white rounded-lg p-4 mb-4 shadow-sm border">
-          <Text className="font-medium text-gray-800 mb-3">Hỗ trợ</Text>
+          <Text className="font-medium text-gray-800 mb-3">H� tr�</Text>
           
           <Button
             variant="secondary"
@@ -170,7 +170,7 @@ const ProfilePageV2: React.FC = () => {
             onClick={handleFollowOA}
           >
             <Icon icon="zi-heart" className="mr-3 text-blue-500" />
-            <Text className="text-blue-600">❤️ Quan tâm OA</Text>
+            <Text className="text-blue-600">d Quan t�m OA</Text>
           </Button>
           
           <Button
@@ -179,13 +179,13 @@ const ProfilePageV2: React.FC = () => {
             onClick={handleOpenSupport}
           >
             <Icon icon="zi-chat" className="mr-3 text-green-500" />
-            <Text className="text-green-600">💬 Hỗ trợ trực tuyến</Text>
+            <Text className="text-green-600">=� H� tr� tr�c tuy�n</Text>
           </Button>
         </Box>
 
         {/* Menu Items */}
         <Box className="bg-white rounded-lg p-4 mb-4 shadow-sm border">
-          <Text className="font-medium text-gray-800 mb-3">Cài đặt</Text>
+          <Text className="font-medium text-gray-800 mb-3">C�i �t</Text>
           
           <Button
             variant="secondary"
@@ -193,7 +193,7 @@ const ProfilePageV2: React.FC = () => {
             onClick={() => navigate('/settings')}
           >
             <Icon icon="zi-setting" className="mr-3 text-gray-500" />
-            Cài đặt ứng dụng
+            C�i �t �ng d�ng
           </Button>
           
           <Button
@@ -202,13 +202,13 @@ const ProfilePageV2: React.FC = () => {
             onClick={() => navigate('/about')}
           >
             <Icon icon="zi-info-circle" className="mr-3 text-gray-500" />
-            Về ứng dụng
+            V� �ng d�ng
           </Button>
         </Box>
 
         {/* Test Navigation */}
         <Box className="bg-gray-50 rounded-lg p-4">
-          <Text className="font-medium text-gray-700 mb-3">🧪 Test & Debug</Text>
+          <Text className="font-medium text-gray-700 mb-3">>� Test & Debug</Text>
           
           <Button
             variant="secondary"
@@ -216,7 +216,7 @@ const ProfilePageV2: React.FC = () => {
             onClick={() => navigate('/oa-checker')}
           >
             <Icon icon="zi-setting" className="mr-3 text-purple-500" />
-            <Text className="text-purple-600">🔍 OA Checker (Fix OA)</Text>
+            <Text className="text-purple-600">= OA Checker (Fix OA)</Text>
           </Button>
           
           <Button
@@ -243,14 +243,14 @@ const ProfilePageV2: React.FC = () => {
             onClick={() => navigate('/profile')}
           >
             <Icon icon="zi-user" className="mr-3 text-red-500" />
-            <Text className="text-red-600">Profile Gốc (Lỗi)</Text>
+            <Text className="text-red-600">Profile G�c (L�i)</Text>
           </Button>
         </Box>
 
         {/* Footer Info */}
         <Box className="text-center py-4">
           <Text className="text-gray-400 text-xs">
-            Profile V2 - Phiên bản tối ưu
+            Profile V2 - Phi�n b�n t�i �u
           </Text>
         </Box>
       </Box>

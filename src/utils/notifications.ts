@@ -15,9 +15,9 @@ export const createNewsNotification = (newsItem: any) => {
   const notifications = getNotifications();
   const newNotification: Notification = {
     id: Date.now(),
-    title: newsItem.category === 'announcement' ? 'Thông báo mới' : 'Tin tức mới',
+    title: newsItem.category === 'announcement' ? 'Th�ng b�o mới' : 'Tin tức mới',
     message: `"${newsItem.title}" vừa được đăng`,
-    category: newsItem.category === 'announcement' ? 'Thông báo' : 'Tin tức', 
+    category: newsItem.category === 'announcement' ? 'Th�ng b�o' : 'Tin tức', 
     date: new Date().toISOString().split('T')[0],
     isRead: false,
     type: newsItem.category === 'announcement' ? 'announcement' : 'news',
@@ -34,9 +34,9 @@ export const createMajorNotification = (majorItem: any) => {
   const notifications = getNotifications();
   const newNotification: Notification = {
     id: Date.now(),
-    title: 'Ngành đào tạo mới',
-    message: `Ngành "${majorItem.name}" vừa được thêm vào chương trình đào tạo`,
-    category: 'Ngành đào tạo',
+    title: 'Ng�nh đ�o tạo mới',
+    message: `Ng�nh "${majorItem.name}" vừa được th�m v�o chương tr�nh đ�o tạo`,
+    category: 'Ng�nh đ�o tạo',
     date: new Date().toISOString().split('T')[0],
     isRead: false,
     type: 'major',
@@ -59,8 +59,8 @@ export const getNotifications = (): Notification[] => {
   const defaultNotifications: Notification[] = [
     {
       id: 1,
-      title: "Chào mừng đến với Trường Cao đẳng Bách khoa Nam Sài Gòn",
-      message: "Cảm ơn bạn đã sử dụng hệ thống thông tin của trường",
+      title: "Ch�o mừng đến với Trường Cao đẳng B�ch khoa Nam S�i G�n",
+      message: "Cảm ơn bạn đ� sử dụng hệ thống th�ng tin của trường",
       category: "Hệ thống",
       date: "2025-09-23",
       isRead: false,

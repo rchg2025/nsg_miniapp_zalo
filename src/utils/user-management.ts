@@ -250,7 +250,7 @@ export const initializeUsersData = (): void => {
     const demoUsers: User[] = [
       {
         id: 'admin_1',
-        name: 'Quản trị viên',
+        name: 'Quản trị vi�n',
         role: 'admin',
         status: 'active',
         source: 'manual',
@@ -260,7 +260,7 @@ export const initializeUsersData = (): void => {
       },
       {
         id: 'teacher_1',
-        name: 'Giáo viên Nguyễn Văn A',
+        name: 'Gi�o vi�n Nguyễn Văn A',
         email: 'teacher.a@nsg.edu.vn',
         role: 'teacher',
         status: 'active',
@@ -271,7 +271,7 @@ export const initializeUsersData = (): void => {
       },
       {
         id: 'student_demo',
-        name: 'Sinh viên Demo',
+        name: 'Sinh vi�n Demo',
         role: 'student',
         status: 'active',
         source: 'manual',

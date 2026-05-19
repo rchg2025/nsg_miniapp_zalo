@@ -15,7 +15,7 @@ const ProfilePageSimple: React.FC = () => {
       try {
         console.log('[PROFILE SIMPLE] Starting to load user info...');
         
-        // Import Zalo API dynamically để tránh conflict
+        // Import Zalo API dynamically để tr�nh conflict
         const { getUserInfo } = await import("zmp-sdk/apis");
         console.log('[PROFILE SIMPLE] Zalo SDK imported');
         
@@ -46,7 +46,7 @@ const ProfilePageSimple: React.FC = () => {
   if (loading) {
     return (
       <Page className="page">
-        <Header title="Cá nhân (Simple)" />
+        <Header title="C� nh�n (Simple)" />
         <Box className="p-4">
           <Text>Đang tải...</Text>
         </Box>
@@ -57,7 +57,7 @@ const ProfilePageSimple: React.FC = () => {
   if (error) {
     return (
       <Page className="page">
-        <Header title="Cá nhân (Simple)" />
+        <Header title="C� nh�n (Simple)" />
         <Box className="p-4">
           <Text className="text-red-500">Lỗi: {error}</Text>
           <Button 
@@ -73,7 +73,7 @@ const ProfilePageSimple: React.FC = () => {
 
   return (
     <Page className="page">
-      <Header title="Cá nhân (Simple)" />
+      <Header title="C� nh�n (Simple)" />
       
       <Box className="p-4">
         {/* User Info */}
@@ -85,7 +85,7 @@ const ProfilePageSimple: React.FC = () => {
             />
             <Box className="ml-4">
               <Text className="text-lg font-semibold text-gray-800">
-                {userInfo?.name || 'Người dùng'}
+                {userInfo?.name || 'Người d�ng'}
               </Text>
               <Text className="text-sm text-gray-500">
                 ID: {userInfo?.id || 'N/A'}
@@ -101,7 +101,7 @@ const ProfilePageSimple: React.FC = () => {
             className="w-full text-left mb-2"
             onClick={() => navigate('/settings')}
           >
-            Cài đặt
+            C�i đặt
           </Button>
           
           <Button

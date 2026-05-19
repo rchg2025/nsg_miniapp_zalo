@@ -51,17 +51,17 @@ export function ChangePasswordModal({ isVisible, onClose, username }: ChangePass
     setError("");
     
     if (!formData.currentPassword || !formData.newPassword || !formData.confirmPassword) {
-      setError("Vui lòng nhập đầy đủ thông tin");
+      setError("Vui l�ng nhập đầy đủ th�ng tin");
       return;
     }
 
     if (formData.newPassword !== formData.confirmPassword) {
-      setError("Mật khẩu mới và xác nhận mật khẩu không khớp");
+      setError("Mật khẩu mới v� x�c nhận mật khẩu kh�ng khớp");
       return;
     }
 
     if (formData.newPassword.length < 6) {
-      setError("Mật khẩu mới phải có ít nhất 6 ký tự");
+      setError("Mật khẩu mới phải c� �t nhất 6 k� tự");
       return;
     }
 
@@ -70,7 +70,7 @@ export function ChangePasswordModal({ isVisible, onClose, username }: ChangePass
     // Verify current password
     const passwords = getPasswordDatabase();
     if (passwords[username] !== formData.currentPassword) {
-      setError("Mật khẩu hiện tại không đúng");
+      setError("Mật khẩu hiện tại kh�ng đ�ng");
       setIsLoading(false);
       return;
     }
@@ -81,7 +81,7 @@ export function ChangePasswordModal({ isVisible, onClose, username }: ChangePass
     // Update password
     try {
       updatePassword(username, formData.newPassword);
-      alert("Đổi mật khẩu thành công!");
+      alert("Đổi mật khẩu th�nh c�ng!");
       
       // Reset form
       setFormData({
@@ -92,7 +92,7 @@ export function ChangePasswordModal({ isVisible, onClose, username }: ChangePass
       
       onClose();
     } catch (error) {
-      setError("Có lỗi xảy ra, vui lòng thử lại");
+      setError("C� lỗi xảy ra, vui l�ng thử lại");
     }
     
     setIsLoading(false);
@@ -121,7 +121,7 @@ export function ChangePasswordModal({ isVisible, onClose, username }: ChangePass
       title="Đổi mật khẩu"
       actions={[
         {
-          text: isLoading ? "Đang xử lý..." : "Đổi mật khẩu",
+          text: isLoading ? "Đang xử l�..." : "Đổi mật khẩu",
           highLight: true,
           onClick: handleChangePassword,
           disabled: isLoading
@@ -137,7 +137,7 @@ export function ChangePasswordModal({ isVisible, onClose, username }: ChangePass
       <Box className="space-y-4 p-4">
         {/* Username display */}
         <Box className="bg-gray-50 rounded-lg p-3">
-          <Text className="text-sm text-gray-600 mb-1">Tài khoản:</Text>
+          <Text className="text-sm text-gray-600 mb-1">T�i khoản:</Text>
           <Text className="font-medium text-gray-800">{username}</Text>
         </Box>
 
@@ -178,7 +178,7 @@ export function ChangePasswordModal({ isVisible, onClose, username }: ChangePass
               type={showPasswords.new ? "text" : "password"}
               value={formData.newPassword}
               onChange={(e) => setFormData({...formData, newPassword: e.target.value})}
-              placeholder="Nhập mật khẩu mới (ít nhất 6 ký tự)"
+              placeholder="Nhập mật khẩu mới (�t nhất 6 k� tự)"
               className="w-full pr-10"
             />
             <Button
@@ -198,7 +198,7 @@ export function ChangePasswordModal({ isVisible, onClose, username }: ChangePass
         {/* Confirm Password */}
         <Box>
           <Text className="text-sm font-medium text-gray-700 mb-2">
-            Xác nhận mật khẩu mới: <span className="text-red-500">*</span>
+            X�c nhận mật khẩu mới: <span className="text-red-500">*</span>
           </Text>
           <Box className="relative">
             <Input
@@ -243,7 +243,7 @@ export function ChangePasswordModal({ isVisible, onClose, username }: ChangePass
         {/* Instructions */}
         <Box className="bg-blue-50 border border-blue-200 rounded-lg p-3">
           <Text className="text-blue-800 text-xs">
-            💡 Mật khẩu mới phải có ít nhất 6 ký tự và khác với mật khẩu hiện tại
+            💡 Mật khẩu mới phải c� �t nhất 6 k� tự v� kh�c với mật khẩu hiện tại
           </Text>
         </Box>
       </Box>

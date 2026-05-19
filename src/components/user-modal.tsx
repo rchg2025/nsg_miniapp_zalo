@@ -54,15 +54,15 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onClose, user, onSave })
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Tên không được để trống';
+      newErrors.name = 'T�n kh�ng được để trống';
     }
 
     if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email không hợp lệ';
+      newErrors.email = 'Email kh�ng hợp lệ';
     }
 
     if (formData.phone && !/^[0-9]{10,11}$/.test(formData.phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Số điện thoại không hợp lệ (10-11 số)';
+      newErrors.phone = 'Số điện thoại kh�ng hợp lệ (10-11 số)';
     }
 
     setErrors(newErrors);
@@ -102,29 +102,29 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onClose, user, onSave })
       onClose();
     } catch (error) {
       console.error('Error saving user:', error);
-      setErrors({ submit: 'Có lỗi xảy ra khi lưu thông tin người dùng' });
+      setErrors({ submit: 'C� lỗi xảy ra khi lưu th�ng tin người d�ng' });
     } finally {
       setIsLoading(false);
     }
   };
 
   const roleOptions = [
-    { value: 'student', label: 'Sinh viên' },
-    { value: 'teacher', label: 'Giáo viên' },
-    { value: 'admin', label: 'Quản trị viên' },
-    { value: 'guest', label: 'Khách' }
+    { value: 'student', label: 'Sinh vi�n' },
+    { value: 'teacher', label: 'Gi�o vi�n' },
+    { value: 'admin', label: 'Quản trị vi�n' },
+    { value: 'guest', label: 'Kh�ch' }
   ];
 
   const statusOptions = [
     { value: 'active', label: 'Hoạt động' },
-    { value: 'inactive', label: 'Không hoạt động' },
-    { value: 'suspended', label: 'Tạm khóa' }
+    { value: 'inactive', label: 'Kh�ng hoạt động' },
+    { value: 'suspended', label: 'Tạm kh�a' }
   ];
 
   return (
     <Modal
       visible={visible}
-      title={user ? 'Chỉnh sửa người dùng' : 'Tạo người dùng mới'}
+      title={user ? 'Chỉnh sửa người d�ng' : 'Tạo người d�ng mới'}
       onClose={onClose}
       actions={[
         {
@@ -151,7 +151,7 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onClose, user, onSave })
                 className="mx-auto mb-2"
               />
               <Text className="text-sm text-gray-500">
-                {user.source === 'zalo' ? '📱 Từ Zalo' : '👤 Tạo thủ công'}
+                {user.source === 'zalo' ? '📱 Từ Zalo' : '👤 Tạo thủ c�ng'}
               </Text>
               {user.zaloId && (
                 <Text className="text-xs text-gray-400">
@@ -165,10 +165,10 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onClose, user, onSave })
         {/* Name */}
         <Box>
           <Text className="block text-sm font-medium text-gray-700 mb-1">
-            Họ và tên *
+            Họ v� t�n *
           </Text>
           <Input
-            placeholder="Nhập họ và tên"
+            placeholder="Nhập họ v� t�n"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             status={errors.name ? 'error' : undefined}
@@ -204,14 +204,14 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onClose, user, onSave })
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             status={errors.phone ? 'error' : undefined}
-            disabled={user?.source === 'zalo'} // Không cho sửa phone từ Zalo
+            disabled={user?.source === 'zalo'} // Kh�ng cho sửa phone từ Zalo
           />
           {errors.phone && (
             <Text className="text-xs text-red-500 mt-1">{errors.phone}</Text>
           )}
           {user?.source === 'zalo' && (
             <Text className="text-xs text-gray-500 mt-1">
-              Số điện thoại từ Zalo không thể chỉnh sửa
+              Số điện thoại từ Zalo kh�ng thể chỉnh sửa
             </Text>
           )}
         </Box>
@@ -219,10 +219,10 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onClose, user, onSave })
         {/* Role */}
         <Box>
           <Text className="block text-sm font-medium text-gray-700 mb-1">
-            Vai trò
+            Vai tr�
           </Text>
           <Select
-            placeholder="Chọn vai trò"
+            placeholder="Chọn vai tr�"
             value={formData.role}
             onChange={(value) => setFormData({ ...formData, role: value as User['role'] })}
           >
@@ -237,10 +237,10 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onClose, user, onSave })
         {/* Status */}
         <Box>
           <Text className="block text-sm font-medium text-gray-700 mb-1">
-            Trạng thái
+            Trạng th�i
           </Text>
           <Select
-            placeholder="Chọn trạng thái"
+            placeholder="Chọn trạng th�i"
             value={formData.status}
             onChange={(value) => setFormData({ ...formData, status: value as User['status'] })}
           >
@@ -255,10 +255,10 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onClose, user, onSave })
         {/* Notes */}
         <Box>
           <Text className="block text-sm font-medium text-gray-700 mb-1">
-            Ghi chú
+            Ghi ch�
           </Text>
           <Input.TextArea
-            placeholder="Nhập ghi chú (tùy chọn)"
+            placeholder="Nhập ghi ch� (t�y chọn)"
             value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
             rows={3}
@@ -269,11 +269,11 @@ const UserModal: React.FC<UserModalProps> = ({ visible, onClose, user, onSave })
         {user && (
           <Box className="border-t pt-4 mt-4">
             <Text className="text-sm font-medium text-gray-700 mb-2">
-              Thông tin hệ thống
+              Th�ng tin hệ thống
             </Text>
             <Box className="grid grid-cols-2 gap-4 text-xs text-gray-500">
               <Box>
-                <Text className="font-medium">Tạo lúc:</Text>
+                <Text className="font-medium">Tạo l�c:</Text>
                 <Text>{new Date(user.createdAt).toLocaleString('vi-VN')}</Text>
               </Box>
               <Box>

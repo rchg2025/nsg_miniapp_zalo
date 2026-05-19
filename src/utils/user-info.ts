@@ -4,23 +4,23 @@ export class UserInfo {
   static async getZaloDisplayName(): Promise<string> {
     try {
       const userInfo = await getUserInfo({
-        autoRequestPermission: true, // Tự động yêu cầu quyền
+        autoRequestPermission: true, // Tự động y�u cầu quyền
       });
       console.log('🔍 Zalo getUserInfo response:', userInfo);
       
       if (userInfo && userInfo.userInfo && userInfo.userInfo.name) {
-        // Lưu tên người dùng vào localStorage để dùng offline
+        // Lưu t�n người d�ng v�o localStorage để d�ng offline
         localStorage.setItem('zalo_user_name', userInfo.userInfo.name);
         return userInfo.userInfo.name;
       }
       
-      // Thử lấy từ localStorage nếu đã lưu trước đó
+      // Thử lấy từ localStorage nếu đ� lưu trước đ�
       const cachedName = localStorage.getItem('zalo_user_name');
       if (cachedName) {
         return cachedName;
       }
       
-      return 'Khách';
+      return 'Kh�ch';
     } catch (error) {
       console.error('❌ Error getting Zalo user info:', error);
       
@@ -30,12 +30,12 @@ export class UserInfo {
         return cachedName;
       }
       
-      return 'Khách';
+      return 'Kh�ch';
     }
   }
 
   static getUserId(): string {
-    // Có thể lấy từ localStorage hoặc từ Zalo SDK
+    // C� thể lấy từ localStorage hoặc từ Zalo SDK
     const userId = localStorage.getItem('user_id');
     return userId || 'guest';
   }
