@@ -208,7 +208,7 @@ const ProfilePageV2: React.FC = () => {
 
         {/* Test Navigation */}
         <Box className="bg-gray-50 rounded-lg p-4">
-          <Text className="font-medium text-gray-700 mb-3">>� Test & Debug</Text>
+          <Text className="font-medium text-gray-700 mb-3">Test &amp; Debug</Text>
           
           <Button
             variant="secondary"
@@ -216,7 +216,7 @@ const ProfilePageV2: React.FC = () => {
             onClick={() => navigate('/oa-checker')}
           >
             <Icon icon="zi-setting" className="mr-3 text-purple-500" />
-            <Text className="text-purple-600">= OA Checker (Fix OA)</Text>
+            <Text className="text-purple-600">OA Checker (Fix OA)</Text>
           </Button>
           
           <Button
@@ -243,7 +243,7 @@ const ProfilePageV2: React.FC = () => {
             onClick={() => navigate('/profile')}
           >
             <Icon icon="zi-user" className="mr-3 text-red-500" />
-            <Text className="text-red-600">Profile G�c (L�i)</Text>
+            <Text className="text-red-600">Profile Gốc (Lỗi)</Text>
           </Button>
         </Box>
 

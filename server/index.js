@@ -184,7 +184,7 @@ app.delete('/api/majors/:id', async (req, res) => {
 });
 
 // ================= NGÆ¯á»œI DÃ™NG (USERS) =================
-// ================= ADMIN & THÀNH VIÊN =================
+// ================= ADMIN & THï¿½NH VIï¿½N =================
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
   const adminUser = process.env.ADMIN_USERNAME || 'admin';
@@ -193,7 +193,7 @@ app.post('/api/admin/login', (req, res) => {
   if (username === adminUser && password === adminPass) {
     res.json({ success: true, token: 'fake-jwt-token-xyz' });
   } else {
-    res.status(401).json({ success: false, error: 'Sai tài kho?n ho?c m?t kh?u' });
+    res.status(401).json({ success: false, error: 'Sai tï¿½i kho?n ho?c m?t kh?u' });
   }
 });
 
@@ -339,6 +339,7 @@ app.get('/', (req, res) => {
 
 // Kh?i d?ng server
 
+
 // ================= CATEGORIES =================
 app.get('/api/categories', async (req, res) => {
   try { const { rows } = await db.query('SELECT * FROM categories ORDER BY id ASC'); res.json(rows); }
@@ -346,11 +347,11 @@ app.get('/api/categories', async (req, res) => {
 });
 app.post('/api/categories', async (req, res) => {
   const { name, slug } = req.body;
-  try { const { rows } = await db.query('INSERT INTO categories (name, slug) VALUES (\, \) RETURNING *', [name, slug]); res.json(rows[0]); }
+  try { const { rows } = await db.query('INSERT INTO categories (name, slug) VALUES ($1, $2) RETURNING *', [name, slug]); res.json(rows[0]); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.delete('/api/categories/:id', async (req, res) => {
-  try { await db.query('DELETE FROM categories WHERE id=', [req.params.id]); res.json({ success: true }); }
+  try { await db.query('DELETE FROM categories WHERE id=$1', [req.params.id]); res.json({ success: true }); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
 
@@ -361,113 +362,95 @@ app.get('/api/training_systems', async (req, res) => {
 });
 app.post('/api/training_systems', async (req, res) => {
   const { name, description } = req.body;
-  try { const { rows } = await db.query('INSERT INTO training_systems (name, description) VALUES (\, \) RETURNING *', [name, description]); res.json(rows[0]); }
+  try { const { rows } = await db.query('INSERT INTO training_systems (name, description) VALUES ($1, $2) RETURNING *', [name, description]); res.json(rows[0]); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.delete('/api/training_systems/:id', async (req, res) => {
-  try { await db.query('DELETE FROM training_systems WHERE id=', [req.params.id]); res.json({ success: true }); }
+  try { await db.query('DELETE FROM training_systems WHERE id=$1', [req.params.id]); res.json({ success: true }); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ================= SYSTEM USERS (Backend Login) =================
-const crypto = require('crypto');
+// ================= SYSTEM USERS =================
 function hashPassword(p) { return crypto.createHash('sha256').update(p).digest('hex'); }
 app.get('/api/system_users', async (req, res) => {
   try { const { rows } = await db.query('SELECT id, username, display_name, role, is_active, created_at FROM system_users ORDER BY id ASC'); res.json(rows); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.post('/api/system_users', async (req, res) => {
-  const { username, password, display_name, role } = req.body;
+  const { username, password, display_name, role, is_active } = req.body;
+  if (!username || !password) return res.status(400).json({ error: 'username and password required' });
   try {
-    const h = hashPassword(password);
-    const { rows } = await db.query('INSERT INTO system_users (username, password_hash, display_name, role) VALUES (\, \, \, \) RETURNING id, username, display_name, role, is_active', [username, h, display_name, role || 'editor']);
+    const hash = hashPassword(password);
+    const { rows } = await db.query(
+      'INSERT INTO system_users (username, password_hash, display_name, role, is_active) VALUES ($1,$2,$3,$4,$5) RETURNING id, username, display_name, role, is_active',
+      [username, hash, display_name || username, role || 'editor', is_active !== false]
+    );
     res.json(rows[0]);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.put('/api/system_users/:id', async (req, res) => {
-  const { display_name, role, is_active, password } = req.body;
+  const { username, password, display_name, role, is_active } = req.body;
   try {
-    let q, params;
     if (password) {
-      q = 'UPDATE system_users SET display_name=\, role=\, is_active=\, password_hash=\ WHERE id=\ RETURNING id, username, display_name, role, is_active';
-      params = [display_name, role, is_active, hashPassword(password), req.params.id];
+      const hash = hashPassword(password);
+      await db.query('UPDATE system_users SET username=$1, password_hash=$2, display_name=$3, role=$4, is_active=$5 WHERE id=$6',
+        [username, hash, display_name, role, is_active, req.params.id]);
     } else {
-      q = 'UPDATE system_users SET display_name=\, role=\, is_active=\ WHERE id=\ RETURNING id, username, display_name, role, is_active';
-      params = [display_name, role, is_active, req.params.id];
+      await db.query('UPDATE system_users SET username=$1, display_name=$2, role=$3, is_active=$4 WHERE id=$5',
+        [username, display_name, role, is_active, req.params.id]);
     }
-    const { rows } = await db.query(q, params);
-    res.json(rows[0]);
+    res.json({ success: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.delete('/api/system_users/:id', async (req, res) => {
-  try { await db.query('DELETE FROM system_users WHERE id=', [req.params.id]); res.json({ success: true }); }
+  try { await db.query('DELETE FROM system_users WHERE id=$1', [req.params.id]); res.json({ success: true }); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// ================= UPLOAD (Google Drive) =================
-const multer = require('multer');
-const { google } = require('googleapis');
-const fs = require('fs');
-const upload = multer({ dest: '/tmp/uploads/' });
-
-async function getGoogleDriveClient() {
-  const { rows } = await db.query('SELECT config_value FROM settings WHERE config_key = ', ['google_service_account_json']);
-  if (!rows.length || !rows[0].config_value) throw new Error('Google Service Account JSON not configured in settings');
-  const credentials = JSON.parse(rows[0].config_value);
-  const auth = new google.auth.GoogleAuth({ credentials, scopes: ['https://www.googleapis.com/auth/drive'] });
-  return google.drive({ version: 'v3', auth });
-}
-
-app.post('/api/upload', upload.single('file'), async (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  try {
-    const drive = await getGoogleDriveClient();
-    const { rows: folderRows } = await db.query('SELECT config_value FROM settings WHERE config_key = ', ['google_drive_folder_id']);
-    const folderId = folderRows.length ? folderRows[0].config_value : null;
-    const fileMetadata = { name: req.file.originalname, ...(folderId && { parents: [folderId] }) };
-    const media = { mimeType: req.file.mimetype, body: fs.createReadStream(req.file.path) };
-    const uploaded = await drive.files.create({ requestBody: fileMetadata, media, fields: 'id, webViewLink, webContentLink' });
-    // Make file publicly readable
-    await drive.permissions.create({ fileId: uploaded.data.id, requestBody: { role: 'reader', type: 'anyone' } });
-    const url = 'https://drive.google.com/uc?export=view&id=' + uploaded.data.id;
-    fs.unlink(req.file.path, () => {});
-    res.json({ url, id: uploaded.data.id });
-  } catch (err) {
-    try { fs.unlink(req.file.path, () => {}); } catch(e) {}
-    res.status(500).json({ error: err.message });
-  }
-});
-
-
-// Login for system users
 app.post('/api/system_users/login', async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ success: false, message: 'Missing credentials' });
   try {
-    const crypto = require('crypto');
-    const hash = crypto.createHash('sha256').update(password).digest('hex');
-    const result = await pool.query(
-      'SELECT id, username, display_name, role, is_active FROM system_users WHERE username = \ AND password_hash = ',
+    const hash = hashPassword(password);
+    const result = await db.query(
+      'SELECT id, username, display_name, role, is_active FROM system_users WHERE username=$1 AND password_hash=$2',
       [username, hash]
     );
     if (!result.rows.length) return res.status(401).json({ success: false, message: 'Sai ten dang nhap hoac mat khau' });
     const user = result.rows[0];
     if (!user.is_active) return res.status(403).json({ success: false, message: 'Tai khoan bi vo hieu hoa' });
     res.json({ success: true, user });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
+  } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ================= UPLOAD (Google Drive) =================
+app.post('/api/upload', (req, res) => {
+  try {
+    const multer = require('multer');
+    const { google } = require('googleapis');
+    const fs = require('fs');
+    const uploader = multer({ dest: '/tmp/uploads/' });
+    uploader.single('file')(req, res, async (err) => {
+      if (err || !req.file) return res.status(400).json({ error: 'No file uploaded' });
+      try {
+        const { rows } = await db.query('SELECT config_value FROM settings WHERE config_key=$1', ['google_service_account_json']);
+        if (!rows.length || !rows[0].config_value) return res.status(400).json({ error: 'Google Drive not configured' });
+        const credentials = JSON.parse(rows[0].config_value);
+        const auth = new google.auth.GoogleAuth({ credentials, scopes: ['https://www.googleapis.com/auth/drive'] });
+        const drive = google.drive({ version: 'v3', auth });
+        const { rows: fr } = await db.query('SELECT config_value FROM settings WHERE config_key=$1', ['google_drive_folder_id']);
+        const folderId = fr.length ? fr[0].config_value : null;
+        const meta = { name: req.file.originalname, ...(folderId && { parents: [folderId] }) };
+        const media = { mimeType: req.file.mimetype, body: fs.createReadStream(req.file.path) };
+        const uploaded = await drive.files.create({ requestBody: meta, media, fields: 'id, webViewLink' });
+        await drive.permissions.create({ fileId: uploaded.data.id, requestBody: { role: 'reader', type: 'anyone' } });
+        fs.unlink(req.file.path, () => {});
+        res.json({ url: uploaded.data.webViewLink, fileId: uploaded.data.id });
+      } catch (e) { res.status(500).json({ error: e.message }); }
+    });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.listen(port, () => {
-  console.log(`Server dang l?ng nghe t?i http://localhost:${port}`);
+  console.log('Server running on port ' + port);
 });
-module.exports = app;
-
-
-
-
-
-
-
-
