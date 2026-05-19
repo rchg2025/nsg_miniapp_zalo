@@ -4,28 +4,24 @@
     {
       "src": "server/index.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "server/public/**",
-      "use": "@vercel/static"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/server/index.js"
+      "source": "/api/(.*)",
+      "destination": "/server/index.js"
     },
     {
-      "src": "/zalo-webhook",
-      "dest": "/server/index.js"
+      "source": "/zalo-webhook",
+      "destination": "/server/index.js"
     },
     {
-      "src": "/",
-      "dest": "/server/public/index.html"
+      "source": "/",
+      "destination": "/server/public/index.html"
     },
     {
-      "src": "/(.*)",
-      "dest": "/server/public/$1"
+      "source": "/(.*)",
+      "destination": "/server/public/$1"
     }
   ]
 }
