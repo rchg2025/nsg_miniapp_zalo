@@ -793,7 +793,7 @@ function viewAdmission(id) {
   document.getElementById('admission-detail-modal').classList.remove('hidden');
 }
 
-async function updateAdmissionStatus(id, status) {
+window.updateAdmissionStatus = async function(id, status) {
   let reject_reason = null;
   if (status === 'rejected') {
     reject_reason = prompt('Vui lòng nhập lý do từ chối hồ sơ này (bắt buộc):');

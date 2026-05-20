@@ -74,14 +74,29 @@ const getNewsData = () => {
   }
 };
 
-const categories = [
-  { key: "all", label: "Tất cả" },
-  { key: "news", label: "Tổng hợp" },
-  { key: "announcement", label: "Thông báo" },
-  { key: "admission", label: "Tuyển sinh" },
-  { key: "event", label: "Sự kiện" },
-  { key: "saved", label: "Đã lưu" }
-];
+const getCategories = (newsList: NewsItem[]) => {
+  const dynamicCategories = Array.from(new Set(newsList.map(news => news.category)))
+    .filter(cat => cat) // Lọc bỏ null/undefined
+    .map(key => {
+      // Map một số key tiếng Anh thường gặp với label tiếng Việt (nếu cần)
+      const labelMap: Record<string, string> = {
+        'news': 'Tin tức',
+        'announcement': 'Thông báo',
+        'admission': 'Tuyển sinh',
+        'event': 'Sự kiện'
+      };
+      return { 
+        key, 
+        label: labelMap[key] || (key.charAt(0).toUpperCase() + key.slice(1)) 
+      };
+    });
+    
+  return [
+    { key: "all", label: "Tất cả" },
+    ...dynamicCategories,
+    { key: "saved", label: "Đã lưu" }
+  ];
+};
 
 function NewsPage() {
   const navigate = useNavigate();
@@ -92,6 +107,9 @@ function NewsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [newsData, setNewsData] = useState<NewsItem[]>([]);
   const [savedNewsIds, setSavedNewsIds] = useState<string[]>([]);
+  
+  // Lấy categories từ dữ liệu thay vì fix cứng
+  const categories = getCategories(newsData);
   
   // Mock user ID - trong thực tế sẽ lấy từ Zalo authentication
   const currentUserId = "user_1";

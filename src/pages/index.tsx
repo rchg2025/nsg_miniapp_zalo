@@ -110,7 +110,6 @@ const QuickMenuSection: React.FC = () => {
     { icon: "🎉", label: "Sự kiện", color: "text-purple-600", bg: "bg-purple-50", route: "/news?category=event" },
     { icon: "🎓", label: "Ngành học", color: "text-green-600", bg: "bg-green-50", route: "/majors" },
     { icon: "📋", label: "Đăng ký", color: "text-orange-600", bg: "bg-orange-50", route: "/admission-registration" },
-    { icon: "👤", label: "Cá nhân", color: "text-gray-600", bg: "bg-gray-50", route: "/profile" },
   ];
 
   return (

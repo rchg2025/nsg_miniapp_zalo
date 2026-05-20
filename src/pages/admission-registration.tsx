@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Icon, Page, Text, Header, Input, DatePicker } from "zmp-ui";
+import { Box, Button, Icon, Page, Text, Header, Input, DatePicker, Select } from "zmp-ui";
+const { Option } = Select;
 import { openChat, getUserInfo, followOA } from "zmp-sdk/apis";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUser } from "@/contexts/user-context";
@@ -291,18 +292,24 @@ function AdmissionRegistrationPage() {
           
           <Box className="mb-4">
             <Text className="mb-2 font-medium">Ngành học *</Text>
-            <select
+            <Select
+              placeholder="Chọn ngành học"
               value={formData.majorId}
-              onChange={(e) => setFormData({...formData, majorId: e.target.value})}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={(value) => {
+                setFormData({...formData, majorId: value as string});
+                const major = majors.find(m => m.id === value);
+                setSelectedMajor(major || null);
+              }}
+              closeOnSelect
             >
-              <option value="">Chọn ngành học</option>
               {majors.map((major) => (
-                <option key={major.id} value={major.id}>
-                  {major.name} ({major.code}) - {getEducationLevelText(major.educationLevel)}
-                </option>
+                <Option 
+                  key={major.id} 
+                  value={major.id} 
+                  title={`${major.name} (${major.code}) - ${getEducationLevelText(major.educationLevel)}`}
+                />
               ))}
-            </select>
+            </Select>
           </Box>
 
           {selectedMajor && (
@@ -403,7 +410,7 @@ function AdmissionRegistrationPage() {
             <Box>
               <Text className="mb-2 font-medium">Địa chỉ *</Text>
               <Input.TextArea
-                placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"
+                placeholder="Số nhà, đường, phường/xã, tỉnh/thành phố"
                 value={formData.address}
                 onChange={(e) => setFormData({...formData, address: e.target.value})}
                 rows={2}

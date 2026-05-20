@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Page, Text, Header, Input, Select } from "zmp-ui";
+import { Box, Button, Page, Text, Header, Input } from "zmp-ui";
 import { useNavigate } from "react-router-dom";
 import { DataManager, Major } from "@/utils/data-manager";
 
@@ -85,7 +85,7 @@ function MajorsPage() {
       />
 
       <Box className="p-4">
-        <Box className="space-y-3 mb-6">
+        <Box className="space-y-3 mb-4">
           <Input
             type="text"
             placeholder="Tìm kiếm ngành học..."
@@ -93,41 +93,29 @@ function MajorsPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full"
           />
-
-          <Select
-            placeholder="Chọn hệ đào tạo"
-            value={selectedLevel}
-            onChange={(value) => setSelectedLevel(value as string)}
-          >
-            <Select.Option value="all" title="Tất cả hệ đào tạo" />
-            <Select.Option value="caodang" title="Cao đẳng" />
-            <Select.Option value="trungcap" title="Trung cấp" />
-            <Select.Option value="caodang-lienthong" title="Cao đẳng liên thông" />
-          </Select>
         </Box>
 
-        <Box className="grid grid-cols-2 gap-3 mb-6">
-          <Box className="bg-white p-3 rounded-lg text-center">
-            <Text className="text-lg font-bold text-blue-600">{majorsData.length}</Text>
-            <Text className="text-xs text-gray-500">Tổng ngành</Text>
-          </Box>
-          <Box className="bg-white p-3 rounded-lg text-center">
-            <Text className="text-lg font-bold text-green-600">
-              {majorsData.filter(m => m.educationLevel === "caodang").length}
-            </Text>
-            <Text className="text-xs text-gray-500">Cao đẳng</Text>
-          </Box>
-          <Box className="bg-white p-3 rounded-lg text-center">
-            <Text className="text-lg font-bold text-orange-600">
-              {majorsData.filter(m => m.educationLevel === "trungcap").length}
-            </Text>
-            <Text className="text-xs text-gray-500">Trung cấp</Text>
-          </Box>
-          <Box className="bg-white p-3 rounded-lg text-center">
-            <Text className="text-lg font-bold text-purple-600">
-              {majorsData.filter(m => m.educationLevel === "caodang-lienthong").length}
-            </Text>
-            <Text className="text-xs text-gray-500">Cao đẳng liên thông</Text>
+        {/* Horizontal level tabs - dynamic from data */}
+        <Box className="bg-white border-b border-gray-200 -mx-4 mb-4">
+          <Box className="overflow-x-auto">
+            <Box className="flex space-x-1 px-4 py-3 min-w-max">
+              {[{ key: "all", label: "Tất cả" }, ...Array.from(new Set(majorsData.map(m => m.educationLevel))).filter(Boolean).map(lvl => ({ key: lvl, label: getEducationLevelText(lvl) }))].map((tab) => (
+                <Button
+                  key={tab.key}
+                  size="small"
+                  variant={selectedLevel === tab.key ? "primary" : "secondary"}
+                  className={`flex-shrink-0 px-4 py-2 rounded-full font-medium transition-all duration-200 ${selectedLevel === tab.key ? "bg-blue-600 text-white shadow-md" : "bg-gray-100 text-gray-600"}`}
+                  onClick={() => setSelectedLevel(tab.key)}
+                >
+                  {tab.label}
+                  {tab.key !== "all" && (
+                    <span className="ml-2 bg-white/20 px-1.5 py-0.5 rounded-full text-xs">
+                      {majorsData.filter(m => m.educationLevel === tab.key).length}
+                    </span>
+                  )}
+                </Button>
+              ))}
+            </Box>
           </Box>
         </Box>
 

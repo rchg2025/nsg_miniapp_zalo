@@ -67,12 +67,6 @@ function BottomNavigation() {
       label: "Đăng ký",
       icon: "zi-edit",
       path: "/admission-registration"
-    },
-    {
-      id: "profile",
-      label: "Cá nhân",
-      icon: "zi-user",
-      path: "/profile"
     }
   ];
 

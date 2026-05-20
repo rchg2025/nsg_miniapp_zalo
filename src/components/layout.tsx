@@ -11,7 +11,6 @@ import { AppProps } from "zmp-ui/app";
 import HomePage from "@/pages/index";
 import NewsPage from "@/pages/news";
 import NewsDetail from "@/pages/news-detail";
-import ProfilePage from "@/pages/profile";
 import MajorsPage from "@/pages/majors";
 import MajorDetailPage from "@/pages/major-detail";
 import AdmissionRegistrationPage from "@/pages/admission-registration";
@@ -31,9 +30,7 @@ import DebugPage from "@/pages/debug";
 import ZaloTestPage from "@/pages/zalo-test";
 import ZaloPermissionTestPage from "@/pages/zalo-permission-test";
 import ZaloOATestPage from "@/pages/zalo-oa-test";
-import ProfileDebugPage from "@/pages/profile-debug";
-import ProfilePageSimple from "@/pages/profile-simple";
-import ProfilePageV2 from "@/pages/profile-v2";
+
 import OAChecker from "@/pages/oa-checker";
 import { Header } from "@/components/header";
 import BottomNavigation from "@/components/bottom-navigation";
@@ -141,10 +138,6 @@ const Layout = () => {
             <Route path="/" element={<HomePage />}></Route>
             <Route path="/news" element={<NewsPage />}></Route>
             <Route path="/news/:id" element={<NewsDetail />}></Route>
-            <Route path="/profile" element={<ProfilePage />}></Route>
-            <Route path="/profile-debug" element={<ProfileDebugPage />}></Route>
-            <Route path="/profile-simple" element={<ProfilePageSimple />}></Route>
-            <Route path="/profile-v2" element={<ProfilePageV2 />}></Route>
             <Route path="/oa-checker" element={<OAChecker />}></Route>
             <Route path="/majors" element={<MajorsPage />}></Route>
             <Route path="/majors/:id" element={<MajorDetailPage />}></Route>
