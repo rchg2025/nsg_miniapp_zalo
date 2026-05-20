@@ -106,7 +106,7 @@ function NewsPage() {
         .map((item: any) => ({
           ...item,
           id: parseInt(item.id) || item.id,
-          image: item.image || item.imageUrl || 'https://via.placeholder.com/300x150',
+          image: item.image || item.imageUrl || null,
           summary: item.summary,
         }))
         .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());

@@ -239,7 +239,7 @@ async function fetchNews() {
     if (!news.length) { tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Chưa có tin tức</td></tr>'; return; }
     tbody.innerHTML = news.map(n => `
       <tr class="border-b hover:bg-gray-50">
-        <td class="p-4"><img src="${n.image || 'https://placehold.co/60x40'}" class="w-16 h-10 object-cover rounded" onerror="this.src='https://placehold.co/60x40'"></td>
+        <td class="p-4"><img src="${n.image_url || 'https://placehold.co/60x40'}" class="w-16 h-10 object-cover rounded" onerror="this.src='https://placehold.co/60x40'"></td>
         <td class="p-4 font-medium max-w-xs truncate">${esc(n.title)}</td>
         <td class="p-4"><span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${esc(n.category || '')}</span></td>
         <td class="p-4 text-sm text-gray-500">${fmtDate(n.created_at)}</td>
@@ -256,7 +256,7 @@ function openNewsModal(news) {
   document.getElementById('news-id').value = news.id || '';
   document.getElementById('news-title').value = news.title || '';
   document.getElementById('news-category').value = news.category || 'Tin Tức';
-  document.getElementById('news-image').value = news.image || '';
+  document.getElementById('news-image').value = news.image_url || news.image || '';
   document.getElementById('news-content').value = news.content || '';
     if(window.newsEditor) window.newsEditor.value = news.content || '';
   document.getElementById('news-drop-name').textContent = '';
@@ -268,7 +268,7 @@ async function saveNews() {
   const payload = {
     title: document.getElementById('news-title').value.trim(),
     category: document.getElementById('news-category').value,
-    image: document.getElementById('news-image').value.trim(),
+    image_url: document.getElementById('news-image').value.trim(),
     content: (window.newsEditor ? window.newsEditor.value : document.getElementById('news-content').value).trim()
   };
   if (!payload.title) { alert('Vui lòng nhập tiêu đề'); return; }

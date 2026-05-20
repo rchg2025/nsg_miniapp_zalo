@@ -106,6 +106,18 @@ function NewsDetail() {
       <Box className="p-4">
         {/* Article Header */}
         <Box className="bg-white rounded-lg shadow-sm p-4 mb-4">
+          {/* Article Image */}
+          {(newsDetail.imageUrl || newsDetail.image) && (
+            <Box className="mb-4 rounded-lg overflow-hidden">
+              <img
+                src={newsDetail.imageUrl || newsDetail.image}
+                alt={newsDetail.title}
+                className="w-full h-48 object-cover"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              />
+            </Box>
+          )}
+
           {/* Category and Hot Badge */}
           <Box className="flex items-center gap-2 mb-3">
             <Box className={`px-3 py-1 rounded-full text-xs font-medium ${categoryInfo.color}`}>
@@ -143,7 +155,9 @@ function NewsDetail() {
         {/* Article Content */}
         <Box className="bg-white rounded-lg shadow-sm p-4 mb-4">
           <Text className="text-gray-700 leading-relaxed">
-            {newsDetail.content}
+            {newsDetail.content && newsDetail.content.startsWith('<')
+              ? <span dangerouslySetInnerHTML={{ __html: newsDetail.content }} />
+              : newsDetail.content}
           </Text>
           
           {/* Additional content based on category */}
