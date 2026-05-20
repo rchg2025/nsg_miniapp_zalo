@@ -289,8 +289,9 @@ async function fetchAdminMajors() {
   tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
   try {
     const res = await fetch(API_BASE + '/majors');
+    if (!res.ok) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu (' + res.status + ')</td></tr>'; return; }
     const majors = await res.json();
-    if (!majors.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">Chưa có ngành học</td></tr>'; return; }
+    if (!Array.isArray(majors) || !majors.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">Chưa có ngành học</td></tr>'; return; }
     tbody.innerHTML = majors.map(m => `
       <tr class="border-b hover:bg-gray-50">
         <td class="p-4 font-mono text-sm">${esc(m.code || '')}</td>
@@ -360,13 +361,19 @@ async function saveMajor() {
     requirements: document.getElementById('major-requirements').value.trim()
   };
   if (!payload.name) { alert('Vui lòng nhập tên ngành'); return; }
+  if (!payload.code) { alert('Vui lòng nhập mã ngành'); return; }
   try {
     const method = id ? 'PUT' : 'POST';
     const url = id ? API_BASE + '/majors/' + id : API_BASE + '/majors';
-    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const res = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      alert('Lỗi lưu ngành học: ' + (err.error || res.status));
+      return;
+    }
     document.getElementById('major-modal').classList.add('hidden');
     fetchAdminMajors();
-  } catch (e) { alert('Lỗi lưu ngành học'); }
+  } catch (e) { alert('Lỗi lưu ngành học: ' + e.message); }
 }
 
 async function deleteMajor(id) {
