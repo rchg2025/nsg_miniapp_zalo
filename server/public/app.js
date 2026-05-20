@@ -304,6 +304,24 @@ async function fetchAdminMajors() {
   } catch (e) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
 }
 
+async function populateMajorLevelSelect(selectedValue) {
+  const sel = document.getElementById('major-level');
+  try {
+    const res = await fetch(API_BASE + '/training_systems');
+    const list = await res.json();
+    sel.innerHTML = '<option value="">-- Chọn hệ đào tạo --</option>';
+    list.forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t.name;
+      opt.textContent = t.name;
+      if (t.name === selectedValue) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  } catch (e) {
+    console.warn('Không tải được danh mục hệ đào tạo:', e);
+  }
+}
+
 function openMajorModal(major) {
   major = major || {};
   document.getElementById('major-id').value = major.id || '';
@@ -313,7 +331,7 @@ function openMajorModal(major) {
   
     document.getElementById('major-duration').value = major.duration || '';
     document.getElementById('major-tuition').value = major.tuition_fee || '';
-    document.getElementById('major-level').value = major.education_level || '';
+    populateMajorLevelSelect(major.education_level || '');
     document.getElementById('major-subjects').value = major.subjects || '';
     document.getElementById('major-career').value = major.career_prospects || '';
     document.getElementById('major-website').value = major.website || '';
