@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.2/jodit.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.2/jodit.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .tab-content { display: none; }
@@ -214,8 +215,37 @@
         <div id="admissions" class="tab-content">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-2xl font-bold">Đăng Ký Tuyển Sinh</h3>
-            <button onclick="fetchAdmissions()" class="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600"><i class="fa-solid fa-sync mr-2"></i>Làm mới</button>
+            <div class="flex gap-2">
+              <button onclick="exportAdmissionsToExcel()" class="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"><i class="fa-solid fa-file-excel mr-2"></i>Xuất Excel</button>
+              <button onclick="fetchAdmissions()" class="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600"><i class="fa-solid fa-sync mr-2"></i>Làm mới</button>
+            </div>
           </div>
+          
+          <!-- Bộ lọc thông minh -->
+          <div class="bg-white p-4 rounded-lg shadow mb-4 flex flex-wrap gap-4 items-end">
+            <div class="flex-1 min-w-[200px]">
+              <label class="block text-sm font-medium mb-1">Tìm kiếm</label>
+              <input type="text" id="admission-search" oninput="filterAdmissions()" class="w-full border rounded px-3 py-2 text-sm" placeholder="Họ tên, SĐT, CMND, Ngành...">
+            </div>
+            <div class="w-40">
+              <label class="block text-sm font-medium mb-1">Trạng thái</label>
+              <select id="admission-filter-status" onchange="filterAdmissions()" class="w-full border rounded px-3 py-2 text-sm">
+                <option value="all">Tất cả</option>
+                <option value="pending">Chờ xử lý</option>
+                <option value="approved">Đã duyệt</option>
+                <option value="rejected">Từ chối</option>
+              </select>
+            </div>
+            <div class="w-36">
+              <label class="block text-sm font-medium mb-1">Từ ngày</label>
+              <input type="date" id="admission-filter-from" onchange="filterAdmissions()" class="w-full border rounded px-3 py-2 text-sm">
+            </div>
+            <div class="w-36">
+              <label class="block text-sm font-medium mb-1">Đến ngày</label>
+              <input type="date" id="admission-filter-to" onchange="filterAdmissions()" class="w-full border rounded px-3 py-2 text-sm">
+            </div>
+          </div>
+
           <div class="bg-white rounded-lg shadow overflow-x-auto">
             <table class="w-full text-left">
               <thead class="bg-gray-50 border-b"><tr>

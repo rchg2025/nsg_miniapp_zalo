@@ -632,22 +632,136 @@ async function fetchAdmissions() {
     const res = await fetch(API_BASE + '/admissions');
     const list = await res.json();
     if (!Array.isArray(list) || !list.length) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-400">Chưa có đăng ký</td></tr>'; return; }
-    _admissionsList = list;
-    tbody.innerHTML = list.map(a => `
-      <tr class="border-b hover:bg-gray-50">
-        <td class="p-4 font-medium">${esc(a.student_name || '')}</td>
-        <td class="p-4">${esc(a.phone || '')}</td>
-        <td class="p-4">${esc(a.id_card || '')}</td>
-        <td class="p-4">${esc(a.major_name || a.major_code || '')}</td>
-        <td class="p-4"><span class="px-2 py-1 rounded text-xs font-semibold ${a.status === 'approved' ? 'bg-green-100 text-green-700' : a.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}">${esc(a.status || 'pending')}</span></td>
-        <td class="p-4 text-sm text-gray-500">${fmtDate(a.created_at)}</td>
-        <td class="p-4 text-right flex gap-2 justify-end">
-          <button onclick="viewAdmission(${a.id})" class="text-blue-600 hover:underline text-sm">Chi tiết</button>
-          <button onclick="updateAdmissionStatus(${a.id},'approved')" class="text-green-600 hover:underline text-sm">Duyệt</button>
-          <button onclick="updateAdmissionStatus(${a.id},'rejected')" class="text-red-600 hover:underline text-sm">Từ chối</button>
-        </td>
-      </tr>`).join('');
+    
+    if (!_majorsList || !_majorsList.length) {
+      try {
+        const mRes = await fetch(API_BASE + '/majors');
+        const mList = await mRes.json();
+        if (Array.isArray(mList)) _majorsList = mList;
+      } catch(e) {}
+    }
+
+    // Map major_name from _majorsList if possible
+    _admissionsList = list.map(a => {
+      if (!a.major_name && a.major_code) {
+        const major = _majorsList.find(m => m.code === a.major_code || m.id == a.major_code);
+        if (major) a.major_name = major.name;
+      }
+      return a;
+    });
+    
+    renderAdmissions(_admissionsList);
   } catch (e) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+function renderAdmissions(list) {
+  const tbody = document.getElementById('admissions-tbody');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-400">Không tìm thấy kết quả</td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(a => `
+    <tr class="border-b hover:bg-gray-50">
+      <td class="p-4 font-medium">${esc(a.student_name || '')}</td>
+      <td class="p-4">${esc(a.phone || '')}</td>
+      <td class="p-4">${esc(a.id_card || '')}</td>
+      <td class="p-4">${esc(a.major_name || a.major_code || '')}</td>
+      <td class="p-4"><span class="px-2 py-1 rounded text-xs font-semibold ${a.status === 'approved' ? 'bg-green-100 text-green-700' : a.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}">${a.status === 'approved' ? 'Đã duyệt' : a.status === 'rejected' ? 'Từ chối' : 'Chờ xử lý'}</span></td>
+      <td class="p-4 text-sm text-gray-500">${fmtDate(a.created_at)}</td>
+      <td class="p-4 text-right flex gap-2 justify-end">
+        <button onclick="viewAdmission(${a.id})" class="text-blue-600 hover:underline text-sm">Chi tiết</button>
+        <button onclick="updateAdmissionStatus(${a.id},'approved')" class="text-green-600 hover:underline text-sm">Duyệt</button>
+        <button onclick="updateAdmissionStatus(${a.id},'rejected')" class="text-red-600 hover:underline text-sm">Từ chối</button>
+      </td>
+    </tr>`).join('');
+}
+
+function filterAdmissions() {
+  const searchTrm = document.getElementById('admission-search').value.toLowerCase();
+  const statusFilter = document.getElementById('admission-filter-status').value;
+  const fromDate = document.getElementById('admission-filter-from').value;
+  const toDate = document.getElementById('admission-filter-to').value;
+
+  const filtered = _admissionsList.filter(a => {
+    // Search
+    const textToSearch = [a.student_name, a.phone, a.id_card, a.major_name, a.major_code].join(' ').toLowerCase();
+    if (searchTrm && !textToSearch.includes(searchTrm)) return false;
+
+    // Status
+    if (statusFilter !== 'all' && a.status !== statusFilter) return false;
+
+    // Date
+    if (fromDate || toDate) {
+      // created_at format is ISO string like 2023-10-12T05:22:11
+      const createdDate = new Date(a.created_at);
+      createdDate.setHours(0, 0, 0, 0); // truncate hours for date compare
+
+      if (fromDate) {
+        const fromD = new Date(fromDate);
+        fromD.setHours(0, 0, 0, 0);
+        if (createdDate < fromD) return false;
+      }
+      if (toDate) {
+        const toD = new Date(toDate);
+        toD.setHours(23, 59, 59, 999);
+        if (createdDate > toD) return false;
+      }
+    }
+    
+    return true;
+  });
+
+  renderAdmissions(filtered);
+}
+
+function exportAdmissionsToExcel() {
+  if (!_admissionsList || !_admissionsList.length) {
+    alert('Không có dữ liệu để xuất');
+    return;
+  }
+  
+  // Get filtered items straight from DOM or by re-running filter:
+  // Quickest way is to just re-evaluate the filter on _admissionsList
+  const searchTrm = document.getElementById('admission-search').value.toLowerCase();
+  const statusFilter = document.getElementById('admission-filter-status').value;
+  const fromDate = document.getElementById('admission-filter-from').value;
+  const toDate = document.getElementById('admission-filter-to').value;
+
+  const filtered = _admissionsList.filter(a => {
+    const textToSearch = [a.student_name, a.phone, a.id_card, a.major_name, a.major_code].join(' ').toLowerCase();
+    if (searchTrm && !textToSearch.includes(searchTrm)) return false;
+    if (statusFilter !== 'all' && a.status !== statusFilter) return false;
+    if (fromDate || toDate) {
+      const createdDate = new Date(a.created_at);
+      if (fromDate && createdDate < new Date(fromDate)) return false;
+      if (toDate && createdDate > new Date(toDate + 'T23:59:59')) return false;
+    }
+    return true;
+  });
+
+  if (!filtered.length) {
+    alert('Không có dữ liệu phù hợp với bộ lọc hiện tại');
+    return;
+  }
+
+  const dataToExport = filtered.map(a => ({
+    'Họ và tên': a.student_name || '',
+    'Ngày sinh': a.date_of_birth ? new Date(a.date_of_birth).toLocaleDateString('vi-VN') : '',
+    'Số điện thoại': a.phone || '',
+    'CMND/CCCD': a.id_card || '',
+    'Email': a.email || '',
+    'Trường THPT': a.high_school || '',
+    'Ngành đăng ký': a.major_name || a.major_code || '',
+    'Ngày đăng ký': new Date(a.created_at).toLocaleString('vi-VN'),
+    'Trạng thái': a.status === 'approved' ? 'Đã duyệt' : a.status === 'rejected' ? 'Từ chối' : 'Chờ xử lý',
+    'Zalo ID': a.zalo_id || ''
+  }));
+
+  const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Dang_Ky_Tuyen_Sinh");
+  
+  XLSX.writeFile(workbook, "Danh_Sach_Tuyen_Sinh_NSG.xlsx");
 }
 
 function viewAdmission(id) {
