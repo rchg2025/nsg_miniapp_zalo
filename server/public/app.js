@@ -301,7 +301,12 @@ async function fetchAdminMajors() {
     tbody.innerHTML = majors.map(m => `
       <tr class="border-b hover:bg-gray-50">
         <td class="p-4 font-mono text-sm">${esc(m.code || '')}</td>
-        <td class="p-4 font-medium">${esc(m.name)}</td>
+        <td class="p-4 font-medium">
+          <div class="flex items-center gap-2">
+            ${m.image_url ? `<img src="${esc(m.image_url)}" class="w-10 h-10 rounded object-cover flex-shrink-0" onerror="this.style.display='none'">` : '<div class="w-10 h-10 bg-blue-100 rounded flex items-center justify-center flex-shrink-0 text-lg">📚</div>'}
+            <span>${esc(m.name)}</span>
+          </div>
+        </td>
         <td class="p-4 text-sm text-gray-600 max-w-xs truncate">${esc(stripHtml(m.description || ''))}</td>
         <td class="p-4 text-right">
           <button onclick="previewMajor(${m.id})" class="text-gray-500 hover:underline text-sm mr-2">Xem</button>
@@ -363,19 +368,22 @@ function openMajorModal(major) {
   document.getElementById('major-code').value = major.code || '';
   document.getElementById('major-name').value = major.name || '';
   document.getElementById('major-image').value = major.image_url || major.image || '';
-  
-    document.getElementById('major-duration').value = major.duration || '';
-    document.getElementById('major-tuition').value = major.tuition_fee || '';
-    populateMajorLevelSelect(major.education_level || '');
-    document.getElementById('major-subjects').value = major.subjects || '';
-    document.getElementById('major-career').value = major.career_prospects || '';
-    document.getElementById('major-website').value = major.website || '';
-    document.getElementById('major-description').value = major.description || '';
-    if(window.majorDescEditor) window.majorDescEditor.value = major.description || '';
-    if(window.majorCareerEditor) window.majorCareerEditor.value = major.career_prospects || '';
+  document.getElementById('major-duration').value = major.duration || '';
+  document.getElementById('major-tuition').value = major.tuition_fee || '';
+  populateMajorLevelSelect(major.education_level || '');
+  document.getElementById('major-subjects').value = major.subjects || '';
+  document.getElementById('major-career').value = major.career_prospects || '';
+  document.getElementById('major-website').value = major.website || '';
+  document.getElementById('major-description').value = major.description || '';
   document.getElementById('major-requirements').value = major.requirements || '';
   document.getElementById('major-drop-name').textContent = '';
+  // Hiển thị modal trước để Jodit có DOM visible
   document.getElementById('major-modal').classList.remove('hidden');
+  // Sau đó mới set nội dung Jodit (cần modal visible để render đúng)
+  setTimeout(() => {
+    if (window.majorDescEditor) window.majorDescEditor.value = major.description || '';
+    if (window.majorCareerEditor) window.majorCareerEditor.value = major.career_prospects || '';
+  }, 80);
 }
 
 async function saveMajor() {

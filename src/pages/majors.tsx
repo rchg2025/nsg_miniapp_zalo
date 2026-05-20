@@ -139,7 +139,16 @@ function MajorsPage() {
 
         <Box className="space-y-4">
           {filteredMajors.map((major) => (
-            <Box className="bg-white rounded-lg overflow-hidden shadow-sm border p-4" key={major.id}>
+            <Box className="bg-white rounded-lg overflow-hidden shadow-sm border" key={major.id}>
+              {major.imageUrl && (
+                <img
+                  src={major.imageUrl}
+                  alt={major.name}
+                  className="w-full h-36 object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                />
+              )}
+              <Box className="p-4">
               <Box className="mb-2 flex items-center justify-between">
                 <Text.Title>{major.name}</Text.Title>
                 <Box className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
@@ -183,6 +192,7 @@ function MajorsPage() {
               >
                 Xem chi tiết
               </Button>
+              </Box>
             </Box>
           ))}
         </Box>
