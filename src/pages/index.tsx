@@ -105,12 +105,28 @@ const QuickMenuSection: React.FC = () => {
   const navigate = useNavigate();
   
   const menuItems = [
-    { icon: "📝", label: "Tin tức", color: "text-blue-600", bg: "bg-blue-50", route: "/news?category=news" },
-    { icon: "📢", label: "Thông báo", color: "text-red-600", bg: "bg-red-50", route: "/news?category=announcement" },
-    { icon: "🎉", label: "Sự kiện", color: "text-purple-600", bg: "bg-purple-50", route: "/news?category=event" },
-    { icon: "🎓", label: "Ngành học", color: "text-green-600", bg: "bg-green-50", route: "/majors" },
-    { icon: "📋", label: "Đăng ký", color: "text-orange-600", bg: "bg-orange-50", route: "/admission-registration" },
+    { icon: "📝", label: "Tin tức", color: "text-blue-600", bg: "bg-blue-50", route: "/news?category=news", action: null },
+    { icon: "📢", label: "Thông báo", color: "text-red-600", bg: "bg-red-50", route: "/news?category=announcement", action: null },
+    { icon: "🎉", label: "Sự kiện", color: "text-purple-600", bg: "bg-purple-50", route: "/news?category=event", action: null },
+    { icon: "🎓", label: "Ngành học", color: "text-green-600", bg: "bg-green-50", route: "/majors", action: null },
+    { icon: "📋", label: "Đăng ký", color: "text-orange-600", bg: "bg-orange-50", route: "/admission-registration", action: null },
+    { icon: "💬", label: "Quan tâm OA", color: "text-blue-500", bg: "bg-sky-50", route: null, action: "follow-oa" },
   ];
+
+  const handleItemClick = async (item: typeof menuItems[0]) => {
+    if (item.action === "follow-oa") {
+      try {
+        const { openWebview } = await import("zmp-sdk/apis");
+        await openWebview({ url: "https://zalo.me/namsaigon" });
+      } catch (e) {
+        console.error("Error opening OA:", e);
+      }
+      return;
+    }
+    if (item.route) {
+      navigate(item.route);
+    }
+  };
 
   return (
     <Box className="mb-6 px-4">
@@ -120,10 +136,7 @@ const QuickMenuSection: React.FC = () => {
           <Box
             key={index}
             className={`${item.bg} rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:scale-105 transition-transform`}
-            onClick={() => {
-              console.log('📍 Navigating to:', item.route);
-              navigate(item.route);
-            }}
+            onClick={() => handleItemClick(item)}
           >
             <Text className={`text-3xl mb-2`}>{item.icon}</Text>
             <Text className={`${item.color} text-sm font-medium text-center`}>
