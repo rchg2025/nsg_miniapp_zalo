@@ -2,6 +2,7 @@
 let currentUser = null;
 let _admissionsList = [];
 let _majorsList = [];
+let _newsList = [];
 
 // ===================== AUTH =====================
 
@@ -237,6 +238,7 @@ async function fetchNews() {
     const res = await fetch(API_BASE + '/news');
     const news = await res.json();
     if (!news.length) { tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Chưa có tin tức</td></tr>'; return; }
+    _newsList = news;
     tbody.innerHTML = news.map(n => `
       <tr class="border-b hover:bg-gray-50">
         <td class="p-4"><img src="${n.image_url || 'https://placehold.co/60x40'}" class="w-16 h-10 object-cover rounded" onerror="this.src='https://placehold.co/60x40'"></td>
@@ -244,11 +246,29 @@ async function fetchNews() {
         <td class="p-4"><span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${esc(n.category || '')}</span></td>
         <td class="p-4 text-sm text-gray-500">${fmtDate(n.created_at)}</td>
         <td class="p-4 text-right">
-          <button onclick="openNewsModal(${JSON.stringify(n).replace(/"/g,'&quot;')})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
+          <button onclick="previewNews(${n.id})" class="text-gray-500 hover:underline text-sm mr-2">Xem</button>
+          <button onclick="editNews(${n.id})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
           <button onclick="deleteNews(${n.id})" class="text-red-600 hover:underline text-sm">Xóa</button>
         </td>
       </tr>`).join('');
   } catch (e) { tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+function editNews(id) { const n = _newsList.find(x => x.id == id); if (n) openNewsModal(n); }
+
+function previewNews(id) {
+  const n = _newsList.find(x => x.id == id);
+  if (!n) return;
+  document.getElementById('news-preview-title').textContent = n.title || '';
+  document.getElementById('news-preview-body').innerHTML = `
+    ${n.image_url ? `<img src="${esc(n.image_url)}" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` : ''}
+    <div class="flex gap-2 mb-3">
+      <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${esc(n.category || '')}</span>
+      <span class="text-xs text-gray-400">${fmtDate(n.created_at)}</span>
+    </div>
+    <div class="prose text-sm text-gray-700 leading-relaxed">${n.content || '<em>Không có nội dung</em>'}</div>
+  `;
+  document.getElementById('news-preview-modal').classList.remove('hidden');
 }
 
 function openNewsModal(news) {
@@ -258,9 +278,13 @@ function openNewsModal(news) {
   document.getElementById('news-category').value = news.category || 'Tin Tức';
   document.getElementById('news-image').value = news.image_url || news.image || '';
   document.getElementById('news-content').value = news.content || '';
-    if(window.newsEditor) window.newsEditor.value = news.content || '';
   document.getElementById('news-drop-name').textContent = '';
+  // Show modal first so Jodit has visible DOM
   document.getElementById('news-modal').classList.remove('hidden');
+  // Set Jodit value after modal is visible
+  setTimeout(() => {
+    if (window.newsEditor) window.newsEditor.value = news.content || '';
+  }, 80);
 }
 
 async function saveNews() {
