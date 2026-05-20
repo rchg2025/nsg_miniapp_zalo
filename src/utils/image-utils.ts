@@ -3,6 +3,25 @@
  */
 
 /**
+ * Chuyển đổi Google Drive URL sang URL hiển thị trực tiếp
+ * Hỗ trợ: /file/d/ID/view, /open?id=ID, /uc?id=ID
+ */
+export function convertGoogleDriveUrl(url: string): string {
+  if (!url) return url;
+  // https://drive.google.com/file/d/FILE_ID/view
+  const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
+  if (fileMatch) {
+    return `https://drive.google.com/uc?export=view&id=${fileMatch[1]}`;
+  }
+  // https://drive.google.com/open?id=FILE_ID
+  const openMatch = url.match(/drive\.google\.com\/open\?id=([^&]+)/);
+  if (openMatch) {
+    return `https://drive.google.com/uc?export=view&id=${openMatch[1]}`;
+  }
+  return url;
+}
+
+/**
  * Tạo URL placeholder image với text tùy chỉnh
  * @param width - Chiều rộng ảnh
  * @param height - Chiều cao ảnh
@@ -38,7 +57,7 @@ export function getImageUrl(
     return getPlaceholderImage(800, 400, fallbackText);
   }
   
-  return imageUrl;
+  return convertGoogleDriveUrl(imageUrl);
 }
 
 /**

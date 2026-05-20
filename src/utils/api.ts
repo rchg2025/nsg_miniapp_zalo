@@ -1,4 +1,15 @@
 // Cấu hình URL của Backend Vercel mà bạn cung cấp
+import { convertGoogleDriveUrl } from './image-utils';
+
+const normalizeNewsCategory = (cat: string): string => {
+  if (!cat) return 'news';
+  const lc = cat.toLowerCase();
+  if (lc.includes('s\u1ef1 ki\u1ec7n') || lc.includes('su kien') || lc === 'event') return 'event';
+  if (lc.includes('th\u00f4ng b\u00e1o') || lc.includes('thong bao') || lc === 'announcement') return 'announcement';
+  if (lc.includes('tin t\u1ee9c') || lc.includes('tin tuc') || lc === 'news') return 'news';
+  return lc;
+};
+
 const formatToHCMTime = (dateStr: string) => {
   if (!dateStr) return new Date().toISOString();
   try {
@@ -44,9 +55,10 @@ export const getNews = async () => {
   return data.map((item: any) => ({
     ...item,
     date: formatToHCMTime(item.created_at),
-    image: item.image_url || 'https://via.placeholder.com/300x150',
-    imageUrl: item.image_url || 'https://via.placeholder.com/300x150',
-    summary: item.content ? item.content.substring(0, 100) + '...' : '',
+    image: convertGoogleDriveUrl(item.image_url || ''),
+    imageUrl: convertGoogleDriveUrl(item.image_url || ''),
+    category: normalizeNewsCategory(item.category),
+    summary: item.content ? item.content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().substring(0, 100) + '...' : '',
     status: 'published'
   }));
 };
@@ -72,7 +84,7 @@ export const getMajors = async () => {
       ...item,
       tuitionFee: Number(item.tuition_fee ?? item.tuitionFee ?? 0),
       educationLevel: item.education_level || item.educationLevel || 'caodang',
-      imageUrl: item.image_url || item.imageUrl || '',
+      imageUrl: convertGoogleDriveUrl(item.image_url || item.imageUrl || ''),
       careerProspects,
       subjects,
       isActive: true,

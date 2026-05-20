@@ -170,7 +170,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const checkUserInfo = async () => {
     try {
-      const user = await getUserInfo({ autoRequestPermission: false });
+      const user = await getUserInfo({ autoRequestPermission: true });
       if (user.userInfo) {
         const role = getUserRole(user.userInfo.id);
         const permissions = getUserPermissions(role);

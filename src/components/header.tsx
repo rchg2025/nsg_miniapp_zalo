@@ -39,7 +39,7 @@ export function Header({
               <Text.Title className="text-white font-bold">{title}</Text.Title>
             ) : (
               <Box className="flex items-center">
-                {isLoggedIn && userInfo ? (
+                {userInfo && userInfo.id !== 'guest' ? (
                   <Box className="flex items-center">
                     <Avatar 
                       src={userInfo.avatar}
