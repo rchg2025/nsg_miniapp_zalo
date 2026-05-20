@@ -314,11 +314,11 @@ app.get('/api/admissions', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.post('/api/admissions', async (req, res) => {
-  const { student_name, date_of_birth, phone, email, major_code, major_name, high_school, zalo_id, id_card, address, graduation_year, notes } = req.body;
+  const { student_name, date_of_birth, phone, email, major_code, major_name, high_school, zalo_id, id_card, address, graduation_year, notes, desired_education_level } = req.body;
   try {
     const { rows } = await db.query(
-      'INSERT INTO admissions (student_name, date_of_birth, phone, email, major_code, major_name, high_school, zalo_id, id_card, address, graduation_year, notes) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING *',
-      [student_name, date_of_birth || null, phone, email, major_code, major_name || null, high_school || null, zalo_id || null, id_card || null, address || null, graduation_year || null, notes || null]
+      'INSERT INTO admissions (student_name, date_of_birth, phone, email, major_code, major_name, high_school, zalo_id, id_card, address, graduation_year, notes, desired_education_level) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *',
+      [student_name, date_of_birth || null, phone, email, major_code, major_name || null, high_school || null, zalo_id || null, id_card || null, address || null, graduation_year || null, notes || null, desired_education_level || null]
     );
     res.json(rows[0]);
   } catch (err) { res.status(500).json({ error: err.message }); }

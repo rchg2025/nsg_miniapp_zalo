@@ -24,6 +24,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
       return;
     }
     currentUser = data.user;
+    localStorage.setItem('admin_session', JSON.stringify(currentUser));
     document.getElementById('admin-name').textContent = currentUser.display_name || currentUser.username;
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('app-container').style.display = 'flex';
@@ -32,6 +33,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
     // Fallback for local testing / no backend yet
     if (username === 'admin' && password === 'admin123') {
       currentUser = { username: 'admin', display_name: 'Admin', role: 'admin' };
+      localStorage.setItem('admin_session', JSON.stringify(currentUser));
       document.getElementById('admin-name').textContent = 'Admin';
       document.getElementById('login-container').style.display = 'none';
       document.getElementById('app-container').style.display = 'flex';
@@ -45,6 +47,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
 
 function logout() {
   currentUser = null;
+  localStorage.removeItem('admin_session');
   document.getElementById('app-container').style.display = 'none';
   document.getElementById('login-container').style.display = 'flex';
   document.getElementById('username').value = '';
@@ -591,14 +594,17 @@ function viewAdmission(id) {
       <div><span class="font-semibold text-gray-600">Họ tên:</span><br>${esc(a.student_name || '')}</div>
       <div><span class="font-semibold text-gray-600">SĐT:</span><br>${esc(a.phone || '')}</div>
       <div><span class="font-semibold text-gray-600">CMND/CCCD:</span><br>${esc(a.id_card || '')}</div>
+      <div><span class="font-semibold text-gray-600">Ngày sinh:</span><br>${fmtDate(a.date_of_birth)}</div>
       <div><span class="font-semibold text-gray-600">Email:</span><br>${esc(a.email || '')}</div>
+      <div><span class="font-semibold text-gray-600">Zalo ID:</span><br>${esc(a.zalo_id || '')}</div>
       <div><span class="font-semibold text-gray-600">Ngành đăng ký:</span><br>${esc(a.major_name || a.major_code || '')}</div>
       <div><span class="font-semibold text-gray-600">Mã ngành:</span><br>${esc(a.major_code || '')}</div>
+      <div><span class="font-semibold text-gray-600">Hệ đào tạo:</span><br>${esc(a.desired_education_level || '')}</div>
       <div><span class="font-semibold text-gray-600">Trường THPT:</span><br>${esc(a.high_school || '')}</div>
       <div><span class="font-semibold text-gray-600">Năm tốt nghiệp:</span><br>${esc(a.graduation_year || '')}</div>
-      <div class="col-span-2"><span class="font-semibold text-gray-600">Địa chỉ:</span><br>${esc(a.address || '')}</div>
       <div><span class="font-semibold text-gray-600">Trạng thái:</span><br><span class="px-2 py-1 rounded text-xs font-semibold ${a.status === 'approved' ? 'bg-green-100 text-green-700' : a.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}">${statusLabel}</span></div>
       <div><span class="font-semibold text-gray-600">Ngày đăng ký:</span><br>${fmtDate(a.created_at)}</div>
+      <div class="col-span-2"><span class="font-semibold text-gray-600">Địa chỉ:</span><br>${esc(a.address || '')}</div>
       <div class="col-span-2"><span class="font-semibold text-gray-600">Ghi chú:</span><br>${esc(a.notes || '')}</div>
     </div>
   `;
@@ -712,3 +718,19 @@ window.addEventListener('load', () => {
     notiEditor = Jodit.make('#noti-message', { height: 300 });
   }
 });
+
+// ===================== AUTO RESTORE SESSION =====================
+(function() {
+  try {
+    const saved = localStorage.getItem('admin_session');
+    if (saved) {
+      currentUser = JSON.parse(saved);
+      document.getElementById('admin-name').textContent = currentUser.display_name || currentUser.username;
+      document.getElementById('login-container').style.display = 'none';
+      document.getElementById('app-container').style.display = 'flex';
+      loadDashboard();
+    }
+  } catch(e) {
+    localStorage.removeItem('admin_session');
+  }
+})();

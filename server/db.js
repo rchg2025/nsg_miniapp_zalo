@@ -133,6 +133,7 @@ const initDB = async () => {
     try { await client.query("ALTER TABLE admissions ADD COLUMN IF NOT EXISTS address TEXT"); } catch(e) {}
     try { await client.query("ALTER TABLE admissions ADD COLUMN IF NOT EXISTS graduation_year VARCHAR(10)"); } catch(e) {}
     try { await client.query("ALTER TABLE admissions ADD COLUMN IF NOT EXISTS notes TEXT"); } catch(e) {}
+    try { await client.query("ALTER TABLE admissions ADD COLUMN IF NOT EXISTS desired_education_level VARCHAR(100)"); } catch(e) {}
 
     // Tạo tài khoản superadmin nếu chưa tồn tại
     try {

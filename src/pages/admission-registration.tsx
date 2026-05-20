@@ -11,6 +11,7 @@ function AdmissionRegistrationPage() {
   const { userInfo } = useUser();
   const [searchParams] = useSearchParams();
   const [majors, setMajors] = useState<Major[]>([]);
+  const [trainingLevels, setTrainingLevels] = useState<string[]>([]);
   const [selectedMajor, setSelectedMajor] = useState<Major | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -22,7 +23,7 @@ function AdmissionRegistrationPage() {
     idCard: '',
     dateOfBirth: '',
     address: '',
-    educationLevel: 'caodang' as 'caodang' | 'trungcap' | 'caodang-lienthong',
+    educationLevel: '' as string,
     graduationYear: '',
     school: '',
     academicScore: '',
@@ -45,6 +46,22 @@ function AdmissionRegistrationPage() {
       setMajors(DataManager.getMajors());
     });
     console.log('🎓 Loading majors for registration...');
+
+    // Load training systems from API
+    fetch(`${API_BASE_URL}/training_systems`)
+      .then(r => r.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          const levels = data.map((t: any) => t.name).filter(Boolean);
+          setTrainingLevels(levels);
+          setFormData(prev => ({ ...prev, educationLevel: prev.educationLevel || levels[0] || '' }));
+        }
+      })
+      .catch(() => {
+        const fallback = ['Cao đẳng', 'Trung cấp', 'Cao đẳng liên thông'];
+        setTrainingLevels(fallback);
+        setFormData(prev => ({ ...prev, educationLevel: prev.educationLevel || fallback[0] }));
+      });
 
     // Get majorId from URL parameter
     const majorIdFromUrl = searchParams.get('majorId');
@@ -188,6 +205,7 @@ function AdmissionRegistrationPage() {
         address: formData.address,
         graduation_year: formData.graduationYear,
         notes: formData.note,
+        desired_education_level: formData.educationLevel,
         zalo_id: (userInfo as any)?.id || ''
       };
       const apiRes = await fetch(`${API_BASE_URL}/admissions`, {
@@ -230,7 +248,7 @@ function AdmissionRegistrationPage() {
         idCard: '',
         dateOfBirth: '',
         address: '',
-        educationLevel: 'caodang',
+        educationLevel: '',
         graduationYear: '',
         school: '',
         academicScore: '',
@@ -403,12 +421,13 @@ function AdmissionRegistrationPage() {
               <Text className="mb-2 font-medium">Hệ đào tạo mong muốn</Text>
               <select
                 value={formData.educationLevel}
-                onChange={(e) => setFormData({...formData, educationLevel: e.target.value as any})}
+                onChange={(e) => setFormData({...formData, educationLevel: e.target.value})}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
-                <option value="caodang">Cao đẳng</option>
-                <option value="trungcap">Trung cấp</option>
-                <option value="caodang-lienthong">Cao đẳng liên thông</option>
+                <option value="">— Chọn hệ đào tạo —</option>
+                {trainingLevels.map(level => (
+                  <option key={level} value={level}>{level}</option>
+                ))}
               </select>
             </Box>
 
