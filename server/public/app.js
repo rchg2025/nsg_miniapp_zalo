@@ -3,7 +3,6 @@ let currentUser = null;
 let _admissionsList = [];
 let _majorsList = [];
 let _newsList = [];
-let _notisList = [];
 
 // ===================== AUTH =====================
 
@@ -64,7 +63,6 @@ const TAB_TITLES = {
   'system-users': 'Thành Viên Hệ Thống',
   news: 'Quản Lý Tin Tức',
   majors: 'Quản Lý Ngành Học',
-  notifications: 'Quản Lý Thông Báo',
   categories: 'Danh Mục',
   admissions: 'Đăng Ký Tuyển Sinh',
   settings: 'Cấu Hình Hệ Thống'
@@ -76,7 +74,6 @@ const TAB_LOADERS = {
   'system-users': fetchSysUsers,
   news: fetchNews,
   majors: fetchAdminMajors,
-  notifications: fetchAdminNotis,
   categories: () => { fetchCategories(); fetchTraining(); },
   admissions: fetchAdmissions,
   settings: loadSettings
@@ -122,7 +119,88 @@ async function loadDashboard() {
     document.getElementById('stat-news').textContent = Array.isArray(news) ? news.length : '-';
     document.getElementById('stat-majors').textContent = Array.isArray(majors) ? majors.length : '-';
     document.getElementById('stat-admissions').textContent = Array.isArray(admissions) ? admissions.length : '-';
+    // Cache for dashboard admission list
+    if (Array.isArray(majors)) _majorsList = majors;
+    if (Array.isArray(admissions)) {
+      _admissionsList = admissions.map(a => {
+        if (!a.major_name && a.major_code) {
+          const major = _majorsList.find(m => m.code === a.major_code || m.id == a.major_code);
+          if (major) a.major_name = major.name;
+        }
+        return a;
+      });
+    }
+    // Populate major filter dropdown
+    const majorSel = document.getElementById('dash-adm-major');
+    if (majorSel && Array.isArray(majors)) {
+      let opts = '<option value="all">Tất cả ngành</option>';
+      majors.forEach(m => { opts += `<option value="${esc(m.name)}">${esc(m.name)}</option>`; });
+      majorSel.innerHTML = opts;
+    }
+    loadDashAdmissions();
   } catch (e) { console.warn('Dashboard load error:', e); }
+}
+
+// ===================== DASHBOARD ADMISSIONS =====================
+let _dashAdmPage = 1;
+let _dashAdmFiltered = [];
+const DASH_ADM_PAGE_SIZE = 10;
+
+function loadDashAdmissions() { filterDashAdmissions(); }
+
+function filterDashAdmissions() {
+  const q = (document.getElementById('dash-adm-search')?.value || '').toLowerCase();
+  const status = document.getElementById('dash-adm-status')?.value || 'all';
+  const major = document.getElementById('dash-adm-major')?.value || 'all';
+  _dashAdmFiltered = _admissionsList.filter(a => {
+    const txt = [a.student_name, a.phone, a.major_name, a.major_code].join(' ').toLowerCase();
+    if (q && !txt.includes(q)) return false;
+    if (status !== 'all' && a.status !== status) return false;
+    if (major !== 'all' && (a.major_name || a.major_code) !== major) return false;
+    return true;
+  });
+  _dashAdmPage = 1;
+  renderDashAdmissions();
+}
+
+function renderDashAdmissions() {
+  const tbody = document.getElementById('dash-adm-tbody');
+  if (!tbody) return;
+  const total = _dashAdmFiltered.length;
+  const totalPages = Math.ceil(total / DASH_ADM_PAGE_SIZE) || 1;
+  if (_dashAdmPage > totalPages) _dashAdmPage = totalPages;
+  const start = (_dashAdmPage - 1) * DASH_ADM_PAGE_SIZE;
+  const page = _dashAdmFiltered.slice(start, start + DASH_ADM_PAGE_SIZE);
+  if (!page.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="p-3 text-center text-gray-400">Chưa có đăng ký tuyển sinh</td></tr>';
+  } else {
+    tbody.innerHTML = page.map(a => `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-3 font-medium">${esc(a.student_name || '')}</td>
+        <td class="p-3">${esc(a.phone || '')}</td>
+        <td class="p-3">${esc(a.major_name || a.major_code || '')}</td>
+        <td class="p-3"><span class="px-2 py-1 rounded text-xs font-semibold ${a.status === 'approved' ? 'bg-green-100 text-green-700' : a.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}">${a.status === 'approved' ? 'Đã duyệt' : a.status === 'rejected' ? 'Từ chối' : 'Chờ xử lý'}</span></td>
+        <td class="p-3 text-gray-500">${fmtDate(a.created_at)}</td>
+        <td class="p-3 text-right"><button onclick="viewAdmission(${a.id})" class="text-blue-600 hover:underline text-sm">Chi tiết</button></td>
+      </tr>`).join('');
+  }
+  const pag = document.getElementById('dash-adm-pagination');
+  if (pag) {
+    pag.innerHTML = `
+      <span>Hiển thị ${total ? start + 1 : 0}–${Math.min(start + DASH_ADM_PAGE_SIZE, total)} / ${total} hồ sơ</span>
+      <div class="flex gap-2">
+        <button onclick="dashAdmGoPage(${_dashAdmPage - 1})" ${_dashAdmPage <= 1 ? 'disabled' : ''} class="px-3 py-1 rounded border ${_dashAdmPage <= 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-100'">← Trước</button>
+        <span class="px-3 py-1">Trang ${_dashAdmPage} / ${totalPages}</span>
+        <button onclick="dashAdmGoPage(${_dashAdmPage + 1})" ${_dashAdmPage >= totalPages ? 'disabled' : ''} class="px-3 py-1 rounded border ${_dashAdmPage >= totalPages ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-100'"}>Sau →</button>
+      </div>`;
+  }
+}
+
+function dashAdmGoPage(page) {
+  const totalPages = Math.ceil(_dashAdmFiltered.length / DASH_ADM_PAGE_SIZE) || 1;
+  if (page < 1 || page > totalPages) return;
+  _dashAdmPage = page;
+  renderDashAdmissions();
 }
 
 // ===================== ZALO USERS =====================
@@ -243,8 +321,8 @@ async function fetchNews() {
     tbody.innerHTML = news.map(n => `
       <tr class="border-b hover:bg-gray-50">
         <td class="p-4">
-          ${n.image_url
-            ? `<img src="${esc(n.image_url)}" class="w-16 h-10 object-cover rounded" onerror="this.parentElement.innerHTML='<span class=\'text-xs text-gray-400\'>Ch\u01b0a c\u00f3 ảnh</span>'">`
+          ${(n.image_url || n.image)
+            ? `<img src="${esc(n.image_url || n.image)}" class="w-16 h-10 object-cover rounded" onerror="this.parentElement.innerHTML='<span class=\'text-xs text-gray-400\'>Ch\u01b0a c\u00f3 ảnh</span>'">`
             : '<span class="text-xs text-gray-400">Chưa có ảnh</span>'}
         </td>
         <td class="p-4 font-medium max-w-xs truncate">${esc(n.title)}</td>
@@ -266,7 +344,7 @@ function previewNews(id) {
   if (!n) return;
   document.getElementById('news-preview-title').textContent = n.title || '';
   document.getElementById('news-preview-body').innerHTML = `
-    ${n.image_url ? `<img src="${esc(n.image_url)}" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` : ''}
+    ${(n.image_url || n.image) ? `<img src="${esc(n.image_url || n.image)}" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` : ''}
     <div class="flex gap-2 mb-3">
       <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${esc(n.category || '')}</span>
       <span class="text-xs text-gray-400">${fmtDate(n.created_at)}</span>
@@ -451,92 +529,6 @@ async function deleteMajor(id) {
   if (!confirm('Xóa ngành học này?')) return;
   await fetch(API_BASE + '/majors/' + id, { method: 'DELETE' });
   fetchAdminMajors();
-}
-
-// ===================== NOTIFICATIONS =====================
-
-async function fetchAdminNotis() {
-  const tbody = document.getElementById('noti-tbody');
-  tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
-  try {
-    const res = await fetch(API_BASE + '/notifications');
-    const notis = await res.json();
-    if (!notis.length) { tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Chưa có thông báo</td></tr>'; return; }
-    _notisList = notis;
-    tbody.innerHTML = notis.map(n => `
-      <tr class="border-b hover:bg-gray-50">
-        <td class="p-4">
-          ${n.image_url
-            ? `<img src="${esc(n.image_url)}" class="w-16 h-10 object-cover rounded" onerror="this.parentElement.innerHTML='<span class=\'text-xs text-gray-400\'>Ch\u01b0a c\u00f3 ảnh</span>'">`
-            : '<span class="text-xs text-gray-400">Chưa có ảnh</span>'}
-        </td>
-        <td class="p-4 font-medium">${esc(n.title)}</td>
-        <td class="p-4 text-sm text-gray-600 max-w-xs truncate">${esc(stripHtml(n.message || n.content || ''))}</td>
-        <td class="p-4 text-sm text-gray-500">${fmtDate(n.created_at)}</td>
-        <td class="p-4 text-right">
-          <button onclick="previewNoti(${n.id})" class="text-gray-500 hover:underline text-sm mr-2">Xem</button>
-          <button onclick="editNoti(${n.id})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
-          <button onclick="deleteNoti(${n.id})" class="text-red-600 hover:underline text-sm">Xóa</button>
-        </td>
-      </tr>`).join('');
-  } catch (e) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
-}
-
-function editNoti(id) { const n = _notisList.find(x => x.id == id); if (n) openNotiModal(n); }
-
-function previewNoti(id) {
-  const n = _notisList.find(x => x.id == id);
-  if (!n) return;
-  document.getElementById('noti-preview-title').textContent = n.title || '';
-  document.getElementById('noti-preview-body').innerHTML = `
-    ${n.image_url ? `<img src="${esc(n.image_url)}" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` : ''}
-    <div class="flex gap-2 mb-3">
-      <span class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs">📢 Thông báo</span>
-      <span class="text-xs text-gray-400">${fmtDate(n.created_at)}</span>
-    </div>
-    <div class="prose text-sm text-gray-700 leading-relaxed">${n.message || n.content || '<em>Không có nội dung</em>'}</div>
-  `;
-  document.getElementById('noti-preview-modal').classList.remove('hidden');
-}
-
-function openNotiModal(noti) {
-  noti = noti || {};
-  document.getElementById('noti-id').value = noti.id || '';
-  document.getElementById('noti-title').value = noti.title || '';
-  
-  document.getElementById('noti-image').value = noti.image_url || noti.image || '';
-  document.getElementById('noti-message').value = noti.message || noti.content || '';
-  document.getElementById('noti-drop-name').textContent = '';
-  // Show modal first so Jodit has visible DOM
-  document.getElementById('noti-modal').classList.remove('hidden');
-  // Set Jodit value after modal is visible
-  setTimeout(() => {
-    if (window.notiEditor) window.notiEditor.value = noti.message || noti.content || '';
-  }, 80);
-}
-
-async function saveNoti() {
-  const id = document.getElementById('noti-id').value;
-  const payload = {
-    title: document.getElementById('noti-title').value.trim(),
-    
-      image_url: document.getElementById('noti-image').value.trim(),
-      message: (window.notiEditor ? window.notiEditor.value : document.getElementById('noti-message').value).trim()
-  };
-  if (!payload.title) { alert('Vui lòng nhập tiêu đề'); return; }
-  try {
-    const method = id ? 'PUT' : 'POST';
-    const url = id ? API_BASE + '/notifications/' + id : API_BASE + '/notifications';
-    await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-    document.getElementById('noti-modal').classList.add('hidden');
-    fetchAdminNotis();
-  } catch (e) { alert('Lỗi lưu thông báo'); }
-}
-
-async function deleteNoti(id) {
-  if (!confirm('Xóa thông báo này?')) return;
-  await fetch(API_BASE + '/notifications/' + id, { method: 'DELETE' });
-  fetchAdminNotis();
 }
 
 // ===================== CATEGORIES =====================
@@ -911,13 +903,12 @@ function fmtDate(val) {
   try { return new Date(val).toLocaleDateString('vi-VN'); } catch { return val; }
 }
 
-let newsEditor, majorDescEditor, majorCareerEditor, notiEditor;
+let newsEditor, majorDescEditor, majorCareerEditor;
 window.addEventListener('load', () => {
   if(typeof Jodit !== 'undefined') {
     newsEditor = Jodit.make('#news-content', { height: 400 });
     majorDescEditor = Jodit.make('#major-description', { height: 300 });
     majorCareerEditor = Jodit.make('#major-career', { height: 300 });
-    notiEditor = Jodit.make('#noti-message', { height: 300 });
   }
 });
 

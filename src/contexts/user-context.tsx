@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getUserInfo } from "zmp-sdk/apis";
+import { getUserInfo, authorize } from "zmp-sdk/apis";
 import { UserInfo, UserRole, PERMISSIONS, Permission } from "@/types";
 
 interface UserContextType {
@@ -171,7 +171,13 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const checkUserInfo = async () => {
     try {
-      const user = await getUserInfo({ autoRequestPermission: true });
+      // Yêu cầu quyền truy cập tên và ảnh đại diện (bắt buộc từ SDK 2.35.0+)
+      try {
+        await authorize({ scopes: ['scope.userInfo'] });
+      } catch (_) {
+        // Người dùng từ chối hoặc lỗi quyền — vẫn tiếp tục, sẽ chỉ nhận được ID
+      }
+      const user = await getUserInfo({});
       if (user.userInfo) {
         const role = getUserRole(user.userInfo.id);
         const permissions = getUserPermissions(role);
@@ -183,6 +189,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           role,
           permissions
         });
+        // Save user to backend
+        try {
+          const { API_BASE_URL } = await import('@/utils/api');
+          await fetch(`${API_BASE_URL}/users`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ zalo_id: user.userInfo.id, name: user.userInfo.name || 'Khách', avatar: user.userInfo.avatar || '' })
+          });
+        } catch (_) {}
       } else {
         // Auto create guest user if no Zalo login
         setUserInfo({

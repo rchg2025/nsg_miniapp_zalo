@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Text, Avatar, useSnackbar } from 'zmp-ui';
-import { getUserInfo } from 'zmp-sdk/apis';
+import { getUserInfo, authorize } from 'zmp-sdk/apis';
 import { useUser } from '../contexts/user-context';
 import { UserRole } from '@/types';
 
@@ -32,7 +32,14 @@ export function Header({
     if (title || isRequesting) return; // chỉ hoạt động ở trang chủ
     setIsRequesting(true);
     try {
-      const result = await getUserInfo({ autoRequestPermission: true });
+      // Bước 1: yêu cầu quyền đọc tên và ảnh đại diện (bắt buộc từ SDK 2.35.0+)
+      try {
+        await authorize({ scopes: ['scope.userInfo'] });
+      } catch (_) {
+        // Người dùng từ chối hoặc lỗi quyền — vẫn tiếp tục
+      }
+      // Bước 2: lấy thông tin sau khi đã được cấp quyền
+      const result = await getUserInfo({});
       if (result?.userInfo) {
         const u = result.userInfo;
         // Lấy số điện thoại nếu được cấp phép
@@ -43,9 +50,6 @@ export function Header({
           phone = phoneResult?.number || phoneResult?.token || undefined;
         } catch (_) { /* phone không bắt buộc */ }
 
-        const { getUserRole, getUserPermissions } = await import('@/contexts/user-context').catch(() => ({ getUserRole: null, getUserPermissions: null }));
-        
-        // Giữ role hiện tại nếu không import được helpers
         const role = userInfo?.role ?? UserRole.STUDENT;
         const permissions = userInfo?.permissions ?? [];
 
@@ -57,7 +61,16 @@ export function Header({
           role,
           permissions
         });
-        openSnackbar({ text: `Xin chào, ${u.name}! 👋`, type: 'success', duration: 3000 });
+        // Save user to backend
+        try {
+          const { API_BASE_URL } = await import('@/utils/api');
+          await fetch(`${API_BASE_URL}/users`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ zalo_id: u.id, name: u.name || 'Khách', avatar: u.avatar || '' })
+          });
+        } catch (_) {}
+        openSnackbar({ text: `Xin chào, ${u.name || 'Bạn'}! 👋`, type: 'success', duration: 3000 });
       }
     } catch (err) {
       openSnackbar({ text: 'Không thể lấy thông tin. Vui lòng thử lại.', type: 'error', duration: 3000 });

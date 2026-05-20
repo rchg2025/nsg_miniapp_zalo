@@ -50,7 +50,6 @@
           <li><a href="#" onclick="switchTab('system-users')" id="nav-system-users" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-user-shield mr-3"></i>Thành viên HT</a></li>
           <li><a href="#" onclick="switchTab('news')" id="nav-news" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-newspaper mr-3"></i>Tin Tức</a></li>
           <li><a href="#" onclick="switchTab('majors')" id="nav-majors" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-graduation-cap mr-3"></i>Ngành Học</a></li>
-          <li><a href="#" onclick="switchTab('notifications')" id="nav-notifications" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-bell mr-3"></i>Thông Báo</a></li>
           <li><a href="#" onclick="switchTab('categories')" id="nav-categories" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-folder-open mr-3"></i>Danh Mục</a></li>
           <li><a href="#" onclick="switchTab('admissions')" id="nav-admissions" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-user-plus mr-3"></i>Tuyển Sinh</a></li>
           <li><a href="#" onclick="switchTab('settings')" id="nav-settings" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-cog mr-3"></i>Cấu Hình HT</a></li>
@@ -88,9 +87,43 @@
               <p class="text-3xl font-bold text-gray-800 mt-1" id="stat-admissions">-</p>
             </div>
           </div>
-          <div class="bg-white rounded-lg shadow p-6">
+          <div class="bg-white rounded-lg shadow p-6 mb-6">
             <h3 class="font-bold text-lg mb-2">Chào mừng đến với Hệ thống Quản trị NSG</h3>
             <p class="text-gray-600">Sử dụng menu bên trái để quản lý nội dung Zalo Mini App.</p>
+          </div>
+          <!-- Danh sách đăng ký tuyển sinh -->
+          <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="font-bold text-lg">📋 Danh sách đăng ký tuyển sinh</h3>
+              <button onclick="switchTab('admissions')" class="text-sm text-blue-600 hover:underline">Xem tất cả →</button>
+            </div>
+            <div class="flex flex-wrap gap-3 mb-4">
+              <div class="flex-1 min-w-[180px]">
+                <input type="text" id="dash-adm-search" oninput="filterDashAdmissions()" class="w-full border rounded px-3 py-2 text-sm" placeholder="🔍 Tìm tên, SĐT, ngành...">
+              </div>
+              <div class="w-44">
+                <select id="dash-adm-status" onchange="filterDashAdmissions()" class="w-full border rounded px-3 py-2 text-sm bg-white">
+                  <option value="all">Tất cả trạng thái</option>
+                  <option value="pending">Chờ xử lý</option>
+                  <option value="approved">Đã duyệt</option>
+                  <option value="rejected">Từ chối</option>
+                </select>
+              </div>
+              <div class="w-44">
+                <select id="dash-adm-major" onchange="filterDashAdmissions()" class="w-full border rounded px-3 py-2 text-sm bg-white">
+                  <option value="all">Tất cả ngành</option>
+                </select>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-gray-50 border-b"><tr>
+                  <th class="p-3">Họ tên</th><th class="p-3">SĐT</th><th class="p-3">Ngành đăng ký</th><th class="p-3">Trạng thái</th><th class="p-3">Ngày đăng ký</th><th class="p-3 text-right">Thao tác</th>
+                </tr></thead>
+                <tbody id="dash-adm-tbody"><tr><td colspan="6" class="p-3 text-center text-gray-400">Đang tải...</td></tr></tbody>
+              </table>
+            </div>
+            <div id="dash-adm-pagination" class="flex justify-between items-center mt-3 pt-3 border-t text-sm text-gray-500"></div>
           </div>
         </div>
 
@@ -154,22 +187,6 @@
                 <th class="p-4">Mã ngành</th><th class="p-4">Tên ngành</th><th class="p-4">Mô tả</th><th class="p-4 text-right">Thao tác</th>
               </tr></thead>
               <tbody id="majors-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- THÔNG BÁO -->
-        <div id="notifications" class="tab-content">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-2xl font-bold">Quản Lý Thông Báo</h3>
-            <button onclick="openNotiModal({})" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"><i class="fa fa-plus mr-2"></i>Soạn thông báo</button>
-          </div>
-          <div class="bg-white rounded-lg shadow overflow-x-auto">
-            <table class="w-full text-left">
-              <thead class="bg-gray-50 border-b"><tr>
-                <th class="p-4">Hình ảnh</th><th class="p-4">Tiêu đề</th><th class="p-4">Nội dung</th><th class="p-4">Ngày tạo</th><th class="p-4 text-right">Thao tác</th>
-              </tr></thead>
-              <tbody id="noti-tbody"></tbody>
             </table>
           </div>
         </div>
@@ -360,30 +377,6 @@
     </div>
   </div>
 
-  <!-- Modal: Thông báo -->
-  <div id="noti-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div class="bg-white rounded-lg shadow-lg w-1/2 p-6">
-      <h3 class="text-xl font-bold mb-4">Soạn Thông Báo</h3>
-      <input type="hidden" id="noti-id">
-      <div class="mb-3"><label class="block text-sm font-medium mb-1">Tiêu đề</label><input type="text" id="noti-title" class="w-full border rounded px-3 py-2"></div>
-      <div class="mb-3">
-          <label class="block text-sm font-medium mb-1">Hình ảnh đại diện</label>
-          <div id="noti-drop-zone" class="drop-zone mb-2" onclick="document.getElementById('noti-file-input').click()" ondragover="handleDragOver(event,'noti-drop-zone')" ondragleave="handleDragLeave(event,'noti-drop-zone')" ondrop="handleDrop(event,'noti-image','noti-drop-zone','noti-drop-name')">
-            <input type="file" id="noti-file-input" accept="image/*" onchange="handleFileSelect(event,'noti-image','noti-drop-zone','noti-drop-name')">
-            <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2 block"></i>
-            <p class="text-gray-500 text-sm">Kéo thả hoặc click để chọn ảnh &bull; Upload lên Google Drive</p>
-            <p id="noti-drop-name" class="text-blue-600 text-sm mt-1 font-medium"></p>
-          </div>
-          <input type="text" id="noti-image" class="w-full border rounded px-3 py-2 text-sm" placeholder="Hoặc dán URL ảnh...">
-        </div>
-      <div class="mb-4"><label class="block text-sm font-medium mb-1">Nội dung</label><textarea id="noti-message" class="w-full border rounded px-3 py-2 h-32"></textarea></div>
-      <div class="flex justify-end gap-2">
-        <button onclick="document.getElementById('noti-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 rounded">Hủy</button>
-        <button onclick="saveNoti()" class="px-4 py-2 bg-blue-600 text-white rounded font-bold">Gửi thông báo</button>
-      </div>
-    </div>
-  </div>
-
   <!-- Modal: Danh mục chuyên mục -->
   <div id="category-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
     <div class="bg-white rounded-lg shadow-lg w-96 p-6">
@@ -464,20 +457,6 @@
       <div id="news-preview-body" class="p-6 max-h-[70vh] overflow-y-auto"></div>
       <div class="p-4 flex justify-end border-t">
         <button onclick="document.getElementById('news-preview-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 rounded">Đóng</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal: Xem trước thông báo -->
-  <div id="noti-preview-modal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl">
-      <div class="p-6 border-b flex justify-between items-center">
-        <h3 id="noti-preview-title" class="text-xl font-bold pr-4"></h3>
-        <button onclick="document.getElementById('noti-preview-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl flex-shrink-0">&times;</button>
-      </div>
-      <div id="noti-preview-body" class="p-6 max-h-[70vh] overflow-y-auto"></div>
-      <div class="p-4 flex justify-end border-t">
-        <button onclick="document.getElementById('noti-preview-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 rounded">Đóng</button>
       </div>
     </div>
   </div>
