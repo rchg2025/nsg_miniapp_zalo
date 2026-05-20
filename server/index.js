@@ -153,11 +153,12 @@ app.get('/api/majors', async (req, res) => {
 
 // Thêm ngành học
 app.post('/api/majors', async (req, res) => {
-  const { code, name, description, requirements, image_url, duration, tuition_fee, education_level, subjects, career_prospects, website } = req.body;
+  const { code, name, description, requirements, image_url, image, duration, tuition_fee, education_level, subjects, career_prospects, website } = req.body;
+  const imgUrl = image_url || image || null;
   try {
     const { rows } = await db.query(
-      'INSERT INTO majors (code, name, description, requirements) VALUES ($1, $2, $3, $4) RETURNING *',
-      [code, name, description, requirements, image_url, duration, tuition_fee, education_level, subjects, career_prospects, website]
+      'INSERT INTO majors (code, name, description, requirements, image_url, duration, tuition_fee, education_level, subjects, career_prospects, website) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
+      [code, name, description, requirements, imgUrl, duration, tuition_fee || null, education_level, subjects, career_prospects, website]
     );
     res.json(rows[0]);
   } catch (err) {
@@ -168,11 +169,12 @@ app.post('/api/majors', async (req, res) => {
 // Cập nhật ngành học
 app.put('/api/majors/:id', async (req, res) => {
   const { id } = req.params;
-  const { code, name, description, requirements, image_url, duration, tuition_fee, education_level, subjects, career_prospects, website } = req.body;
+  const { code, name, description, requirements, image_url, image, duration, tuition_fee, education_level, subjects, career_prospects, website } = req.body;
+  const imgUrl = image_url || image || null;
   try {
     const { rows } = await db.query(
-      'UPDATE majors SET code = $1, name = $2, description = $3, requirements = $4 WHERE id = $5 RETURNING *',
-      [code, name, description, requirements, image_url, duration, tuition_fee, education_level, subjects, career_prospects, website, id]
+      'UPDATE majors SET code=$1, name=$2, description=$3, requirements=$4, image_url=$5, duration=$6, tuition_fee=$7, education_level=$8, subjects=$9, career_prospects=$10, website=$11 WHERE id=$12 RETURNING *',
+      [code, name, description, requirements, imgUrl, duration, tuition_fee || null, education_level, subjects, career_prospects, website, id]
     );
     res.json(rows[0]);
   } catch (err) {
