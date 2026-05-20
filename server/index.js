@@ -249,8 +249,8 @@ app.post('/api/notifications', async (req, res) => {
   const { title, message, type, image_url } = req.body;
   try {
     const { rows } = await db.query(
-      'INSERT INTO notifications (title, message, type) VALUES ($1, $2, $3) RETURNING *',
-      [title, message, type || 'info', image_url]
+      'INSERT INTO notifications (title, message, type, image_url) VALUES ($1, $2, $3, $4) RETURNING *',
+      [title, message, type || 'info', image_url || null]
     );
     res.json(rows[0]);
   } catch (err) { res.status(500).json({ error: err.message }); }
@@ -259,8 +259,8 @@ app.put('/api/notifications/:id', async (req, res) => {
   const { title, message, type, is_read, image_url } = req.body;
   try {
     const { rows } = await db.query(
-      'UPDATE notifications SET title=$1, message=$2, type=$3, is_read=$4 WHERE id=$5 RETURNING *',
-      [title, message, type, is_read, req.params.id, req.body.image_url]
+      'UPDATE notifications SET title=$1, message=$2, type=$3, is_read=$4, image_url=$5 WHERE id=$6 RETURNING *',
+      [title, message, type || 'info', is_read || false, image_url || null, req.params.id]
     );
     res.json(rows[0]);
   } catch (err) { res.status(500).json({ error: err.message }); }

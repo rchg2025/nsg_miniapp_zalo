@@ -3,6 +3,7 @@ let currentUser = null;
 let _admissionsList = [];
 let _majorsList = [];
 let _newsList = [];
+let _notisList = [];
 
 // ===================== AUTH =====================
 
@@ -241,7 +242,11 @@ async function fetchNews() {
     _newsList = news;
     tbody.innerHTML = news.map(n => `
       <tr class="border-b hover:bg-gray-50">
-        <td class="p-4"><img src="${n.image_url || 'https://placehold.co/60x40'}" class="w-16 h-10 object-cover rounded" onerror="this.src='https://placehold.co/60x40'"></td>
+        <td class="p-4">
+          ${n.image_url
+            ? `<img src="${esc(n.image_url)}" class="w-16 h-10 object-cover rounded" onerror="this.parentElement.innerHTML='<span class=\'text-xs text-gray-400\'>Ch\u01b0a c\u00f3 ảnh</span>'">`
+            : '<span class="text-xs text-gray-400">Chưa có ảnh</span>'}
+        </td>
         <td class="p-4 font-medium max-w-xs truncate">${esc(n.title)}</td>
         <td class="p-4"><span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${esc(n.category || '')}</span></td>
         <td class="p-4 text-sm text-gray-500">${fmtDate(n.created_at)}</td>
@@ -456,18 +461,42 @@ async function fetchAdminNotis() {
   try {
     const res = await fetch(API_BASE + '/notifications');
     const notis = await res.json();
-    if (!notis.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">Chưa có thông báo</td></tr>'; return; }
+    if (!notis.length) { tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-400">Chưa có thông báo</td></tr>'; return; }
+    _notisList = notis;
     tbody.innerHTML = notis.map(n => `
       <tr class="border-b hover:bg-gray-50">
+        <td class="p-4">
+          ${n.image_url
+            ? `<img src="${esc(n.image_url)}" class="w-16 h-10 object-cover rounded" onerror="this.parentElement.innerHTML='<span class=\'text-xs text-gray-400\'>Ch\u01b0a c\u00f3 ảnh</span>'">`
+            : '<span class="text-xs text-gray-400">Chưa có ảnh</span>'}
+        </td>
         <td class="p-4 font-medium">${esc(n.title)}</td>
-        <td class="p-4 text-sm text-gray-600 max-w-xs truncate">${esc(n.message || n.content || '')}</td>
+        <td class="p-4 text-sm text-gray-600 max-w-xs truncate">${esc(stripHtml(n.message || n.content || ''))}</td>
         <td class="p-4 text-sm text-gray-500">${fmtDate(n.created_at)}</td>
         <td class="p-4 text-right">
-          <button onclick="openNotiModal(${JSON.stringify(n).replace(/"/g,'&quot;')})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
+          <button onclick="previewNoti(${n.id})" class="text-gray-500 hover:underline text-sm mr-2">Xem</button>
+          <button onclick="editNoti(${n.id})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
           <button onclick="deleteNoti(${n.id})" class="text-red-600 hover:underline text-sm">Xóa</button>
         </td>
       </tr>`).join('');
   } catch (e) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+function editNoti(id) { const n = _notisList.find(x => x.id == id); if (n) openNotiModal(n); }
+
+function previewNoti(id) {
+  const n = _notisList.find(x => x.id == id);
+  if (!n) return;
+  document.getElementById('noti-preview-title').textContent = n.title || '';
+  document.getElementById('noti-preview-body').innerHTML = `
+    ${n.image_url ? `<img src="${esc(n.image_url)}" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` : ''}
+    <div class="flex gap-2 mb-3">
+      <span class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs">📢 Thông báo</span>
+      <span class="text-xs text-gray-400">${fmtDate(n.created_at)}</span>
+    </div>
+    <div class="prose text-sm text-gray-700 leading-relaxed">${n.message || n.content || '<em>Không có nội dung</em>'}</div>
+  `;
+  document.getElementById('noti-preview-modal').classList.remove('hidden');
 }
 
 function openNotiModal(noti) {
@@ -475,11 +504,15 @@ function openNotiModal(noti) {
   document.getElementById('noti-id').value = noti.id || '';
   document.getElementById('noti-title').value = noti.title || '';
   
-    document.getElementById('noti-image').value = noti.image || noti.image_url || '';
-    document.getElementById('noti-message').value = noti.message || noti.content || '';
-    if(window.notiEditor) window.notiEditor.value = noti.message || noti.content || '';
+  document.getElementById('noti-image').value = noti.image_url || noti.image || '';
+  document.getElementById('noti-message').value = noti.message || noti.content || '';
   document.getElementById('noti-drop-name').textContent = '';
-    document.getElementById('noti-modal').classList.remove('hidden');
+  // Show modal first so Jodit has visible DOM
+  document.getElementById('noti-modal').classList.remove('hidden');
+  // Set Jodit value after modal is visible
+  setTimeout(() => {
+    if (window.notiEditor) window.notiEditor.value = noti.message || noti.content || '';
+  }, 80);
 }
 
 async function saveNoti() {
