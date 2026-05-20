@@ -2,6 +2,7 @@
 import { Box, Button, Icon, Page, Text, Header } from "zmp-ui";
 import { useNavigate, useParams } from "react-router-dom";
 import { normalizeNewsList, labelForCategory } from "@/utils/data-normalization";
+import { getImageUrl, handleImageError } from "@/utils/image-utils";
 
 function NewsDetail() {
   const navigate = useNavigate();
@@ -165,47 +166,11 @@ function NewsDetail() {
               ? <span dangerouslySetInnerHTML={{ __html: newsDetail.content }} />
               : newsDetail.content}
           </Text>
-          
-          {/* Additional content based on category */}
-          {newsDetail.category === "announcement" && (
-            <Box className="mt-6 p-4 bg-red-50 rounded-lg border-l-4 border-red-500">
-              <Text.Title className="text-red-700 mb-2">📢 Thông tin quan trọng</Text.Title>
-              <Text className="text-red-600 text-sm">
-                • Thời gian nộp hồ sơ: 15/03 - 30/08/2025<br/>
-                • Địa điểm: Phòng Đào tạo - Tầng 2<br/>
-                • Hotline: 028.3xxx.xxxx
-              </Text>
-            </Box>
-          )}
-          
-          {newsDetail.category === "admission" && (
-            <Box className="mt-6 p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
-              <Text.Title className="text-green-700 mb-2">🎓 Thông tin ngành học</Text.Title>
-              <Text className="text-green-600 text-sm">
-                • Thời gian đào tạo: 3 năm<br/>
-                • Tỷ lệ có việc làm: 95%<br/>
-                • Học phí: 18.000.000 VND/năm
-              </Text>
-            </Box>
-          )}
         </Box>
 
         {/* Action Buttons */}
         <Box className="bg-white rounded-lg shadow-sm p-4 mb-4">
           <Box className="flex gap-3">
-            <Button
-              variant="secondary"
-              size="small"
-              className={`flex-1 flex items-center justify-center ${
-                isSaved 
-                  ? 'bg-blue-600 text-white border-blue-600' 
-                  : 'border-blue-200 text-blue-600 hover:bg-blue-50'
-              }`}
-              onClick={handleSaveNews}
-            >
-              <Icon icon={isSaved ? "zi-star-solid" : "zi-bookmark"} className="mr-2" />
-              {isSaved ? "Đã lưu" : "Lưu tin"}
-            </Button>
             <Button
               variant="secondary"
               size="small"
@@ -226,27 +191,47 @@ function NewsDetail() {
         </Box>
 
         {/* Related News */}
-        <Box className="bg-white rounded-lg shadow-sm p-4">
-          <Text.Title className="text-blue-600 mb-3">Tin tức liên quan</Text.Title>
-          <Box className="space-y-3">
-            {allNews
-              .filter(item => item.id !== newsDetail.id && item.category === newsDetail.category)
-              .slice(0,3)
-              .map(related => (
-                <Box
-                  key={related.id}
-                  className="flex items-start space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer transition-colors border-l-4 border-blue-500"
-                  onClick={() => navigate(`/news/${related.id}`)}
-                >
-                  <Text className="text-blue-500 mt-1">📄</Text>
-                  <Box className="flex-1">
-                    <Text className="text-sm font-medium text-gray-800 line-clamp-2">{related.title}</Text>
-                    <Text className="text-xs text-gray-500 mt-1">{related.date}</Text>
+        {(() => {
+          const related = allNews
+            .filter(item => String(item.id) !== String(newsDetail.id) && item.category === newsDetail.category)
+            .slice(0, 3);
+          if (related.length === 0) return null;
+          return (
+            <Box className="bg-white rounded-lg shadow-sm p-4">
+              <Text.Title className="text-blue-600 mb-3">Tin tức liên quan</Text.Title>
+              <Box className="space-y-3">
+                {related.map(item => (
+                  <Box
+                    key={item.id}
+                    className="flex gap-3 cursor-pointer active:bg-gray-50 rounded-lg p-1"
+                    onClick={() => navigate(`/news/${item.id}`)}
+                  >
+                    <Box className="w-20 h-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100">
+                      <img
+                        src={getImageUrl(item, item.title)}
+                        alt={item.title}
+                        className="w-full h-full object-cover"
+                        onError={(e) => handleImageError(e, item.title)}
+                      />
+                    </Box>
+                    <Box className="flex-1 min-w-0">
+                      <Text className="text-sm font-medium text-gray-800 line-clamp-2 mb-1">
+                        {item.title}
+                      </Text>
+                      <Text className="text-xs text-gray-400">
+                        {item.date
+                          ? (item.date.includes('T')
+                              ? new Date(item.date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                              : item.date)
+                          : ''}
+                      </Text>
+                    </Box>
                   </Box>
-                </Box>
-              ))}
-          </Box>
-        </Box>
+                ))}
+              </Box>
+            </Box>
+          );
+        })()}
       </Box>
 
       {/* Bottom padding for navigation */}
