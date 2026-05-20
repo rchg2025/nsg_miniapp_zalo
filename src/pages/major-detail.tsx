@@ -196,9 +196,10 @@ loadMajorDetail();
         <Text.Title className="text-lg font-bold mb-3 text-gray-800">
           📝 Mô tả ngành học
         </Text.Title>
-        <Text className="text-gray-700 leading-relaxed">
-          {major.description}
-        </Text>
+        <div
+          className="text-gray-700 leading-relaxed text-sm"
+          dangerouslySetInnerHTML={{ __html: major.description }}
+        />
       </Box>
 
       {/* Education Level */}
@@ -242,12 +243,22 @@ loadMajorDetail();
         </Text.Title>
         <Box className="space-y-2">
           {major.careerProspects && major.careerProspects.length > 0 ? (
-            major.careerProspects.map((prospect, index) => (
-              <Box key={index} className="flex items-start">
-                <Icon icon="zi-star" className="text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
-                <Text className="text-gray-700">{prospect}</Text>
-              </Box>
-            ))
+            (() => {
+              const joined = major.careerProspects.join('\n');
+              if (joined.includes('<')) {
+                return <div className="text-gray-700 text-sm" dangerouslySetInnerHTML={{ __html: joined }} />;
+              }
+              return (
+                <Box className="space-y-2">
+                  {major.careerProspects.map((prospect, index) => (
+                    <Box key={index} className="flex items-start">
+                      <Icon icon="zi-star" className="text-yellow-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <Text className="text-gray-700">{prospect}</Text>
+                    </Box>
+                  ))}
+                </Box>
+              );
+            })()
           ) : (
             <Text className="text-gray-500">Chưa có thông tin cơ hội nghề nghiệp.</Text>
           )}

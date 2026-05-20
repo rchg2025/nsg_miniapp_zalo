@@ -147,7 +147,7 @@ function MajorsPage() {
                 </Box>
               </Box>
 
-              <Text className="text-gray-600 text-sm mb-3">{major.description}</Text>
+              <Text className="text-gray-600 text-sm mb-3">{major.description ? major.description.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().substring(0, 120) + (major.description.replace(/<[^>]*>/g, '').length > 120 ? '...' : '') : ''}</Text>
 
               <Box className="space-y-2 mb-4">
                 <Box className="flex items-center justify-between">

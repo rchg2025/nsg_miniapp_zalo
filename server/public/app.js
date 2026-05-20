@@ -296,7 +296,7 @@ async function fetchAdminMajors() {
       <tr class="border-b hover:bg-gray-50">
         <td class="p-4 font-mono text-sm">${esc(m.code || '')}</td>
         <td class="p-4 font-medium">${esc(m.name)}</td>
-        <td class="p-4 text-sm text-gray-600 max-w-xs truncate">${esc(m.description || '')}</td>
+        <td class="p-4 text-sm text-gray-600 max-w-xs truncate">${esc(stripHtml(m.description || ''))}</td>
         <td class="p-4 text-right">
           <button onclick="openMajorModal(${JSON.stringify(m).replace(/"/g,'&quot;')})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
           <button onclick="deleteMajor(${m.id})" class="text-red-600 hover:underline text-sm">Xóa</button>
@@ -632,6 +632,11 @@ function handleFileSelect(event, inputId, zoneId, dropNameId) {
 function esc(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function stripHtml(html) {
+  if (!html) return '';
+  return String(html).replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
 }
 
 function fmtDate(val) {
