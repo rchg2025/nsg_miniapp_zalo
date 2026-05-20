@@ -219,7 +219,7 @@
           <div class="bg-white rounded-lg shadow overflow-x-auto">
             <table class="w-full text-left">
               <thead class="bg-gray-50 border-b"><tr>
-                <th class="p-4">Họ tên</th><th class="p-4">SĐT</th><th class="p-4">Ngành đăng ký</th><th class="p-4">Trạng thái</th><th class="p-4">Ngày đăng ký</th><th class="p-4 text-right">Thao tác</th>
+                <th class="p-4">Họ tên</th><th class="p-4">SĐT</th><th class="p-4">CMND/CCCD</th><th class="p-4">Ngành đăng ký</th><th class="p-4">Trạng thái</th><th class="p-4">Ngày đăng ký</th><th class="p-4 text-right">Thao tác</th>
               </tr></thead>
               <tbody id="admissions-tbody"></tbody>
             </table>
@@ -420,6 +420,22 @@
       <div class="flex justify-end gap-2">
         <button onclick="document.getElementById('sys-user-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 rounded">Hủy</button>
         <button onclick="saveSysUser()" class="px-4 py-2 bg-blue-600 text-white rounded font-bold">Lưu lại</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Chi tiết đăng ký tuyển sinh -->
+  <div id="admission-detail-modal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-lg">
+      <div class="p-6 border-b flex justify-between items-center">
+        <h3 class="text-xl font-bold">Chi tiết đăng ký tuyển sinh</h3>
+        <button onclick="document.getElementById('admission-detail-modal').classList.add('hidden')" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+      </div>
+      <div id="admission-detail-body" class="p-6 space-y-3 text-sm max-h-96 overflow-y-auto"></div>
+      <div class="p-4 flex justify-end gap-2 border-t">
+        <button id="admission-detail-approve" class="px-4 py-2 bg-green-600 text-white rounded font-bold">Duyệt</button>
+        <button id="admission-detail-reject" class="px-4 py-2 bg-red-500 text-white rounded font-bold">Từ chối</button>
+        <button onclick="document.getElementById('admission-detail-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 rounded">Đóng</button>
       </div>
     </div>
   </div>

@@ -4,6 +4,7 @@ import { openChat, getUserInfo, followOA } from "zmp-sdk/apis";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUser } from "@/contexts/user-context";
 import { DataManager, Major, AdmissionApplication } from "@/utils/data-manager";
+import { getMajors as getMajorsFromAPI, API_BASE_URL } from "@/utils/api";
 
 function AdmissionRegistrationPage() {
   const navigate = useNavigate();
@@ -36,10 +37,14 @@ function AdmissionRegistrationPage() {
   });
 
   useEffect(() => {
-    // Load majors from DataManager - hiển thị tất cả ngành
-    const majorsData = DataManager.getMajors();
-    setMajors(majorsData);
-    console.log('🎓 Loaded majors for registration:', majorsData.length);
+    // Load majors from API
+    getMajorsFromAPI().then(data => {
+      setMajors(data);
+    }).catch(err => {
+      console.error('Failed to load majors from API, using local fallback:', err);
+      setMajors(DataManager.getMajors());
+    });
+    console.log('🎓 Loading majors for registration...');
 
     // Get majorId from URL parameter
     const majorIdFromUrl = searchParams.get('majorId');
@@ -170,28 +175,30 @@ function AdmissionRegistrationPage() {
         return dateStr;
       };
 
-      // Create new application
-      const newApplication: AdmissionApplication = {
-        id: Date.now().toString(),
-        studentName: formData.fullName,
+      // Send to API server
+      const appPayload = {
+        student_name: formData.fullName,
+        date_of_birth: convertDateToISO(formData.dateOfBirth),
         phone: formData.phoneNumber,
         email: formData.email,
-        birthDate: convertDateToISO(formData.dateOfBirth),
+        major_code: selectedMajor?.code || formData.majorId,
+        major_name: selectedMajor?.name || '',
+        high_school: formData.school,
+        id_card: formData.idCard,
         address: formData.address,
-        majorId: formData.majorId,
-        majorName: selectedMajor?.name || '',
-        highSchoolScore: parseFloat(formData.academicScore) || 0,
-        graduationYear: formData.graduationYear,
-        status: 'pending',
-        submittedAt: new Date().toISOString(),
+        graduation_year: formData.graduationYear,
         notes: formData.note,
-        documents: documents
+        zalo_id: (userInfo as any)?.id || ''
       };
-
-      // Save application
-      const applications = DataManager.getApplications();
-      const updatedApplications = [newApplication, ...applications];
-      DataManager.saveApplications(updatedApplications);
+      const apiRes = await fetch(`${API_BASE_URL}/admissions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(appPayload)
+      });
+      if (!apiRes.ok) {
+        const err = await apiRes.json().catch(() => ({}));
+        throw new Error(err.error || `Lỗi ${apiRes.status}`);
+      }
 
       // Automatically follow Zalo OA for admission updates
       try {

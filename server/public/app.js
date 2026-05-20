@@ -1,5 +1,6 @@
 ﻿const API_BASE = 'https://nsg-miniapp-zalo-ipia.vercel.app/api';
 let currentUser = null;
+let _admissionsList = [];
 
 // ===================== AUTH =====================
 
@@ -528,24 +529,52 @@ async function deleteTraining(id) {
 
 async function fetchAdmissions() {
   const tbody = document.getElementById('admissions-tbody');
-  tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
   try {
     const res = await fetch(API_BASE + '/admissions');
     const list = await res.json();
-    if (!list.length) { tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">Chưa có đăng ký</td></tr>'; return; }
+    if (!Array.isArray(list) || !list.length) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-400">Chưa có đăng ký</td></tr>'; return; }
+    _admissionsList = list;
     tbody.innerHTML = list.map(a => `
       <tr class="border-b hover:bg-gray-50">
-        <td class="p-4 font-medium">${esc(a.full_name || a.name || '')}</td>
+        <td class="p-4 font-medium">${esc(a.student_name || '')}</td>
         <td class="p-4">${esc(a.phone || '')}</td>
-        <td class="p-4">${esc(a.major_name || a.major || '')}</td>
+        <td class="p-4">${esc(a.id_card || '')}</td>
+        <td class="p-4">${esc(a.major_name || a.major_code || '')}</td>
         <td class="p-4"><span class="px-2 py-1 rounded text-xs font-semibold ${a.status === 'approved' ? 'bg-green-100 text-green-700' : a.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}">${esc(a.status || 'pending')}</span></td>
         <td class="p-4 text-sm text-gray-500">${fmtDate(a.created_at)}</td>
         <td class="p-4 text-right flex gap-2 justify-end">
+          <button onclick="viewAdmission(${a.id})" class="text-blue-600 hover:underline text-sm">Chi tiết</button>
           <button onclick="updateAdmissionStatus(${a.id},'approved')" class="text-green-600 hover:underline text-sm">Duyệt</button>
           <button onclick="updateAdmissionStatus(${a.id},'rejected')" class="text-red-600 hover:underline text-sm">Từ chối</button>
         </td>
       </tr>`).join('');
-  } catch (e) { tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+  } catch (e) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+function viewAdmission(id) {
+  const a = _admissionsList.find(x => x.id == id);
+  if (!a) return;
+  const statusLabel = a.status === 'approved' ? 'Đã duyệt' : a.status === 'rejected' ? 'Từ chối' : 'Chờ xử lý';
+  document.getElementById('admission-detail-body').innerHTML = `
+    <div class="grid grid-cols-2 gap-3">
+      <div><span class="font-semibold text-gray-600">Họ tên:</span><br>${esc(a.student_name || '')}</div>
+      <div><span class="font-semibold text-gray-600">SĐT:</span><br>${esc(a.phone || '')}</div>
+      <div><span class="font-semibold text-gray-600">CMND/CCCD:</span><br>${esc(a.id_card || '')}</div>
+      <div><span class="font-semibold text-gray-600">Email:</span><br>${esc(a.email || '')}</div>
+      <div><span class="font-semibold text-gray-600">Ngành đăng ký:</span><br>${esc(a.major_name || a.major_code || '')}</div>
+      <div><span class="font-semibold text-gray-600">Mã ngành:</span><br>${esc(a.major_code || '')}</div>
+      <div><span class="font-semibold text-gray-600">Trường THPT:</span><br>${esc(a.high_school || '')}</div>
+      <div><span class="font-semibold text-gray-600">Năm tốt nghiệp:</span><br>${esc(a.graduation_year || '')}</div>
+      <div class="col-span-2"><span class="font-semibold text-gray-600">Địa chỉ:</span><br>${esc(a.address || '')}</div>
+      <div><span class="font-semibold text-gray-600">Trạng thái:</span><br><span class="px-2 py-1 rounded text-xs font-semibold ${a.status === 'approved' ? 'bg-green-100 text-green-700' : a.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}">${statusLabel}</span></div>
+      <div><span class="font-semibold text-gray-600">Ngày đăng ký:</span><br>${fmtDate(a.created_at)}</div>
+      <div class="col-span-2"><span class="font-semibold text-gray-600">Ghi chú:</span><br>${esc(a.notes || '')}</div>
+    </div>
+  `;
+  document.getElementById('admission-detail-approve').onclick = () => { updateAdmissionStatus(a.id, 'approved'); document.getElementById('admission-detail-modal').classList.add('hidden'); };
+  document.getElementById('admission-detail-reject').onclick = () => { updateAdmissionStatus(a.id, 'rejected'); document.getElementById('admission-detail-modal').classList.add('hidden'); };
+  document.getElementById('admission-detail-modal').classList.remove('hidden');
 }
 
 async function updateAdmissionStatus(id, status) {
