@@ -32,23 +32,63 @@ export function labelForEducationLevel(raw: string | undefined): string {
 }
 
 // Normalize a single major object coming from arbitrary admin schema
+// Supports both camelCase (frontend) and snake_case (PostgreSQL API response)
 export function normalizeMajor(input: any): Major {
+  // Parse education_level / educationLevels from DB (stored as single string or array)
+  let educationLevels: string[];
+  const rawLevel = input.educationLevels || input.education_level || input.educationLevel;
+  if (Array.isArray(rawLevel) && rawLevel.length > 0) {
+    educationLevels = rawLevel;
+  } else if (typeof rawLevel === 'string' && rawLevel.trim()) {
+    educationLevels = [rawLevel.trim()];
+  } else {
+    educationLevels = ['college', 'vocational'];
+  }
+
+  // Parse career_prospects / careerProspects (stored as TEXT, may be JSON array or plain string)
+  const rawCareer = input.careerProspects || input.career_prospects;
+  let careerProspects: string[];
+  if (Array.isArray(rawCareer)) {
+    careerProspects = rawCareer;
+  } else if (typeof rawCareer === 'string' && rawCareer.trim()) {
+    try { careerProspects = JSON.parse(rawCareer); } catch { careerProspects = [rawCareer]; }
+  } else {
+    careerProspects = ["Cơ hội nghề nghiệp rộng mở"];
+  }
+
+  // Parse requirements (may be JSON array or plain string)
+  const rawReq = input.requirements;
+  let requirements: string[];
+  if (Array.isArray(rawReq)) {
+    requirements = rawReq;
+  } else if (typeof rawReq === 'string' && rawReq.trim()) {
+    try { requirements = JSON.parse(rawReq); } catch { requirements = [rawReq]; }
+  } else {
+    requirements = ["Tốt nghiệp THPT"];
+  }
+
+  // tuition_fee from DB (snake_case)
+  const rawTuition = input.tuitionFee ?? input.tuition_fee ?? input.tuition;
+  const tuitionFee = rawTuition !== undefined && rawTuition !== null && rawTuition !== ''
+    ? Number(rawTuition)
+    : 0;
+
   return {
     id: String(input.id || input._id || Date.now() + Math.random()),
     name: input.name || 'Chưa đặt tên',
     code: input.code || 'N/A',
     description: input.description || 'Đang cập nhật mô tả ngành...',
-    image: input.image || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400',
-    duration: input.duration || '3 năm',
-    educationLevels: input.educationLevels && Array.isArray(input.educationLevels) && input.educationLevels.length > 0
-      ? input.educationLevels
-      : ['college','vocational'],
-    requirements: input.requirements || ["Tốt nghiệp THPT"],
-    careerProspects: input.careerProspects || ["Cơ hội nghề nghiệp rộng mở"],
-    tuitionFee: Number(input.tuitionFee ?? input.tuition ?? 0),
+    image: input.image || input.image_url || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400',
+    duration: input.duration || '',
+    educationLevels,
+    requirements,
+    careerProspects,
+    tuitionFee,
+    subjects: input.subjects || '',
+    website: input.website || '',
     isActive: input.isActive !== false,
-    createdAt: input.createdAt || input.date || new Date().toISOString(),
-    updatedAt: input.updatedAt || input.modifiedAt || new Date().toISOString(),
+    createdAt: input.createdAt || input.created_at || input.date || new Date().toISOString(),
+    updatedAt: input.updatedAt || input.updated_at || input.modifiedAt || new Date().toISOString(),
   } as Major;
 }
 

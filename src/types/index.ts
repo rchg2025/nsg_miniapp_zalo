@@ -60,6 +60,7 @@ export interface Major {
   educationLevels: EducationLevel[];
   requirements: string[]; // Điều kiện đào tạo
   careerProspects: string[]; // Cơ hội nghề nghiệp
+  subjects?: string; // Các môn học
   website?: string; // Website liên quan
   contactInfo?: string; // Thông tin liên hệ
   tuitionFee: number;

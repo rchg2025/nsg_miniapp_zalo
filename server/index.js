@@ -3,7 +3,14 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const crypto = require('crypto');
 const path = require('path');
+const os = require('os');
+const fs = require('fs');
+const multer = require('multer');
+const { google } = require('googleapis');
 const db = require('./db'); // Kết nối PostgreSQL
+
+// Multer: lưu file tạm vào thư mục hệ thống
+const upload = multer({ dest: os.tmpdir() });
 
 const app = express();
 const port = process.env.PORT || 3001; // Cổng server sẽ chạy
@@ -428,17 +435,17 @@ app.post('/api/system_users/login', async (req, res) => {
 app.get('/api/settings/test-drive-connection', async (req, res) => {
   try {
     const { google } = require('googleapis');
-    const { rows } = await db.query('SELECT config_value FROM settings WHERE config_key=', ['google_service_account_json']);
-    if (!rows.length || !rows[0].config_value) return res.status(400).json({ success: false, message: 'Chưa cấu hình JSON' });
+    const { rows } = await db.query('SELECT config_value FROM settings WHERE config_key=$1', ['google_service_account_json']);
+    if (!rows.length || !rows[0].config_value) return res.status(400).json({ success: false, message: 'Chưa cấu hình JSON Service Account' });
     const credentials = JSON.parse(rows[0].config_value);
     const auth = new google.auth.GoogleAuth({ credentials, scopes: ['https://www.googleapis.com/auth/drive'] });
     const drive = google.drive({ version: 'v3', auth });
     
-    const { rows: fr } = await db.query('SELECT config_value FROM settings WHERE config_key=', ['google_drive_folder_id']);
+    const { rows: fr } = await db.query('SELECT config_value FROM settings WHERE config_key=$1', ['google_drive_folder_id']);
     const folderId = fr.length ? fr[0].config_value : null;
     
-    // Test list files
-    const q = folderId ? '' in parents : '';
+    // Test list files in shared/team drive
+    const q = folderId ? `'${folderId}' in parents` : '';
     await drive.files.list({ pageSize: 1, q, supportsAllDrives: true, includeItemsFromAllDrives: true });
     
     res.json({ success: true, message: 'Kết nối Google Drive thành công!' });
@@ -447,40 +454,57 @@ app.get('/api/settings/test-drive-connection', async (req, res) => {
   }
 });
 
-app.post('/api/upload', (req, res) => {
+app.post('/api/upload', upload.single('file'), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   try {
-    const multer = require('multer');
-    const { google } = require('googleapis');
-    const fs = require('fs');
-    const uploader = multer({ dest: '/tmp/uploads/' });
-    uploader.single('file')(req, res, async (err) => {
-      if (err || !req.file) return res.status(400).json({ error: 'No file uploaded' });
+    const { rows } = await db.query('SELECT config_value FROM settings WHERE config_key=$1', ['google_service_account_json']);
+    if (!rows.length || !rows[0].config_value) return res.status(400).json({ error: 'Google Drive not configured' });
+    const credentials = JSON.parse(rows[0].config_value);
+    const auth = new google.auth.GoogleAuth({ credentials, scopes: ['https://www.googleapis.com/auth/drive'] });
+    const drive = google.drive({ version: 'v3', auth });
+
+    const { rows: fr } = await db.query('SELECT config_value FROM settings WHERE config_key=$1', ['google_drive_folder_id']);
+    const folderId = fr.length ? fr[0].config_value : null;
+
+    // Detect if folderId belongs to a Shared/Team Drive
+    let driveId = null;
+    if (folderId) {
       try {
-        const { rows } = await db.query('SELECT config_value FROM settings WHERE config_key=$1', ['google_service_account_json']);
-        if (!rows.length || !rows[0].config_value) return res.status(400).json({ error: 'Google Drive not configured' });
-        const credentials = JSON.parse(rows[0].config_value);
-        const auth = new google.auth.GoogleAuth({ credentials, scopes: ['https://www.googleapis.com/auth/drive'] });
-        const drive = google.drive({ version: 'v3', auth });
-        const { rows: fr } = await db.query('SELECT config_value FROM settings WHERE config_key=$1', ['google_drive_folder_id']);
-        const folderId = fr.length ? fr[0].config_value : null;
-        const meta = { name: req.file.originalname, ...(folderId && { parents: [folderId] }) };
-        const media = { mimeType: req.file.mimetype, body: fs.createReadStream(req.file.path) };
-        const uploaded = await drive.files.create({ 
-          requestBody: meta, 
-          media, 
-          fields: 'id, webViewLink',
-          supportsAllDrives: true 
-        });
-        await drive.permissions.create({ 
-          fileId: uploaded.data.id, 
-          requestBody: { role: 'reader', type: 'anyone' },
-          supportsAllDrives: true 
-        });
-        fs.unlink(req.file.path, () => {});
-        res.json({ url: uploaded.data.webViewLink, fileId: uploaded.data.id });
-      } catch (e) { res.status(500).json({ error: e.message }); }
-    });
-  } catch (e) { res.status(500).json({ error: e.message }); }
+        const folderInfo = await drive.files.get({ fileId: folderId, fields: 'driveId', supportsAllDrives: true });
+        driveId = folderInfo.data.driveId || null;
+      } catch (_) {}
+    }
+
+    const meta = { name: req.file.originalname };
+    if (folderId) meta.parents = [folderId];
+    const media = { mimeType: req.file.mimetype, body: fs.createReadStream(req.file.path) };
+
+    const uploadParams = { requestBody: meta, media, fields: 'id', supportsAllDrives: true };
+    if (driveId) uploadParams.driveId = driveId;
+
+    const uploaded = await drive.files.create(uploadParams);
+    const fileId = uploaded.data.id;
+
+    // Try to set public permission (may fail on Team Drives - handled gracefully)
+    try {
+      await drive.permissions.create({
+        fileId,
+        requestBody: { role: 'reader', type: 'anyone' },
+        supportsAllDrives: true
+      });
+    } catch (permErr) {
+      console.warn('Permission set skipped (Team Drive restriction):', permErr.message);
+    }
+
+    fs.unlink(req.file.path, () => {});
+    // Direct view URL — works for personal and shared drives
+    const directUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+    res.json({ url: directUrl, fileId });
+  } catch (e) {
+    if (req.file) fs.unlink(req.file.path, () => {});
+    console.error('Upload error:', e);
+    res.status(500).json({ error: e.message });
+  }
 });
 
 app.listen(port, () => {
