@@ -115,7 +115,17 @@ const initDB = async () => {
     await client.query(createTablesQuery);
     
     // Đảm bảo ALTER TABLE cho database cũ
-    try { await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'user'"); } catch(e) {}
+ 
+    try { await client.query('ALTER TABLE majors ADD COLUMN IF NOT EXISTS image_url VARCHAR(255)'); } catch(e) {}
+    try { await client.query('ALTER TABLE majors ADD COLUMN IF NOT EXISTS duration VARCHAR(100)'); } catch(e) {}
+    try { await client.query('ALTER TABLE majors ADD COLUMN IF NOT EXISTS tuition_fee NUMERIC'); } catch(e) {}
+    try { await client.query('ALTER TABLE majors ADD COLUMN IF NOT EXISTS education_level VARCHAR(100)'); } catch(e) {}
+    try { await client.query('ALTER TABLE majors ADD COLUMN IF NOT EXISTS subjects TEXT'); } catch(e) {}
+    try { await client.query('ALTER TABLE majors ADD COLUMN IF NOT EXISTS career_prospects TEXT'); } catch(e) {}
+    try { await client.query('ALTER TABLE majors ADD COLUMN IF NOT EXISTS website VARCHAR(255)'); } catch(e) {}
+    
+    try { await client.query('ALTER TABLE notifications ADD COLUMN IF NOT EXISTS image_url VARCHAR(255)'); } catch(e) {}
+   try { await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'user'"); } catch(e) {}
     try { await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(50)"); } catch(e) {}
     try { await client.query("ALTER TABLE system_users ADD COLUMN IF NOT EXISTS is_superadmin BOOLEAN DEFAULT FALSE"); } catch(e) {}
 

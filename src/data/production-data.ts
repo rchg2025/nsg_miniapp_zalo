@@ -22,7 +22,7 @@ export const PRODUCTION_DATA: {
   version: '1.0.0'
 };
 
-// Dữ liệu mẫu fallback nếu production data chưa c�
+// Dữ liệu mẫu fallback nếu production data chưa có
 export const FALLBACK_DATA: {
   news: NewsItem[];
   majors: Major[];
@@ -31,11 +31,11 @@ export const FALLBACK_DATA: {
   news: [
     {
       id: '1',
-      title: 'Th�ng b�o tuyển sinh năm học 2024-2025',
-      content: 'Trường Cao đẳng B�ch khoa Nam S�i G�n th�ng b�o kế hoạch tuyển sinh năm học 2024-2025...',
-      summary: 'Kế hoạch tuyển sinh năm học mới với nhiều ng�nh học hấp dẫn',
+      title: 'Thông báo tuyển sinh năm học 2024-2025',
+      content: 'Trường Cao đẳng Bách khoa Nam Sài Gòn thông báo kế hoạch tuyển sinh năm học 2024-2025...',
+      summary: 'Kế hoạch tuyển sinh năm học mới với nhiều ngành học hấp dẫn',
       category: 'tuyen-sinh',
-      author: 'Ban Gi�m hiệu',
+      author: 'Ban Giám hiệu',
       createdAt: '2024-01-15T09:00:00Z',
       updatedAt: '2024-01-15T09:00:00Z',
       status: 'published',
@@ -43,19 +43,19 @@ export const FALLBACK_DATA: {
       imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=400&fit=crop',
       viewCount: 1250,
       likeCount: 89,
-      tags: ['tuyển sinh', 'th�ng b�o', 'năm học mới']
+      tags: ['tuyển sinh', 'thông báo', 'năm học mới']
     }
   ],
   majors: [
     {
       id: '1',
-      name: 'C�ng nghệ Th�ng tin',
+      name: 'Công nghệ Thông tin',
       code: 'CNTT01',
-      description: 'Đ�o tạo chuy�n vi�n c�ng nghệ th�ng tin c� kỹ năng lập tr�nh, quản trị hệ thống v� ph�t triển ứng dụng.',
+      description: 'Đào tạo chuyên viên công nghệ thông tin có kỹ năng lập trình, quản trị hệ thống và phát triển ứng dụng.',
       duration: '3 năm',
       tuitionFee: 18000000,
-      subjects: ['Lập tr�nh C/C++', 'Java', 'Web Development', 'Database', 'Mạng m�y t�nh', 'To�n cao cấp'],
-      careerProspects: ['Lập tr�nh vi�n', 'Quản trị hệ thống', 'Chuy�n vi�n IT', 'Ph�t triển web/mobile'],
+      subjects: ['Lập trình C/C++', 'Java', 'Web Development', 'Database', 'Mạng máy tính', 'Toán cao cấp'],
+      careerProspects: ['Lập trình viên', 'Quản trị hệ thống', 'Chuyên viên IT', 'Phát triển web/mobile'],
       admissionScore: 18.5,
       quota: 120,
       enrolled: 98,

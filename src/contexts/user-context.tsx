@@ -25,7 +25,7 @@ interface UserProviderProps {
   children: React.ReactNode;
 }
 
-// Hệ thống quản l� role dựa tr�n Zalo ID
+// Hệ thống quản lý role dựa trên Zalo ID
 interface UserRoleData {
   zaloId: string;
   role: UserRole;
@@ -34,7 +34,7 @@ interface UserRoleData {
   isActive: boolean;
 }
 
-// Mock database cho user roles (trong thực tế sẽ lưu tr�n server)
+// Mock database cho user roles (trong thực tế sẽ lưu trên server)
 const getUserRoleDatabase = (): UserRoleData[] => {
   try {
     const stored = localStorage.getItem('user_roles_db');
@@ -42,7 +42,7 @@ const getUserRoleDatabase = (): UserRoleData[] => {
       const parsed = JSON.parse(stored);
       return parsed;
     }
-    // Default admin accounts với nhiều t�i khoản demo
+    // Default admin accounts với nhiều tài khoản demo
     const defaultRoles: UserRoleData[] = [
       {
         zaloId: 'admin123',
@@ -58,7 +58,7 @@ const getUserRoleDatabase = (): UserRoleData[] => {
         assignedAt: new Date().toISOString(),
         isActive: true
       },
-      // Th�m một số t�i khoản demo cho c�c role kh�c nhau
+      // Thêm một số tài khoản demo cho các role khác nhau
       {
         zaloId: '1234567890', // Demo admin account
         role: UserRole.ADMIN,
@@ -101,7 +101,7 @@ const saveUserRoleDatabase = (roles: UserRoleData[]) => {
   }
 };
 
-// Th�m/cập nhật role cho user
+// Thêm/cập nhật role cho user
 export const assignUserRole = (zaloId: string, role: UserRole, assignedBy: string): boolean => {
   try {
     const roles = getUserRoleDatabase();
@@ -126,7 +126,7 @@ export const assignUserRole = (zaloId: string, role: UserRole, assignedBy: strin
   }
 };
 
-// X�a role của user
+// Xóa role của user
 export const removeUserRole = (zaloId: string): boolean => {
   const roles = getUserRoleDatabase();
   const updatedRoles = roles.filter(r => r.zaloId !== zaloId);
@@ -157,7 +157,7 @@ const getUserPermissions = (role: UserRole): string[] => {
 const getUserRole = (zaloId: string): UserRole => {
   const roles = getUserRoleDatabase();
   const userRole = roles.find(r => r.zaloId === zaloId && r.isActive);
-  return userRole ? userRole.role : UserRole.STUDENT; // Default l� student
+  return userRole ? userRole.role : UserRole.STUDENT; // Default là student
 };
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
@@ -177,7 +177,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         
         setUserInfo({
           id: user.userInfo.id,
-          name: user.userInfo.name || 'Kh�ch',
+          name: user.userInfo.name || 'Khách',
           avatar: user.userInfo.avatar || '',
           role,
           permissions
@@ -186,7 +186,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         // Auto create guest user if no Zalo login
         setUserInfo({
           id: 'guest',
-          name: 'Kh�ch',
+          name: 'Khách',
           avatar: '',
           role: UserRole.STUDENT,
           permissions: []
@@ -196,7 +196,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       // Auto create guest user on error
       setUserInfo({
         id: 'guest',
-        name: 'Kh�ch',
+        name: 'Khách',
         avatar: '',
         role: UserRole.STUDENT,
         permissions: []

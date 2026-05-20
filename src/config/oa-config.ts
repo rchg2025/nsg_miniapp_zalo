@@ -1,13 +1,13 @@
 /**
- * Cấu h�nh OA v� c�c th�ng tin li�n hệ
+ * Cấu hình OA và các thông tin liên hệ
  */
 
 export const OA_CONFIG = {
   // OA ID của trường - cần được cập nhật với OA ID thực
-  // Để test: c� thể d�ng OA ID của Zalo Mini App Sample hoặc OA kh�c
-  OA_ID: "4295375038644451656", // Thay đổi th�nh OA ID thực của trường
+  // Để test: có thể dùng OA ID của Zalo Mini App Sample hoặc OA khác
+  OA_ID: "4295375038644451656", // Thay đổi thành OA ID thực của trường
   
-  // Th�ng tin li�n hệ dự ph�ng
+  // Thông tin liên hệ dự phòng
   CONTACT_INFO: {
     phone: "0981146179",
     website: "https://namsaigon.edu.vn",
@@ -16,8 +16,8 @@ export const OA_CONFIG = {
   
   // Tin nhắn mặc định
   DEFAULT_MESSAGES: {
-    follow: "Xin ch�o! T�i muốn quan t�m OA của trường để nhận th�ng tin tuyển sinh.",
-    support: "Xin ch�o! T�i cần hỗ trợ về th�ng tin tuyển sinh v� c�c dịch vụ của trường."
+    follow: "Xin chào! Tôi muốn quan tâm OA của trường để nhận thông tin tuyển sinh.",
+    support: "Xin chào! Tôi cần hỗ trợ về thông tin tuyển sinh và các dịch vụ của trường."
   }
 };
 

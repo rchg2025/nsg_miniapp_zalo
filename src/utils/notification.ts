@@ -1,8 +1,8 @@
 /**
- * Hiển thị th�ng b�o thay thế cho alert()
- * Sử dụng window.alert nhưng với prefix "Th�ng b�o"
- * @param message Nội dung th�ng b�o
- * @param type Loại th�ng b�o: success, error, warning, info
+ * Hiển thị thông báo thay thế cho alert()
+ * Sử dụng window.alert nhưng với prefix "Thông báo"
+ * @param message Nội dung thông báo
+ * @param type Loại thông báo: success, error, warning, info
  */
 export const showNotification = (
   message: string,
@@ -15,41 +15,41 @@ export const showNotification = (
     info: 'ℹ️'
   }[type];
 
-  window.alert(`${icon} Th�ng b�o\n\n${message}`);
+  window.alert(`${icon} Thông báo\n\n${message}`);
 };
 
 /**
- * Hiển thị th�ng b�o th�nh c�ng
+ * Hiển thị thông báo thành công
  */
 export const showSuccess = (message: string) => {
   showNotification(message, 'success');
 };
 
 /**
- * Hiển thị th�ng b�o lỗi
+ * Hiển thị thông báo lỗi
  */
 export const showError = (message: string) => {
   showNotification(message, 'error');
 };
 
 /**
- * Hiển thị th�ng b�o cảnh b�o
+ * Hiển thị thông báo cảnh báo
  */
 export const showWarning = (message: string) => {
   showNotification(message, 'warning');
 };
 
 /**
- * Hiển thị th�ng b�o th�ng tin
+ * Hiển thị thông báo thông tin
  */
 export const showInfo = (message: string) => {
   showNotification(message, 'info');
 };
 
 /**
- * Hiển thị dialog x�c nhận (thay thế confirm())
+ * Hiển thị dialog xác nhận (thay thế confirm())
  */
-export const showConfirm = async (message: string, title: string = 'X�c nhận'): Promise<boolean> => {
+export const showConfirm = async (message: string, title: string = 'Xác nhận'): Promise<boolean> => {
   return new Promise((resolve) => {
     if (window.confirm(`${title}\n\n${message}`)) {
       resolve(true);

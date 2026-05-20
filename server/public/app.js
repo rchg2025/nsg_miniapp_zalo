@@ -253,6 +253,7 @@ function openNewsModal(news) {
   document.getElementById('news-category').value = news.category || 'Tin Tức';
   document.getElementById('news-image').value = news.image || '';
   document.getElementById('news-content').value = news.content || '';
+    if(window.newsEditor) window.newsEditor.value = news.content || '';
   document.getElementById('news-drop-name').textContent = '';
   document.getElementById('news-modal').classList.remove('hidden');
 }
@@ -263,7 +264,7 @@ async function saveNews() {
     title: document.getElementById('news-title').value.trim(),
     category: document.getElementById('news-category').value,
     image: document.getElementById('news-image').value.trim(),
-    content: document.getElementById('news-content').value.trim()
+    content: (window.newsEditor ? window.newsEditor.value : document.getElementById('news-content').value).trim()
   };
   if (!payload.title) { alert('Vui lòng nhập tiêu đề'); return; }
   try {
@@ -309,7 +310,16 @@ function openMajorModal(major) {
   document.getElementById('major-code').value = major.code || '';
   document.getElementById('major-name').value = major.name || '';
   document.getElementById('major-image').value = major.image || '';
-  document.getElementById('major-description').value = major.description || '';
+  
+    document.getElementById('major-duration').value = major.duration || '';
+    document.getElementById('major-tuition').value = major.tuition_fee || '';
+    document.getElementById('major-level').value = major.education_level || '';
+    document.getElementById('major-subjects').value = major.subjects || '';
+    document.getElementById('major-career').value = major.career_prospects || '';
+    document.getElementById('major-website').value = major.website || '';
+    document.getElementById('major-description').value = major.description || '';
+    if(window.majorDescEditor) window.majorDescEditor.value = major.description || '';
+    if(window.majorCareerEditor) window.majorCareerEditor.value = major.career_prospects || '';
   document.getElementById('major-requirements').value = major.requirements || '';
   document.getElementById('major-drop-name').textContent = '';
   document.getElementById('major-modal').classList.remove('hidden');
@@ -321,7 +331,14 @@ async function saveMajor() {
     code: document.getElementById('major-code').value.trim(),
     name: document.getElementById('major-name').value.trim(),
     image: document.getElementById('major-image').value.trim(),
-    description: document.getElementById('major-description').value.trim(),
+    
+      description: (window.majorDescEditor ? window.majorDescEditor.value : document.getElementById('major-description').value).trim(),
+      duration: document.getElementById('major-duration').value.trim(),
+      tuition_fee: document.getElementById('major-tuition').value.trim(),
+      education_level: document.getElementById('major-level').value.trim(),
+      subjects: document.getElementById('major-subjects').value.trim(),
+      career_prospects: (window.majorCareerEditor ? window.majorCareerEditor.value : document.getElementById('major-career').value).trim(),
+      website: document.getElementById('major-website').value.trim(),
     requirements: document.getElementById('major-requirements').value.trim()
   };
   if (!payload.name) { alert('Vui lòng nhập tên ngành'); return; }
@@ -366,15 +383,21 @@ function openNotiModal(noti) {
   noti = noti || {};
   document.getElementById('noti-id').value = noti.id || '';
   document.getElementById('noti-title').value = noti.title || '';
-  document.getElementById('noti-message').value = noti.message || noti.content || '';
-  document.getElementById('noti-modal').classList.remove('hidden');
+  
+    document.getElementById('noti-image').value = noti.image || noti.image_url || '';
+    document.getElementById('noti-message').value = noti.message || noti.content || '';
+    if(window.notiEditor) window.notiEditor.value = noti.message || noti.content || '';
+  document.getElementById('noti-drop-name').textContent = '';
+    document.getElementById('noti-modal').classList.remove('hidden');
 }
 
 async function saveNoti() {
   const id = document.getElementById('noti-id').value;
   const payload = {
     title: document.getElementById('noti-title').value.trim(),
-    message: document.getElementById('noti-message').value.trim()
+    
+      image_url: document.getElementById('noti-image').value.trim(),
+      message: (window.notiEditor ? window.notiEditor.value : document.getElementById('noti-message').value).trim()
   };
   if (!payload.title) { alert('Vui lòng nhập tiêu đề'); return; }
   try {
@@ -590,3 +613,13 @@ function fmtDate(val) {
   if (!val) return '-';
   try { return new Date(val).toLocaleDateString('vi-VN'); } catch { return val; }
 }
+
+let newsEditor, majorDescEditor, majorCareerEditor, notiEditor;
+window.addEventListener('load', () => {
+  if(typeof Jodit !== 'undefined') {
+    newsEditor = Jodit.make('#news-content', { height: 400 });
+    majorDescEditor = Jodit.make('#major-description', { height: 300 });
+    majorCareerEditor = Jodit.make('#major-career', { height: 300 });
+    notiEditor = Jodit.make('#noti-message', { height: 300 });
+  }
+});

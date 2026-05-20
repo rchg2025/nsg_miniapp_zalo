@@ -146,11 +146,11 @@ app.get('/api/majors', async (req, res) => {
 
 // Thêm ngành học
 app.post('/api/majors', async (req, res) => {
-  const { code, name, description, requirements } = req.body;
+  const { code, name, description, requirements, image_url, duration, tuition_fee, education_level, subjects, career_prospects, website } = req.body;
   try {
     const { rows } = await db.query(
       'INSERT INTO majors (code, name, description, requirements) VALUES ($1, $2, $3, $4) RETURNING *',
-      [code, name, description, requirements]
+      [code, name, description, requirements, image_url, duration, tuition_fee, education_level, subjects, career_prospects, website]
     );
     res.json(rows[0]);
   } catch (err) {
@@ -161,11 +161,11 @@ app.post('/api/majors', async (req, res) => {
 // Cập nhật ngành học
 app.put('/api/majors/:id', async (req, res) => {
   const { id } = req.params;
-  const { code, name, description, requirements } = req.body;
+  const { code, name, description, requirements, image_url, duration, tuition_fee, education_level, subjects, career_prospects, website } = req.body;
   try {
     const { rows } = await db.query(
       'UPDATE majors SET code = $1, name = $2, description = $3, requirements = $4 WHERE id = $5 RETURNING *',
-      [code, name, description, requirements, id]
+      [code, name, description, requirements, image_url, duration, tuition_fee, education_level, subjects, career_prospects, website, id]
     );
     res.json(rows[0]);
   } catch (err) {
@@ -237,21 +237,21 @@ app.get('/api/notifications', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.post('/api/notifications', async (req, res) => {
-  const { title, message, type } = req.body;
+  const { title, message, type, image_url } = req.body;
   try {
     const { rows } = await db.query(
       'INSERT INTO notifications (title, message, type) VALUES ($1, $2, $3) RETURNING *',
-      [title, message, type || 'info']
+      [title, message, type || 'info', image_url]
     );
     res.json(rows[0]);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.put('/api/notifications/:id', async (req, res) => {
-  const { title, message, type, is_read } = req.body;
+  const { title, message, type, is_read, image_url } = req.body;
   try {
     const { rows } = await db.query(
       'UPDATE notifications SET title=$1, message=$2, type=$3, is_read=$4 WHERE id=$5 RETURNING *',
-      [title, message, type, is_read, req.params.id]
+      [title, message, type, is_read, req.params.id, req.body.image_url]
     );
     res.json(rows[0]);
   } catch (err) { res.status(500).json({ error: err.message }); }
@@ -424,6 +424,29 @@ app.post('/api/system_users/login', async (req, res) => {
 });
 
 // ================= UPLOAD (Google Drive) =================
+
+app.get('/api/settings/test-drive-connection', async (req, res) => {
+  try {
+    const { google } = require('googleapis');
+    const { rows } = await db.query('SELECT config_value FROM settings WHERE config_key=', ['google_service_account_json']);
+    if (!rows.length || !rows[0].config_value) return res.status(400).json({ success: false, message: 'Chưa cấu hình JSON' });
+    const credentials = JSON.parse(rows[0].config_value);
+    const auth = new google.auth.GoogleAuth({ credentials, scopes: ['https://www.googleapis.com/auth/drive'] });
+    const drive = google.drive({ version: 'v3', auth });
+    
+    const { rows: fr } = await db.query('SELECT config_value FROM settings WHERE config_key=', ['google_drive_folder_id']);
+    const folderId = fr.length ? fr[0].config_value : null;
+    
+    // Test list files
+    const q = folderId ? '' in parents : '';
+    await drive.files.list({ pageSize: 1, q, supportsAllDrives: true, includeItemsFromAllDrives: true });
+    
+    res.json({ success: true, message: 'Kết nối Google Drive thành công!' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Lỗi: ' + err.message });
+  }
+});
+
 app.post('/api/upload', (req, res) => {
   try {
     const multer = require('multer');
@@ -442,8 +465,17 @@ app.post('/api/upload', (req, res) => {
         const folderId = fr.length ? fr[0].config_value : null;
         const meta = { name: req.file.originalname, ...(folderId && { parents: [folderId] }) };
         const media = { mimeType: req.file.mimetype, body: fs.createReadStream(req.file.path) };
-        const uploaded = await drive.files.create({ requestBody: meta, media, fields: 'id, webViewLink' });
-        await drive.permissions.create({ fileId: uploaded.data.id, requestBody: { role: 'reader', type: 'anyone' } });
+        const uploaded = await drive.files.create({ 
+          requestBody: meta, 
+          media, 
+          fields: 'id, webViewLink',
+          supportsAllDrives: true 
+        });
+        await drive.permissions.create({ 
+          fileId: uploaded.data.id, 
+          requestBody: { role: 'reader', type: 'anyone' },
+          supportsAllDrives: true 
+        });
         fs.unlink(req.file.path, () => {});
         res.json({ url: uploaded.data.webViewLink, fileId: uploaded.data.id });
       } catch (e) { res.status(500).json({ error: e.message }); }
@@ -454,3 +486,4 @@ app.post('/api/upload', (req, res) => {
 app.listen(port, () => {
   console.log('Server running on port ' + port);
 });
+

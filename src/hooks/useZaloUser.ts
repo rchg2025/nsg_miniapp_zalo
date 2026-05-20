@@ -19,10 +19,10 @@ export const useZaloUser = () => {
       setUserInfo(info);
       
       if (!info) {
-        setError('Kh�ng thể lấy th�ng tin người d�ng Zalo');
+        setError('Không thể lấy thông tin người dùng Zalo');
       }
     } catch (err) {
-      setError('Lỗi khi lấy th�ng tin người d�ng');
+      setError('Lỗi khi lấy thông tin người dùng');
       console.error('Error loading Zalo user info:', err);
     } finally {
       setLoading(false);

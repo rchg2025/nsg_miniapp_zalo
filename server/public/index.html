@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NSG Admin Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.2/jodit.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jodit/3.24.2/jodit.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     .tab-content { display: none; }
@@ -311,6 +313,14 @@
         </div>
         <input type="text" id="major-image" class="w-full border rounded px-3 py-2 text-sm" placeholder="Hoặc dán URL ảnh...">
       </div>
+      <div class="grid grid-cols-2 gap-3 mb-3">
+        <div><label class="block text-sm font-medium mb-1">Thời gian học</label><input type="text" id="major-duration" class="w-full border rounded px-3 py-2"></div>
+        <div><label class="block text-sm font-medium mb-1">Mức học phí</label><input type="text" id="major-tuition" class="w-full border rounded px-3 py-2"></div>
+      </div>
+      <div class="mb-3"><label class="block text-sm font-medium mb-1">Hệ đào tạo</label><input type="text" id="major-level" class="w-full border rounded px-3 py-2"></div>
+      <div class="mb-3"><label class="block text-sm font-medium mb-1">Các môn học</label><input type="text" id="major-subjects" class="w-full border rounded px-3 py-2"></div>
+      <div class="mb-3"><label class="block text-sm font-medium mb-1">Cơ hội việc làm</label><textarea id="major-career" class="w-full border rounded px-3 py-2 h-20"></textarea></div>
+      <div class="mb-3"><label class="block text-sm font-medium mb-1">Website</label><input type="text" id="major-website" class="w-full border rounded px-3 py-2"></div>
       <div class="mb-3"><label class="block text-sm font-medium mb-1">Mô tả</label><textarea id="major-description" class="w-full border rounded px-3 py-2 h-24"></textarea></div>
       <div class="mb-4"><label class="block text-sm font-medium mb-1">Yêu cầu tuyển sinh</label><textarea id="major-requirements" class="w-full border rounded px-3 py-2 h-24"></textarea></div>
       <div class="flex justify-end gap-2">
@@ -326,6 +336,16 @@
       <h3 class="text-xl font-bold mb-4">Soạn Thông Báo</h3>
       <input type="hidden" id="noti-id">
       <div class="mb-3"><label class="block text-sm font-medium mb-1">Tiêu đề</label><input type="text" id="noti-title" class="w-full border rounded px-3 py-2"></div>
+      <div class="mb-3">
+          <label class="block text-sm font-medium mb-1">Hình ảnh đại diện</label>
+          <div id="noti-drop-zone" class="drop-zone mb-2" onclick="document.getElementById('noti-file-input').click()" ondragover="handleDragOver(event,'noti-drop-zone')" ondragleave="handleDragLeave(event,'noti-drop-zone')" ondrop="handleDrop(event,'noti-image','noti-drop-zone','noti-drop-name')">
+            <input type="file" id="noti-file-input" accept="image/*" onchange="handleFileSelect(event,'noti-image','noti-drop-zone','noti-drop-name')">
+            <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2 block"></i>
+            <p class="text-gray-500 text-sm">Kéo thả hoặc click để chọn ảnh &bull; Upload lên Google Drive</p>
+            <p id="noti-drop-name" class="text-blue-600 text-sm mt-1 font-medium"></p>
+          </div>
+          <input type="text" id="noti-image" class="w-full border rounded px-3 py-2 text-sm" placeholder="Hoặc dán URL ảnh...">
+        </div>
       <div class="mb-4"><label class="block text-sm font-medium mb-1">Nội dung</label><textarea id="noti-message" class="w-full border rounded px-3 py-2 h-32"></textarea></div>
       <div class="flex justify-end gap-2">
         <button onclick="document.getElementById('noti-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 rounded">Hủy</button>

@@ -3,18 +3,18 @@
  */
 
 /**
- * Tạo URL placeholder image với text t�y chỉnh
+ * Tạo URL placeholder image với text tùy chỉnh
  * @param width - Chiều rộng ảnh
  * @param height - Chiều cao ảnh
- * @param text - Text hiển thị tr�n ảnh (mặc định: "Chưa c� ảnh đại diện")
- * @param bgColor - M�u nền (hex kh�ng c� #, mặc định: cccccc)
- * @param textColor - M�u chữ (hex kh�ng c� #, mặc định: 666666)
+ * @param text - Text hiển thị trên ảnh (mặc định: "Chưa có ảnh đại diện")
+ * @param bgColor - Màu nền (hex không có #, mặc định: cccccc)
+ * @param textColor - Màu chữ (hex không có #, mặc định: 666666)
  * @returns URL của placeholder image
  */
 export function getPlaceholderImage(
   width: number = 800,
   height: number = 400,
-  text: string = 'Chưa c� ảnh đại diện',
+  text: string = 'Chưa có ảnh đại diện',
   bgColor: string = 'e0e0e0',
   textColor: string = '757575'
 ): string {
@@ -24,13 +24,13 @@ export function getPlaceholderImage(
 
 /**
  * Lấy ảnh từ object với fallback
- * @param item - Object chứa ảnh (c� thể c� image hoặc imageUrl)
- * @param fallbackText - Text hiển thị khi kh�ng c� ảnh
+ * @param item - Object chứa ảnh (có thể có image hoặc imageUrl)
+ * @param fallbackText - Text hiển thị khi không có ảnh
  * @returns URL của ảnh hoặc placeholder
  */
 export function getImageUrl(
   item: { image?: string; imageUrl?: string },
-  fallbackText: string = 'Chưa c� ảnh đại diện'
+  fallbackText: string = 'Chưa có ảnh đại diện'
 ): string {
   const imageUrl = item.imageUrl || item.image;
   
@@ -42,13 +42,13 @@ export function getImageUrl(
 }
 
 /**
- * Xử l� lỗi khi load ảnh
+ * Xử lý lỗi khi load ảnh
  * @param event - Event từ onError của img tag
  * @param fallbackText - Text hiển thị khi lỗi
  */
 export function handleImageError(
   event: React.SyntheticEvent<HTMLImageElement>,
-  fallbackText: string = 'Chưa c� ảnh đại diện'
+  fallbackText: string = 'Chưa có ảnh đại diện'
 ): void {
   const img = event.currentTarget;
   img.src = getPlaceholderImage(800, 400, fallbackText);

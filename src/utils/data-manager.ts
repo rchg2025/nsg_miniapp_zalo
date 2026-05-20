@@ -1,4 +1,4 @@
-// Hệ thống quản l� dữ liệu tập trung cho to�n bộ ứng dụng
+// Hệ thống quản lý dữ liệu tập trung cho toàn bộ ứng dụng
 import { PRODUCTION_DATA, FALLBACK_DATA } from '@/data/production-data';
 
 // Environment check
@@ -31,13 +31,13 @@ export interface Major {
   subjects: string[];
   careerProspects: string[];
   admissionScore: number;
-  quota: number; // Chỉ ti�u tuyển sinh
-  enrolled: number; // Số đ� tuyển
+  quota: number; // Chỉ tiêu tuyển sinh
+  enrolled: number; // Số đã tuyển
   status: 'active' | 'inactive';
   createdAt: string;
   imageUrl?: string;
   educationLevel: 'caodang' | 'trungcap' | 'caodang-lienthong'; // Hệ tuyển sinh
-  website?: string; // Website li�n quan
+  website?: string; // Website liên quan
 }
 
 export interface AdmissionApplication {
@@ -86,10 +86,10 @@ export interface User {
   joinedAt: string;
   lastLogin?: string;
   avatar?: string;
-  majorId?: string; // Nếu l� sinh vi�n
-  studentCode?: string; // M� sinh vi�n
+  majorId?: string; // Nếu là sinh viên
+  studentCode?: string; // Mã sinh viên
   zaloId?: string; // Zalo ID để tự động đăng nhập
-  savedNews?: string[]; // Danh s�ch ID tin tức đ� lưu
+  savedNews?: string[]; // Danh sách ID tin tức đã lưu
 }
 
 export interface SystemStats {
@@ -195,9 +195,9 @@ export class DataManager {
   static getNews(): NewsItem[] {
     console.log('📖 DataManager: Getting news from storage...');
     
-    // Trong development, ưu ti�n localStorage
+    // Trong development, ưu tiên localStorage
     if (IS_DEVELOPMENT) {
-      // Ưu ti�n adminNewsList (dữ liệu mới nhất từ admin)
+      // Ưu tiên adminNewsList (dữ liệu mới nhất từ admin)
       const adminData = localStorage.getItem('adminNewsList');
       const appData = localStorage.getItem(STORAGE_KEYS.NEWS);
       
@@ -239,7 +239,7 @@ export class DataManager {
   }
 
   static saveNews(news: NewsItem[]): void {
-    // Lưu v�o cả 2 keys để đồng bộ
+    // Lưu vào cả 2 keys để đồng bộ
     localStorage.setItem('adminNewsList', JSON.stringify(news));
     localStorage.setItem(STORAGE_KEYS.NEWS, JSON.stringify(news));
     console.log('💾 DataManager: Saved news to both adminNewsList and app_news_data');
@@ -266,9 +266,9 @@ export class DataManager {
   static getMajors(): Major[] {
     console.log('📚 DataManager: Getting majors from storage...');
     
-    // Trong development, ưu ti�n localStorage
+    // Trong development, ưu tiên localStorage
     if (IS_DEVELOPMENT) {
-      // Ưu ti�n adminMajorsList (dữ liệu mới nhất từ admin)
+      // Ưu tiên adminMajorsList (dữ liệu mới nhất từ admin)
       const adminData = localStorage.getItem('adminMajorsList');
       const appData = localStorage.getItem(STORAGE_KEYS.MAJORS);
       
@@ -276,7 +276,7 @@ export class DataManager {
         try {
           const parsed = JSON.parse(adminData);
           console.log(`✅ Found ${parsed.length} majors from adminMajorsList`);
-          // Migration: Th�m educationLevel nếu thiếu
+          // Migration: Thêm educationLevel nếu thiếu
           const migratedData = this.migrateMajorsData(parsed);
           // Đồng bộ sang app_majors_data
           localStorage.setItem(STORAGE_KEYS.MAJORS, JSON.stringify(migratedData));
@@ -290,7 +290,7 @@ export class DataManager {
         try {
           const parsed = JSON.parse(appData);
           console.log(`✅ Found ${parsed.length} majors from app_majors_data`);
-          // Migration: Th�m educationLevel nếu thiếu
+          // Migration: Thêm educationLevel nếu thiếu
           const migratedData = this.migrateMajorsData(parsed);
           if (JSON.stringify(parsed) !== JSON.stringify(migratedData)) {
             console.log('🔄 Migrated majors data with educationLevel');
@@ -319,27 +319,27 @@ export class DataManager {
 
   private static migrateMajorsData(majors: any[]): Major[] {
     return majors.map(major => {
-      // Nếu major chưa c� educationLevel, th�m mặc định
+      // Nếu major chưa có educationLevel, thêm mặc định
       if (!major.educationLevel) {
-        // Logic ph�n loại dựa tr�n t�n hoặc m� ng�nh
+        // Logic phân loại dựa trên tên hoặc mã ngành
         const code = (major.code || '').toLowerCase();
         const name = (major.name || '').toLowerCase();
         
-        if (code.includes('cntt') || name.includes('c�ng nghệ th�ng tin')) {
+        if (code.includes('cntt') || name.includes('công nghệ thông tin')) {
           major.educationLevel = 'caodang';
-        } else if (code.includes('kt') || name.includes('kế to�n')) {
+        } else if (code.includes('kt') || name.includes('kế toán')) {
           major.educationLevel = 'trungcap';
         } else if (code.includes('qtkd') || name.includes('quản trị')) {
           major.educationLevel = 'caodang-lienthong';
         } else {
-          // Mặc định l� cao đẳng
+          // Mặc định là cao đẳng
           major.educationLevel = 'caodang';
         }
         
         console.log(`🔄 Added educationLevel '${major.educationLevel}' for major: ${major.name}`);
       }
 
-      // Đảm bảo subjects v� careerProspects l� arrays
+      // Đảm bảo subjects và careerProspects là arrays
       if (!Array.isArray(major.subjects)) {
         major.subjects = major.subjects ? 
           (typeof major.subjects === 'string' ? major.subjects.split(',').map(s => s.trim()) : []) : 
@@ -359,7 +359,7 @@ export class DataManager {
   }
 
   static saveMajors(majors: Major[]): void {
-    // Lưu v�o cả 2 keys để đồng bộ
+    // Lưu vào cả 2 keys để đồng bộ
     localStorage.setItem('adminMajorsList', JSON.stringify(majors));
     localStorage.setItem(STORAGE_KEYS.MAJORS, JSON.stringify(majors));
     console.log('💾 DataManager: Saved majors to both adminMajorsList and app_majors_data');
@@ -370,7 +370,7 @@ export class DataManager {
   static getApplications(): AdmissionApplication[] {
     console.log('📋 DataManager: Getting applications from storage...');
     
-    // Ưu ti�n admissionRegistrations (dữ liệu mới nhất từ admin)
+    // Ưu tiên admissionRegistrations (dữ liệu mới nhất từ admin)
     const adminData = localStorage.getItem('admissionRegistrations');
     const appData = localStorage.getItem(STORAGE_KEYS.APPLICATIONS);
     
@@ -401,7 +401,7 @@ export class DataManager {
   }
 
   static saveApplications(applications: AdmissionApplication[]): void {
-    // Lưu v�o cả 2 keys để đồng bộ
+    // Lưu vào cả 2 keys để đồng bộ
     localStorage.setItem('admissionRegistrations', JSON.stringify(applications));
     localStorage.setItem(STORAGE_KEYS.APPLICATIONS, JSON.stringify(applications));
     console.log('💾 DataManager: Saved applications to both admissionRegistrations and app_admission_applications');
@@ -688,9 +688,9 @@ export class DataManager {
     return [
       {
         id: '1',
-        title: 'Th�ng b�o tuyển sinh năm học 2024-2025',
-        content: 'Trường Cao đẳng B�ch khoa Nam S�i G�n th�ng b�o tuyển sinh năm học 2024-2025 với nhiều ng�nh học hấp dẫn...',
-        summary: 'Tuyển sinh năm học 2024-2025 với nhiều ưu đ�i',
+        title: 'Thông báo tuyển sinh năm học 2024-2025',
+        content: 'Trường Cao đẳng Bách khoa Nam Sài Gòn thông báo tuyển sinh năm học 2024-2025 với nhiều ngành học hấp dẫn...',
+        summary: 'Tuyển sinh năm học 2024-2025 với nhiều ưu đãi',
         category: 'tuyen-sinh',
         author: 'Admin NSG',
         createdAt: '2024-01-15T08:00:00Z',
@@ -700,15 +700,15 @@ export class DataManager {
         imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=400&fit=crop',
         viewCount: 1250,
         likeCount: 89,
-        tags: ['tuyển sinh', 'th�ng b�o', 'quan trọng'],
+        tags: ['tuyển sinh', 'thông báo', 'quan trọng'],
       },
       {
         id: '2',
         title: 'Lịch thi cuối kỳ học kỳ I năm học 2023-2024',
-        content: 'Ph�ng Đ�o tạo th�ng b�o lịch thi cuối kỳ học kỳ I năm học 2023-2024...',
+        content: 'Phòng Đào tạo thông báo lịch thi cuối kỳ học kỳ I năm học 2023-2024...',
         summary: 'Lịch thi cuối kỳ học kỳ I chi tiết',
         category: 'lich-thi',
-        author: 'Ph�ng Đ�o tạo',
+        author: 'Phòng Đào tạo',
         createdAt: '2024-01-10T10:30:00Z',
         updatedAt: '2024-01-10T10:30:00Z',
         status: 'published',
@@ -716,15 +716,15 @@ export class DataManager {
         imageUrl: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=400&fit=crop',
         viewCount: 856,
         likeCount: 45,
-        tags: ['lịch thi', 'cuối kỳ', 'sinh vi�n'],
+        tags: ['lịch thi', 'cuối kỳ', 'sinh viên'],
       },
       {
         id: '3',
         title: 'Khai giảng năm học mới 2024-2025',
-        content: 'Lễ khai giảng năm học mới 2024-2025 sẽ được tổ chức tại hội trường ch�nh...',
+        content: 'Lễ khai giảng năm học mới 2024-2025 sẽ được tổ chức tại hội trường chính...',
         summary: 'Lễ khai giảng năm học mới trang trọng',
         category: 'su-kien',
-        author: 'Ban Gi�m hiệu',
+        author: 'Ban Giám hiệu',
         createdAt: '2024-01-05T14:00:00Z',
         updatedAt: '2024-01-05T14:00:00Z',
         status: 'draft',
@@ -741,13 +741,13 @@ export class DataManager {
     return [
       {
         id: '1',
-        name: 'C�ng nghệ Th�ng tin',
+        name: 'Công nghệ Thông tin',
         code: 'CNTT01',
-        description: 'Đ�o tạo chuy�n vi�n c�ng nghệ th�ng tin c� kỹ năng lập tr�nh, quản trị hệ thống v� ph�t triển ứng dụng.',
+        description: 'Đào tạo chuyên viên công nghệ thông tin có kỹ năng lập trình, quản trị hệ thống và phát triển ứng dụng.',
         duration: '3 năm',
         tuitionFee: 18000000,
-        subjects: ['Lập tr�nh C/C++', 'Java', 'Web Development', 'Database', 'Mạng m�y t�nh', 'To�n cao cấp'],
-        careerProspects: ['Lập tr�nh vi�n', 'Quản trị hệ thống', 'Chuy�n vi�n IT', 'Ph�t triển web/mobile'],
+        subjects: ['Lập trình C/C++', 'Java', 'Web Development', 'Database', 'Mạng máy tính', 'Toán cao cấp'],
+        careerProspects: ['Lập trình viên', 'Quản trị hệ thống', 'Chuyên viên IT', 'Phát triển web/mobile'],
         admissionScore: 18.5,
         quota: 120,
         enrolled: 98,
@@ -759,13 +759,13 @@ export class DataManager {
       },
       {
         id: '2',
-        name: 'Kế to�n',
+        name: 'Kế toán',
         code: 'KT01',
-        description: 'Đ�o tạo cử nh�n kế to�n c� khả năng l�m việc trong c�c doanh nghiệp, tổ chức t�i ch�nh.',
+        description: 'Đào tạo cử nhân kế toán có khả năng làm việc trong các doanh nghiệp, tổ chức tài chính.',
         duration: '3 năm',
         tuitionFee: 15000000,
-        subjects: ['Nguy�n l� kế to�n', 'Kế to�n t�i ch�nh', 'Kế to�n quản trị', 'Thuế', 'Kiểm to�n', 'To�n t�i ch�nh'],
-        careerProspects: ['Kế to�n vi�n', 'Kiểm to�n vi�n', 'Chuy�n vi�n t�i ch�nh', 'Tư vấn thuế'],
+        subjects: ['Nguyên lý kế toán', 'Kế toán tài chính', 'Kế toán quản trị', 'Thuế', 'Kiểm toán', 'Toán tài chính'],
+        careerProspects: ['Kế toán viên', 'Kiểm toán viên', 'Chuyên viên tài chính', 'Tư vấn thuế'],
         admissionScore: 16.0,
         quota: 80,
         enrolled: 75,
@@ -779,11 +779,11 @@ export class DataManager {
         id: '3',
         name: 'Quản trị Kinh doanh',
         code: 'QTKD01',
-        description: 'Đ�o tạo nh�n lực quản l� c� khả năng điều h�nh v� ph�t triển doanh nghiệp.',
+        description: 'Đào tạo nhân lực quản lý có khả năng điều hành và phát triển doanh nghiệp.',
         duration: '3 năm',
         tuitionFee: 16000000,
-        subjects: ['Quản trị học', 'Marketing', 'T�i ch�nh doanh nghiệp', 'Quản trị nh�n sự', 'Logistics', 'Kinh tế học'],
-        careerProspects: ['Quản l� doanh nghiệp', 'Chuy�n vi�n marketing', 'Tư vấn kinh doanh', 'Khởi nghiệp'],
+        subjects: ['Quản trị học', 'Marketing', 'Tài chính doanh nghiệp', 'Quản trị nhân sự', 'Logistics', 'Kinh tế học'],
+        careerProspects: ['Quản lý doanh nghiệp', 'Chuyên viên marketing', 'Tư vấn kinh doanh', 'Khởi nghiệp'],
         admissionScore: 17.0,
         quota: 100,
         enrolled: 85,
@@ -826,7 +826,7 @@ export class DataManager {
       },
       {
         id: '3',
-        name: 'L� Văn C',
+        name: 'Lê Văn C',
         phone: '0923456789',
         email: 'levanc@nsg.edu.vn',
         role: 'teacher',
@@ -854,7 +854,7 @@ export class DataManager {
       {
         id: '1',
         title: 'Tuyển sinh năm học 2024-2025',
-        description: 'Đăng k� ngay để kh�ng bỏ lỡ cơ hội học tập tại trường',
+        description: 'Đăng ký ngay để không bỏ lỡ cơ hội học tập tại trường',
         imageUrl: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=400&fit=crop',
         linkUrl: '/admission-registration',
         order: 1,
@@ -864,8 +864,8 @@ export class DataManager {
       },
       {
         id: '2',
-        title: 'Kh�m ph� c�c ng�nh đ�o tạo',
-        description: 'T�m hiểu về c�c ng�nh học ph� hợp với sở th�ch của bạn',
+        title: 'Khám phá các ngành đào tạo',
+        description: 'Tìm hiểu về các ngành học phù hợp với sở thích của bạn',
         imageUrl: 'https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=800&h=400&fit=crop',
         linkUrl: '/majors',
         order: 2,
@@ -876,7 +876,7 @@ export class DataManager {
       {
         id: '3',
         title: 'Cơ sở vật chất hiện đại',
-        description: 'Học tập trong m�i trường chuy�n nghiệp với trang thiết bị tối t�n',
+        description: 'Học tập trong môi trường chuyên nghiệp với trang thiết bị tối tân',
         imageUrl: 'https://images.unsplash.com/photo-1562774053-701939374585?w=800&h=400&fit=crop',
         order: 3,
         status: 'active',
@@ -889,9 +889,9 @@ export class DataManager {
   private static getDefaultSettings(): SystemSettings {
     return {
       general: {
-        schoolName: 'Trường Cao đẳng B�ch khoa Nam S�i G�n',
+        schoolName: 'Trường Cao đẳng Bách khoa Nam Sài Gòn',
         schoolCode: 'NSG',
-        address: 'Th�nh phố Hồ Ch� Minh',
+        address: 'Thành phố Hồ Chí Minh',
         phone: '028-12345678',
         email: 'info@nsg.edu.vn',
         website: 'https://nsg.edu.vn',
@@ -903,7 +903,7 @@ export class DataManager {
         endDate: '2024-08-31',
         minScore: 15.0,
         maxApplications: 500,
-        requiredDocuments: ['Bản sao bằng tốt nghiệp', 'Bản sao học bạ', 'Chứng minh nh�n d�n', 'Ảnh 3x4'],
+        requiredDocuments: ['Bản sao bằng tốt nghiệp', 'Bản sao học bạ', 'Chứng minh nhân dân', 'Ảnh 3x4'],
       },
       app: {
         theme: 'light',

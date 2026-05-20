@@ -2,9 +2,9 @@
 import { Major, NewsItem } from "@/types";
 
 export const CATEGORY_LABELS: Record<string, string> = {
-  announcement: 'Th�ng b�o',
+  announcement: 'Thông báo',
   news: 'Tin tức',
-  admission: 'Ng�nh tuyển sinh'
+  admission: 'Ngành tuyển sinh'
 };
 
 export const EDUCATION_LEVEL_LABELS: Record<string, string> = {
@@ -12,22 +12,22 @@ export const EDUCATION_LEVEL_LABELS: Record<string, string> = {
   vocational: 'Trung cấp',
   bachelor: 'Đại học',
   university: 'Đại học',
-  highschool: 'Trung học phổ th�ng',
+  highschool: 'Trung học phổ thông',
   intermediate: 'Trung cấp',
   advanced: 'Cao đẳng',
-  bridge_college: 'Cao đẳng li�n th�ng',
+  bridge_college: 'Cao đẳng liên thông',
   'COLLEGE': 'Cao đẳng',
   'VOCATIONAL': 'Trung cấp',
-  'BRIDGE_COLLEGE': 'Cao đẳng li�n th�ng'
+  'BRIDGE_COLLEGE': 'Cao đẳng liên thông'
 };
 
 export function labelForCategory(raw: string | undefined): string {
-  if (!raw) return 'Kh�c';
+  if (!raw) return 'Khác';
   return CATEGORY_LABELS[raw] || raw;
 }
 
 export function labelForEducationLevel(raw: string | undefined): string {
-  if (!raw) return 'Kh�c';
+  if (!raw) return 'Khác';
   return EDUCATION_LEVEL_LABELS[raw] || raw;
 }
 
@@ -35,9 +35,9 @@ export function labelForEducationLevel(raw: string | undefined): string {
 export function normalizeMajor(input: any): Major {
   return {
     id: String(input.id || input._id || Date.now() + Math.random()),
-    name: input.name || 'Chưa đặt t�n',
+    name: input.name || 'Chưa đặt tên',
     code: input.code || 'N/A',
-    description: input.description || 'Đang cập nhật m� tả ng�nh...',
+    description: input.description || 'Đang cập nhật mô tả ngành...',
     image: input.image || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400',
     duration: input.duration || '3 năm',
     educationLevels: input.educationLevels && Array.isArray(input.educationLevels) && input.educationLevels.length > 0
@@ -63,7 +63,7 @@ export function normalizeNewsItem(input: any): Partial<NewsItem> & { id: number 
   const category = input.category || 'news';
   return {
     id,
-    title: input.title || 'Chưa c� ti�u đề',
+    title: input.title || 'Chưa có tiêu đề',
     summary: input.summary || (input.content ? String(input.content).substring(0,150) + '...' : 'Đang cập nhật nội dung...'),
     content: input.content || input.body || '',
     image: input.image || '/api/placeholder/300/200',
