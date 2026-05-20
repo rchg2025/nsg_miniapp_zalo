@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button, Icon, Page, Text, Header, Input, DatePicker, Select } from "zmp-ui";
 const { Option } = Select;
-import { openChat, getUserInfo, followOA } from "zmp-sdk/apis";
+import { openChat, getUserInfo, followOA, openWebview } from "zmp-sdk/apis";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUser } from "@/contexts/user-context";
 import { DataManager, Major, AdmissionApplication } from "@/utils/data-manager";
@@ -267,13 +267,18 @@ function AdmissionRegistrationPage() {
 
   const handleContactSupport = async () => {
     try {
-      await openChat({
-        type: "oa",
-        id: "297335769392043040",
-        message: "Xin chào! Tôi cần hỗ trợ về tuyển sinh."
-      });
+      await openWebview({ url: "https://zalo.me/namsaigon" });
     } catch (error) {
-      console.error('Error opening chat:', error);
+      // Fallback: mở chat OA trực tiếp
+      try {
+        await openChat({
+          type: "oa",
+          id: "297335769392043040",
+          message: "Xin chào! Tôi cần hỗ trợ về tuyển sinh."
+        });
+      } catch (e) {
+        console.error('Error opening contact:', e);
+      }
     }
   };
 

@@ -52,7 +52,7 @@ function BottomNavigation() {
     },
     {
       id: "news",
-      label: `Tin tức${savedNewsCount > 0 ? ` (${savedNewsCount})` : ''}`,
+      label: "Tin tức",
       icon: "zi-bookmark",
       path: "/news"
     },
