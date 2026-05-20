@@ -1,6 +1,7 @@
 ﻿const API_BASE = 'https://nsg-miniapp-zalo-ipia.vercel.app/api';
 let currentUser = null;
 let _admissionsList = [];
+let _majorsList = [];
 
 // ===================== AUTH =====================
 
@@ -293,17 +294,46 @@ async function fetchAdminMajors() {
     if (!res.ok) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu (' + res.status + ')</td></tr>'; return; }
     const majors = await res.json();
     if (!Array.isArray(majors) || !majors.length) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-400">Chưa có ngành học</td></tr>'; return; }
+    _majorsList = majors;
     tbody.innerHTML = majors.map(m => `
       <tr class="border-b hover:bg-gray-50">
         <td class="p-4 font-mono text-sm">${esc(m.code || '')}</td>
         <td class="p-4 font-medium">${esc(m.name)}</td>
         <td class="p-4 text-sm text-gray-600 max-w-xs truncate">${esc(stripHtml(m.description || ''))}</td>
         <td class="p-4 text-right">
-          <button onclick="openMajorModal(${JSON.stringify(m).replace(/"/g,'&quot;')})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
+          <button onclick="previewMajor(${m.id})" class="text-gray-500 hover:underline text-sm mr-2">Xem</button>
+          <button onclick="editMajor(${m.id})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button>
           <button onclick="deleteMajor(${m.id})" class="text-red-600 hover:underline text-sm">Xóa</button>
         </td>
       </tr>`).join('');
   } catch (e) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+function editMajor(id) {
+  const m = _majorsList.find(x => x.id == id);
+  if (m) openMajorModal(m);
+}
+
+function previewMajor(id) {
+  const m = _majorsList.find(x => x.id == id);
+  if (!m) return;
+  const modal = document.getElementById('major-preview-modal');
+  document.getElementById('major-preview-title').textContent = m.name || '';
+  document.getElementById('major-preview-body').innerHTML = `
+    <div class="space-y-3 text-sm">
+      <div class="grid grid-cols-2 gap-3">
+        <div><span class="font-semibold text-gray-600">Mã ngành:</span><br>${esc(m.code || '')}</div>
+        <div><span class="font-semibold text-gray-600">Hệ đào tạo:</span><br>${esc(m.education_level || '')}</div>
+        <div><span class="font-semibold text-gray-600">Thời gian:</span><br>${esc(m.duration || '')}</div>
+        <div><span class="font-semibold text-gray-600">Học phí:</span><br>${esc(m.tuition_fee || '')}</div>
+      </div>
+      ${m.image_url ? `<div><img src="${esc(m.image_url)}" class="w-full max-h-40 object-cover rounded" onerror="this.style.display='none'"></div>` : ''}
+      ${m.description ? `<div><span class="font-semibold text-gray-600">Mô tả:</span><div class="mt-1 prose prose-sm max-w-none border rounded p-3 bg-gray-50 max-h-40 overflow-y-auto">${m.description}</div></div>` : ''}
+      ${m.subjects ? `<div><span class="font-semibold text-gray-600">Môn thi:</span><br>${esc(m.subjects)}</div>` : ''}
+      ${m.career_prospects ? `<div><span class="font-semibold text-gray-600">Triển vọng nghề:</span><div class="mt-1 prose prose-sm max-w-none border rounded p-3 bg-gray-50 max-h-32 overflow-y-auto">${m.career_prospects}</div></div>` : ''}
+    </div>
+  `;
+  modal.classList.remove('hidden');
 }
 
 async function populateMajorLevelSelect(selectedValue) {
@@ -329,7 +359,7 @@ function openMajorModal(major) {
   document.getElementById('major-id').value = major.id || '';
   document.getElementById('major-code').value = major.code || '';
   document.getElementById('major-name').value = major.name || '';
-  document.getElementById('major-image').value = major.image || '';
+  document.getElementById('major-image').value = major.image_url || major.image || '';
   
     document.getElementById('major-duration').value = major.duration || '';
     document.getElementById('major-tuition').value = major.tuition_fee || '';
