@@ -785,6 +785,7 @@ function viewAdmission(id) {
       <div><span class="font-semibold text-gray-600">Ngày đăng ký:</span><br>${fmtDate(a.created_at)}</div>
       <div class="col-span-2"><span class="font-semibold text-gray-600">Địa chỉ:</span><br>${esc(a.address || '')}</div>
       <div class="col-span-2"><span class="font-semibold text-gray-600">Ghi chú:</span><br>${esc(a.notes || '')}</div>
+      ${a.reject_reason ? `<div class="col-span-2"><span class="font-semibold text-red-600">Lý do từ chối:</span><br><span class="text-red-600">${esc(a.reject_reason)}</span></div>` : ''}
     </div>
   `;
   document.getElementById('admission-detail-approve').onclick = () => { updateAdmissionStatus(a.id, 'approved'); document.getElementById('admission-detail-modal').classList.add('hidden'); };
@@ -793,9 +794,31 @@ function viewAdmission(id) {
 }
 
 async function updateAdmissionStatus(id, status) {
+  let reject_reason = null;
+  if (status === 'rejected') {
+    reject_reason = prompt('Vui lòng nhập lý do từ chối hồ sơ này (bắt buộc):');
+    if (reject_reason === null || reject_reason.trim() === '') {
+      alert('Bạn phải nhập lý do từ chối.');
+      return;
+    }
+  }
+  
+  if (!confirm(`Bạn có chắc muốn chuyển trạng thái hồ sơ thành: ${status === 'approved' ? 'Đã duyệt' : 'Từ chối'}? Hệ thống sẽ gửi email thông báo tới học viên.`)) return;
+  
   try {
-    await fetch(API_BASE + '/admissions/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
-    fetchAdmissions();
+    const res = await fetch(API_BASE + '/admissions/' + id, { 
+      method: 'PUT', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify({ status, reject_reason: reject_reason ? reject_reason.trim() : null }) 
+    });
+    
+    if (res.ok) {
+      alert('Đã cập nhật trạng thái và gửi email thành công');
+      fetchAdmissions();
+    } else {
+      const data = await res.json();
+      alert('Lỗi: ' + (data.error || 'Cập nhật thất bại'));
+    }
   } catch (e) { alert('Lỗi cập nhật trạng thái'); }
 }
 

@@ -84,6 +84,9 @@ const initDB = async () => {
         zalo_id VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+      
+      -- Thêm cột lý do từ chối
+      try { await client.query('ALTER TABLE admissions ADD COLUMN IF NOT EXISTS reject_reason TEXT'); } catch(e) {}
       -- 8. Danh mục chuyên mục (Tin tức / Sự kiện)
       CREATE TABLE IF NOT EXISTS categories (
         id SERIAL PRIMARY KEY,

@@ -7,6 +7,7 @@ const os = require('os');
 const fs = require('fs');
 const multer = require('multer');
 const { google } = require('googleapis');
+const nodemailer = require('nodemailer');
 const db = require('./db'); // Kết nối PostgreSQL
 
 // Multer: lưu file tạm vào thư mục hệ thống
@@ -14,6 +15,29 @@ const upload = multer({ dest: os.tmpdir() });
 
 const app = express();
 const port = process.env.PORT || 3001; // Cổng server sẽ chạy
+
+// NodeMailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS
+  }
+});
+async function sendEmail(to, subject, html) {
+  try {
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      console.log('Bỏ qua gửi email vì chưa cấu hình SMTP_USER và SMTP_PASS.');
+      return false;
+    }
+    const mailOptions = { from: `"Hệ thống Tuyển sinh" <${process.env.SMTP_USER}>`, to, subject, html };
+    await transporter.sendMail(mailOptions);
+    return true;
+  } catch (error) {
+    console.error('Lỗi khi gửi email:', error);
+    return false;
+  }
+}
 
 // Middleware
 app.use(cors()); // Cho phép Cross-Origin Resource Sharing
@@ -320,18 +344,71 @@ app.post('/api/admissions', async (req, res) => {
       'INSERT INTO admissions (student_name, date_of_birth, phone, email, major_code, major_name, high_school, zalo_id, id_card, address, graduation_year, notes, desired_education_level) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *',
       [student_name, date_of_birth || null, phone, email, major_code, major_name || null, high_school || null, zalo_id || null, id_card || null, address || null, graduation_year || null, notes || null, desired_education_level || null]
     );
-    res.json(rows[0]);
+
+    const newAd = rows[0];
+
+    // Gửi email cho admin/editor
+    if (process.env.ADMIN_EMAILS) {
+      const adminHtml = `
+        <h3>Có đăng ký xét tuyển mới!</h3>
+        <ul>
+          <li><strong>Họ tên:</strong> ${student_name}</li>
+          <li><strong>SDT:</strong> ${phone}</li>
+          <li><strong>Email:</strong> ${email || 'Không có'}</li>
+          <li><strong>Ngành đăng ký:</strong> ${major_name || major_code}</li>
+          <li><strong>CMND/CCCD:</strong> ${id_card || 'Không có'}</li>
+        </ul>
+        <p>Vui lòng đăng nhập hệ thống Admin để xem và xử lý!</p>
+      `;
+      sendEmail(process.env.ADMIN_EMAILS, 'Thông báo đăng ký xét tuyển mới', adminHtml);
+    }
+
+    // Gửi email xác nhận cho học viên (nếu có email)
+    if (email) {
+      const studentHtml = `
+        <h3>Chào ${student_name},</h3>
+        <p>Hệ thống đã ghi nhận thông tin đăng ký xét tuyển ngành <strong>${major_name || major_code}</strong> của bạn thành công.</p>
+        <p>Hồ sơ của bạn hiện đang ở trạng thái <strong>Chờ xử lý</strong>.</p>
+        <p>Ban tuyển sinh sẽ sớm liên hệ hoặc thông báo kết quả cho bạn qua email này hoặc số điện thoại ${phone}.</p>
+        <br/><p>Trân trọng,<br/>Phòng Tuyển sinh Trường NSG.</p>
+      `;
+      sendEmail(email, 'Xác nhận đăng ký xét tuyển NSG', studentHtml);
+    }
+
+    res.json(newAd);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.put('/api/admissions/:id', async (req, res) => {
   // Chủ yếu dùng để duyệt (Duyệt/Từ chối) đăng ký
-  const { status } = req.body;
+  const { status, reject_reason } = req.body;
   try {
     const { rows } = await db.query(
-      'UPDATE admissions SET status=$1 WHERE id=$2 RETURNING *',
-      [status, req.params.id]
+      'UPDATE admissions SET status=$1, reject_reason=$2 WHERE id=$3 RETURNING *',
+      [status, reject_reason || null, req.params.id]
     );
-    res.json(rows[0]);
+    
+    const ad = rows[0];
+
+    // Gửi email trạng thái mới cho học viên (nếu có email)
+    if (ad.email) {
+      let statusStr = status === 'approved' ? 'Được duyệt (Trúng tuyển)' : status === 'rejected' ? 'Từ chối' : 'Chờ xử lý';
+      let htmlContent = `
+        <h3>Chào ${ad.student_name},</h3>
+        <p>Ban tuyển sinh Trường NSG xin thông báo đến bạn kết quả xét tuyển đối với hồ sơ đăng ký ngành <strong>${ad.major_name || ad.major_code}</strong>.</p>
+        <p>Trạng thái hiện tại: <strong style="color: ${status === 'approved' ? 'green' : 'red'};">${statusStr}</strong></p>
+      `;
+      if (status === 'rejected' && reject_reason) {
+         htmlContent += `<p><strong>Lý do:</strong> ${reject_reason}</p>`;
+      }
+      if (status === 'approved') {
+         htmlContent += `<p>Vui lòng chuẩn bị các giấy tờ cũng như hoàn tất các hồ sơ cần thiết trong thời gian sớm nhất theo hướng dẫn của trường!</p>`;
+      }
+      htmlContent += `<br/><p>Trân trọng,<br/>Phòng Tuyển sinh Trường NSG.</p>`;
+
+      sendEmail(ad.email, 'Cập nhật trạng thái hồ sơ đăng ký', htmlContent);
+    }
+
+    res.json(ad);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.delete('/api/admissions/:id', async (req, res) => {
