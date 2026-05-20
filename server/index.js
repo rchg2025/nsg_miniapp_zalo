@@ -430,6 +430,51 @@ app.post('/api/system_users/login', async (req, res) => {
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
 });
 
+// ================= SETTINGS =================
+
+// Map giữa key frontend và key trong DB
+const SETTINGS_KEY_MAP = {
+  google_folder_id: 'google_drive_folder_id',
+  google_sa_json: 'google_service_account_json',
+  smtp_host: 'smtp_host',
+  smtp_user: 'smtp_user',
+  smtp_pass: 'smtp_pass'
+};
+
+app.get('/api/settings', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT config_key, config_value FROM settings');
+    // Chuyển về object key frontend
+    const result = {};
+    const reverseMap = Object.fromEntries(Object.entries(SETTINGS_KEY_MAP).map(([k, v]) => [v, k]));
+    for (const row of rows) {
+      const frontendKey = reverseMap[row.config_key] || row.config_key;
+      result[frontendKey] = row.config_value;
+    }
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/settings', async (req, res) => {
+  try {
+    const entries = Object.entries(req.body || {});
+    for (const [frontendKey, value] of entries) {
+      if (value === undefined || value === null) continue;
+      const dbKey = SETTINGS_KEY_MAP[frontendKey] || frontendKey;
+      await db.query(
+        `INSERT INTO settings (config_key, config_value) VALUES ($1, $2)
+         ON CONFLICT (config_key) DO UPDATE SET config_value = EXCLUDED.config_value`,
+        [dbKey, String(value)]
+      );
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ================= UPLOAD (Google Drive) =================
 
 app.get('/api/settings/test-drive-connection', async (req, res) => {
