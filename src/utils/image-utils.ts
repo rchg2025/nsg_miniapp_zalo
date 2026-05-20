@@ -8,15 +8,17 @@
  */
 export function convertGoogleDriveUrl(url: string): string {
   if (!url) return url;
-  // https://drive.google.com/file/d/FILE_ID/view
+  // Extract FILE_ID from any Google Drive URL variant
+  let fileId: string | null = null;
   const fileMatch = url.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
-  if (fileMatch) {
-    return `https://drive.google.com/uc?export=view&id=${fileMatch[1]}`;
-  }
-  // https://drive.google.com/open?id=FILE_ID
+  if (fileMatch) fileId = fileMatch[1];
   const openMatch = url.match(/drive\.google\.com\/open\?id=([^&]+)/);
-  if (openMatch) {
-    return `https://drive.google.com/uc?export=view&id=${openMatch[1]}`;
+  if (!fileId && openMatch) fileId = openMatch[1];
+  const ucMatch = url.match(/drive\.google\.com\/uc\?.*[?&]id=([^&]+)/);
+  if (!fileId && ucMatch) fileId = ucMatch[1];
+  if (fileId) {
+    // thumbnail endpoint serves image directly (no redirect, no auth wall)
+    return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1000-h1000`;
   }
   return url;
 }

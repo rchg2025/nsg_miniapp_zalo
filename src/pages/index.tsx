@@ -24,6 +24,7 @@ interface MajorType {
   code: string;
   description: string;
   image?: string;
+  imageUrl?: string;
   duration?: string;
   status?: string;
   isActive?: boolean;
@@ -168,7 +169,7 @@ const MajorsSection: React.FC<{ majors: MajorType[] }> = ({ majors }) => {
           >
             {/* Ảnh đại diện ngành */}
             <Box className="h-24 overflow-hidden bg-gradient-to-br from-blue-400 to-blue-600">
-              {major.image ? (
+              {(major.imageUrl || major.image) ? (
                 <img
                   src={getImageUrl(major, major.name)}
                   alt={major.name}
