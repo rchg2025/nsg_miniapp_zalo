@@ -297,49 +297,58 @@ function AdmissionRegistrationPage() {
             </Box>
 
             {showMajorList && (
-              <Box
-                className="fixed inset-0 z-50 flex items-end bg-black/40"
+              <div
+                style={{ position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'flex-end', backgroundColor: 'rgba(0,0,0,0.45)' }}
                 onClick={() => setShowMajorList(false)}
               >
-                <Box
-                  className="w-full bg-white rounded-t-2xl shadow-xl"
-                  style={{ maxHeight: '70vh', display: 'flex', flexDirection: 'column' }}
+                <div
+                  style={{ width: '100%', backgroundColor: '#fff', borderRadius: '16px 16px 0 0', boxShadow: '0 -4px 24px rgba(0,0,0,0.15)', display: 'flex', flexDirection: 'column', maxHeight: '65vh' }}
                   onClick={(e) => e.stopPropagation()}
                 >
                   {/* Header */}
-                  <Box className="flex items-center justify-between px-4 py-3 border-b">
-                    <Text className="font-semibold text-gray-700">Chọn ngành học</Text>
-                    <Box
-                      className="w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 cursor-pointer"
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', borderBottom: '1px solid #e5e7eb', flexShrink: 0 }}>
+                    <span style={{ fontWeight: 600, color: '#374151', fontSize: 15 }}>Chọn ngành học</span>
+                    <div
+                      style={{ width: 28, height: 28, borderRadius: '50%', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                       onClick={() => setShowMajorList(false)}
                     >
-                      <Text className="text-gray-500 text-sm">✕</Text>
-                    </Box>
-                  </Box>
+                      <span style={{ color: '#6b7280', fontSize: 13 }}>✕</span>
+                    </div>
+                  </div>
                   {/* Search input */}
-                  <Box className="px-4 py-2 border-b">
+                  <div style={{ padding: '8px 16px', borderBottom: '1px solid #e5e7eb', flexShrink: 0 }}>
                     <input
                       autoFocus
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      style={{ width: '100%', padding: '8px 12px', border: '1px solid #d1d5db', borderRadius: 8, fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
                       placeholder="Gõ tên hoặc mã ngành để tìm kiếm..."
                       value={majorSearch}
                       onChange={(e) => setMajorSearch(e.target.value)}
                     />
-                  </Box>
-                  {/* List */}
-                  <Box style={{ overflowY: 'auto', flex: 1 }}>
-                    {majors
-                      .filter(m =>
+                  </div>
+                  {/* List — flex: 1 + overflow-y scroll */}
+                  <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                    {(() => {
+                      const filtered = majors.filter(m =>
                         majorSearch === '' ||
                         m.name.toLowerCase().includes(majorSearch.toLowerCase()) ||
                         (m.code || '').toLowerCase().includes(majorSearch.toLowerCase())
-                      )
-                      .map(major => (
-                        <Box
+                      );
+                      if (filtered.length === 0) {
+                        return (
+                          <div style={{ padding: 24, textAlign: 'center', color: '#9ca3af', fontSize: 14 }}>
+                            Không tìm thấy ngành học phù hợp
+                          </div>
+                        );
+                      }
+                      return filtered.map(major => (
+                        <div
                           key={major.id}
-                          className={`px-4 py-3 border-b cursor-pointer flex items-center justify-between ${
-                            formData.majorId === major.id ? 'bg-blue-50' : 'active:bg-gray-50'
-                          }`}
+                          style={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                            padding: '14px 16px', borderBottom: '1px solid #f3f4f6',
+                            cursor: 'pointer',
+                            backgroundColor: formData.majorId === major.id ? '#eff6ff' : '#fff'
+                          }}
                           onClick={() => {
                             setSelectedMajor(major);
                             setFormData(prev => ({ ...prev, majorId: major.id, educationLevel: major.educationLevel || '' }));
@@ -347,26 +356,18 @@ function AdmissionRegistrationPage() {
                             setMajorSearch('');
                           }}
                         >
-                          <Text className={`text-sm ${formData.majorId === major.id ? 'text-blue-600 font-medium' : 'text-gray-800'}`}>
+                          <span style={{ fontSize: 14, color: formData.majorId === major.id ? '#2563eb' : '#1f2937', fontWeight: formData.majorId === major.id ? 600 : 400, flex: 1 }}>
                             {major.name} ({major.code}) - {getEducationLevelText(major.educationLevel)}
-                          </Text>
+                          </span>
                           {formData.majorId === major.id && (
-                            <Text className="text-blue-500 ml-2">✓</Text>
+                            <span style={{ color: '#2563eb', marginLeft: 8, fontWeight: 700 }}>✓</span>
                           )}
-                        </Box>
-                      ))}
-                    {majors.filter(m =>
-                      majorSearch === '' ||
-                      m.name.toLowerCase().includes(majorSearch.toLowerCase()) ||
-                      (m.code || '').toLowerCase().includes(majorSearch.toLowerCase())
-                    ).length === 0 && (
-                      <Box className="p-6 text-center">
-                        <Text className="text-gray-400 text-sm">Không tìm thấy ngành học phù hợp</Text>
-                      </Box>
-                    )}
-                  </Box>
-                </Box>
-              </Box>
+                        </div>
+                      ));
+                    })()}
+                  </div>
+                </div>
+              </div>
             )}
           </Box>
 
