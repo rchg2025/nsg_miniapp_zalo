@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Icon, Page, Text, Header, Input, DatePicker, Select } from "zmp-ui";
-const { Option } = Select;
+import { Box, Button, Icon, Page, Text, Header, Input, DatePicker } from "zmp-ui";
 import { openChat, getUserInfo, followOA, openWebview } from "zmp-sdk/apis";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUser } from "@/contexts/user-context";
@@ -12,9 +11,10 @@ function AdmissionRegistrationPage() {
   const { userInfo } = useUser();
   const [searchParams] = useSearchParams();
   const [majors, setMajors] = useState<Major[]>([]);
-  const [trainingLevels, setTrainingLevels] = useState<string[]>([]);
   const [selectedMajor, setSelectedMajor] = useState<Major | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [majorSearch, setMajorSearch] = useState('');
+  const [showMajorList, setShowMajorList] = useState(false);
   
   const [formData, setFormData] = useState({
     majorId: '',
@@ -47,22 +47,6 @@ function AdmissionRegistrationPage() {
       setMajors(DataManager.getMajors());
     });
     console.log('🎓 Loading majors for registration...');
-
-    // Load training systems from API
-    fetch(`${API_BASE_URL}/training_systems`)
-      .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          const levels = data.map((t: any) => t.name).filter(Boolean);
-          setTrainingLevels(levels);
-          setFormData(prev => ({ ...prev, educationLevel: prev.educationLevel || levels[0] || '' }));
-        }
-      })
-      .catch(() => {
-        const fallback = ['Cao đẳng', 'Trung cấp', 'Cao đẳng liên thông'];
-        setTrainingLevels(fallback);
-        setFormData(prev => ({ ...prev, educationLevel: prev.educationLevel || fallback[0] }));
-      });
 
     // Get majorId from URL parameter
     const majorIdFromUrl = searchParams.get('majorId');
@@ -297,24 +281,93 @@ function AdmissionRegistrationPage() {
           
           <Box className="mb-4">
             <Text className="mb-2 font-medium">Ngành học *</Text>
-            <Select
-              placeholder="Chọn ngành học"
-              value={formData.majorId}
-              onChange={(value) => {
-                setFormData({...formData, majorId: value as string});
-                const major = majors.find(m => m.id === value);
-                setSelectedMajor(major || null);
-              }}
-              closeOnSelect
+            {/* Searchable major dropdown */}
+            <Box
+              className="flex items-center justify-between px-3 py-2 border border-gray-300 rounded-lg bg-white cursor-pointer"
+              onClick={() => { setShowMajorList(true); setMajorSearch(''); }}
             >
-              {majors.map((major) => (
-                <Option 
-                  key={major.id} 
-                  value={major.id} 
-                  title={`${major.name} (${major.code}) - ${getEducationLevelText(major.educationLevel)}`}
-                />
-              ))}
-            </Select>
+              {selectedMajor ? (
+                <Text className="text-sm flex-1">
+                  {selectedMajor.name} ({selectedMajor.code}) - {getEducationLevelText(selectedMajor.educationLevel)}
+                </Text>
+              ) : (
+                <Text className="text-sm text-gray-400 flex-1">Chọn ngành học</Text>
+              )}
+              <Text className="text-gray-400 ml-2">▾</Text>
+            </Box>
+
+            {showMajorList && (
+              <Box
+                className="fixed inset-0 z-50 flex items-end bg-black/40"
+                onClick={() => setShowMajorList(false)}
+              >
+                <Box
+                  className="w-full bg-white rounded-t-2xl shadow-xl"
+                  style={{ maxHeight: '70vh', display: 'flex', flexDirection: 'column' }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Header */}
+                  <Box className="flex items-center justify-between px-4 py-3 border-b">
+                    <Text className="font-semibold text-gray-700">Chọn ngành học</Text>
+                    <Box
+                      className="w-7 h-7 flex items-center justify-center rounded-full bg-gray-100 cursor-pointer"
+                      onClick={() => setShowMajorList(false)}
+                    >
+                      <Text className="text-gray-500 text-sm">✕</Text>
+                    </Box>
+                  </Box>
+                  {/* Search input */}
+                  <Box className="px-4 py-2 border-b">
+                    <input
+                      autoFocus
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      placeholder="Gõ tên hoặc mã ngành để tìm kiếm..."
+                      value={majorSearch}
+                      onChange={(e) => setMajorSearch(e.target.value)}
+                    />
+                  </Box>
+                  {/* List */}
+                  <Box style={{ overflowY: 'auto', flex: 1 }}>
+                    {majors
+                      .filter(m =>
+                        majorSearch === '' ||
+                        m.name.toLowerCase().includes(majorSearch.toLowerCase()) ||
+                        (m.code || '').toLowerCase().includes(majorSearch.toLowerCase())
+                      )
+                      .map(major => (
+                        <Box
+                          key={major.id}
+                          className={`px-4 py-3 border-b cursor-pointer flex items-center justify-between ${
+                            formData.majorId === major.id ? 'bg-blue-50' : 'active:bg-gray-50'
+                          }`}
+                          onClick={() => {
+                            setSelectedMajor(major);
+                            setFormData(prev => ({ ...prev, majorId: major.id, educationLevel: major.educationLevel || '' }));
+                            setShowMajorList(false);
+                            setMajorSearch('');
+                          }}
+                        >
+                          <Text className={`text-sm ${formData.majorId === major.id ? 'text-blue-600 font-medium' : 'text-gray-800'}`}>
+                            {major.name} ({major.code}) - {getEducationLevelText(major.educationLevel)}
+                          </Text>
+                          {formData.majorId === major.id && (
+                            <Text className="text-blue-500 ml-2">✓</Text>
+                          )}
+                        </Box>
+                      ))}
+                    {majors.filter(m =>
+                      majorSearch === '' ||
+                      m.name.toLowerCase().includes(majorSearch.toLowerCase()) ||
+                      (m.code || '').toLowerCase().includes(majorSearch.toLowerCase())
+                    ).length === 0 && (
+                      <Box className="p-6 text-center">
+                        <Text className="text-gray-400 text-sm">Không tìm thấy ngành học phù hợp</Text>
+                      </Box>
+                    )}
+                  </Box>
+                </Box>
+              </Box>
+            )}
           </Box>
 
           {selectedMajor && (
@@ -429,20 +482,6 @@ function AdmissionRegistrationPage() {
           <Text.Title className="mb-4">🎒 Thông tin học vấn</Text.Title>
           
           <Box className="space-y-4">
-            <Box>
-              <Text className="mb-2 font-medium">Hệ đào tạo mong muốn</Text>
-              <select
-                value={formData.educationLevel}
-                onChange={(e) => setFormData({...formData, educationLevel: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">— Chọn hệ đào tạo —</option>
-                {trainingLevels.map(level => (
-                  <option key={level} value={level}>{level}</option>
-                ))}
-              </select>
-            </Box>
-
             <Box className="grid grid-cols-2 gap-3">
               <Box>
                 <Text className="mb-2 font-medium">Năm tốt nghiệp *</Text>
