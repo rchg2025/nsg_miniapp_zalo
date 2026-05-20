@@ -136,18 +136,24 @@ function NewsDetail() {
           </Text.Title>
 
           {/* Meta Info */}
-          <Box className="flex items-center text-sm text-gray-500 mb-4 space-x-4">
-            <Box className="flex items-center">
+          <Box className="flex flex-wrap items-center text-sm text-gray-500 mb-4 gap-3">
+            <Box className="flex items-center gap-1">
               <Icon icon="zi-calendar" className="mr-1" />
-              {newsDetail.date}
+              {newsDetail.date
+                ? (newsDetail.date.includes('T')
+                    ? new Date(newsDetail.date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                    : newsDetail.date)
+                : (newsDetail.createdAt
+                    ? new Date(newsDetail.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                    : '')}
             </Box>
-            <Box className="flex items-center">
+            <Box className="flex items-center gap-1">
               <Icon icon="zi-user" className="mr-1" />
-              {newsDetail.author}
+              {newsDetail.author || 'Quản trị viên'}
             </Box>
-            <Box className="flex items-center">
+            <Box className="flex items-center gap-1">
               <Text className="mr-1">👁️</Text>
-              {newsDetail.views} lượt xem
+              {(newsDetail.views ?? 0).toLocaleString('vi-VN')} lượt xem
             </Box>
           </Box>
         </Box>

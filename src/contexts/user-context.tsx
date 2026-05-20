@@ -9,6 +9,7 @@ interface UserContextType {
   hasPermission: (permission: Permission) => boolean;
   isAdmin: boolean;
   isTeacher: boolean;
+  refreshUserInfo: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -214,7 +215,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     isLoggedIn: !!userInfo,
     hasPermission,
     isAdmin: userInfo?.role === UserRole.ADMIN,
-    isTeacher: userInfo?.role === UserRole.TEACHER || userInfo?.role === UserRole.ADMIN
+    isTeacher: userInfo?.role === UserRole.TEACHER || userInfo?.role === UserRole.ADMIN,
+    refreshUserInfo: checkUserInfo
   };
 
   return (
