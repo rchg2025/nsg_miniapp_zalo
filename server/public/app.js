@@ -642,16 +642,17 @@ async function saveZaloUser() {
 
 async function fetchSysUsers() {
   const tbody = document.getElementById('sys-users-tbody');
-  tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
   try {
     const res = await fetch(API_BASE + '/system_users');
-    if (!res.ok) { tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu: ' + res.status + '</td></tr>'; return; }
+    if (!res.ok) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu: ' + res.status + '</td></tr>'; return; }
     const users = await res.json();
-    if (!Array.isArray(users) || !users.length) { tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-400">Chưa có tài khoản</td></tr>'; return; }
+    if (!Array.isArray(users) || !users.length) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-400">Chưa có tài khoản</td></tr>'; return; }
     tbody.innerHTML = users.map(u => `
       <tr class="border-b hover:bg-gray-50">
         <td class="p-4 font-medium">${esc(u.username)}</td>
         <td class="p-4">${esc(u.display_name || '')}</td>
+        <td class="p-4 text-sm text-gray-600">${u.email ? `<a href="mailto:${esc(u.email)}" class="hover:text-blue-600">${esc(u.email)}</a>` : '<span class="text-gray-300">-</span>'}</td>
         <td class="p-4"><span class="px-2 py-1 rounded text-xs font-semibold ${u.role === 'admin' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}">${esc(u.role)}</span></td>
         <td class="p-4"><span class="px-2 py-1 rounded text-xs font-semibold ${u.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}">${u.is_active ? 'Hoạt động' : 'Vô hiệu'}</span></td>
         <td class="p-4 text-sm text-gray-500">${fmtDate(u.created_at)}</td>
