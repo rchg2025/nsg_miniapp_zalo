@@ -48,6 +48,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('app-container').style.display = 'flex';
     applyRoleVisibility();
+    refreshAdmissionsBadge();
     loadDashboard();
   } catch (err) {
     errText.textContent = 'Không thể kết nối máy chủ. Vui lòng thử lại sau.';
@@ -64,6 +65,18 @@ function applyRoleVisibility() {
     const el = document.getElementById(id);
     if (el) el.parentElement.style.display = isAdmin ? '' : 'none';
   });
+}
+
+async function refreshAdmissionsBadge() {
+  try {
+    const res = await fetch(API_BASE + '/admissions/pending-count');
+    if (!res.ok) return;
+    const { count } = await res.json();
+    const badge = document.getElementById('admissions-badge');
+    if (!badge) return;
+    if (count > 0) { badge.textContent = count; badge.classList.remove('hidden'); }
+    else { badge.classList.add('hidden'); }
+  } catch(e) {}
 }
 
 function logout() {
@@ -1145,6 +1158,7 @@ window.updateAdmissionStatus = async function(id, status) {
     if (res.ok) {
       alert('Đã cập nhật trạng thái và gửi email thành công');
       fetchAdmissions();
+      refreshAdmissionsBadge();
     } else {
       const data = await res.json();
       alert('Lỗi: ' + (data.error || 'Cập nhật thất bại'));
@@ -1260,6 +1274,7 @@ window.addEventListener('load', () => {
       document.getElementById('login-container').style.display = 'none';
       document.getElementById('app-container').style.display = 'flex';
       applyRoleVisibility();
+      refreshAdmissionsBadge();
       loadDashboard();
     }
   } catch(e) {

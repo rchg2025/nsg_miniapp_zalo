@@ -477,6 +477,13 @@ app.delete('/api/events/:id', async (req, res) => {
 });
 
 // ================= ĐĂNG KÝ TUYỂN SINH (ADMISSIONS) =================
+app.get('/api/admissions/pending-count', async (req, res) => {
+  try {
+    const { rows } = await db.query("SELECT COUNT(*) AS count FROM admissions WHERE status='pending'");
+    res.json({ count: parseInt(rows[0].count, 10) });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 app.get('/api/admissions', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT * FROM admissions ORDER BY created_at DESC');
