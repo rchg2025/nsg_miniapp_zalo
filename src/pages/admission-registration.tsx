@@ -59,12 +59,7 @@ function AdmissionRegistrationPage() {
         majorId: majorIdFromUrl
       }));
       
-      // Show notification that major was auto-selected
-      if (majorNameFromUrl) {
-        setTimeout(() => {
-          alert(`✅ Đã tự động chọn ngành: ${decodeURIComponent(majorNameFromUrl)}`);
-        }, 500);
-      }
+      // Major will auto-display once majors list loads (via useEffect)
     }
 
     // Automatically collect Zalo user data and pre-fill form
@@ -111,7 +106,7 @@ function AdmissionRegistrationPage() {
   useEffect(() => {
     // Update selected major when majorId changes
     if (formData.majorId) {
-      const major = majors.find(m => m.id === formData.majorId);
+      const major = majors.find(m => String(m.id) === String(formData.majorId));
       setSelectedMajor(major || null);
     } else {
       setSelectedMajor(null);

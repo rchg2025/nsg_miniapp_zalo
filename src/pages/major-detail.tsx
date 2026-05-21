@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from "react";
 import { Box, Button, Icon, Page, Text, Header } from "zmp-ui";
+import { openWebview } from "zmp-sdk/apis";
 import { useNavigate, useParams } from "react-router-dom";
 import { DataManager, Major } from "@/utils/data-manager";
 
@@ -275,7 +276,7 @@ loadMajorDetail();
             variant="secondary"
             fullWidth
             className="bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100"
-            onClick={() => window.open(major.website, "_blank")}
+            onClick={() => openWebview({ url: major.website! })}
           >
             <Icon icon="zi-calendar" className="mr-2" />
             Xem chương trình đào tạo chi tiết
@@ -306,7 +307,7 @@ loadMajorDetail();
               </Button>
               <Button 
                 variant="secondary"
-                onClick={() => window.open("https://nsg.edu.vn", "_blank")}
+                onClick={() => openWebview({ url: "https://dkts.namsaigon.edu.vn" })}
               >
                 <Icon icon="zi-location" className="mr-1" />
                 Website

@@ -93,8 +93,7 @@ const getCategories = (newsList: NewsItem[]) => {
     
   return [
     { key: "all", label: "Tất cả" },
-    ...dynamicCategories,
-    { key: "saved", label: "Đã lưu" }
+    ...dynamicCategories
   ];
 };
 
