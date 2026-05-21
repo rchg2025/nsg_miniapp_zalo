@@ -47,6 +47,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
     document.getElementById('admin-name').textContent = currentUser.display_name || currentUser.username;
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('app-container').style.display = 'flex';
+    applyRoleVisibility();
     loadDashboard();
   } catch (err) {
     errText.textContent = 'Không thể kết nối máy chủ. Vui lòng thử lại sau.';
@@ -55,6 +56,15 @@ document.getElementById('login-form').addEventListener('submit', async function(
     btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> <span>Đăng Nhập</span>';
   }
 });
+
+function applyRoleVisibility() {
+  const isAdmin = currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin');
+  const adminOnlyNavs = ['nav-system-users', 'nav-settings'];
+  adminOnlyNavs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.parentElement.style.display = isAdmin ? '' : 'none';
+  });
+}
 
 function logout() {
   currentUser = null;
@@ -328,7 +338,11 @@ const TAB_LOADERS = {
   settings: loadSettings
 };
 
+const ADMIN_ONLY_TABS = ['system-users', 'settings'];
+
 function switchTab(tabId) {
+  const isAdmin = currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin');
+  if (ADMIN_ONLY_TABS.includes(tabId) && !isAdmin) return false;
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('[id^="nav-"]').forEach(el => {
     el.classList.remove('bg-gray-800', 'text-white');
@@ -1173,6 +1187,7 @@ window.addEventListener('load', () => {
       document.getElementById('admin-name').textContent = currentUser.display_name || currentUser.username;
       document.getElementById('login-container').style.display = 'none';
       document.getElementById('app-container').style.display = 'flex';
+      applyRoleVisibility();
       loadDashboard();
     }
   } catch(e) {
