@@ -30,6 +30,60 @@
     .drop-zone.dragover { border-color: #2563eb; background: #eff6ff; }
     .drop-zone input[type=file] { display: none; }
 
+    /* ===== RESPONSIVE SIDEBAR ===== */
+    #sidebar {
+      width: 256px;
+      transition: width 0.3s ease, transform 0.3s ease;
+      flex-shrink: 0;
+      z-index: 40;
+    }
+    #sidebar.sb-collapsed { width: 64px; }
+    #sidebar .nav-label { white-space: nowrap; overflow: hidden; transition: opacity 0.2s, width 0.3s; }
+    #sidebar.sb-collapsed .nav-label { opacity: 0; width: 0; }
+    #sidebar.sb-collapsed .sidebar-title { opacity: 0; width: 0; overflow: hidden; }
+    #sidebar .nav-link { display: flex; align-items: center; padding: 10px 20px; transition: background 0.15s; }
+    #sidebar.sb-collapsed .nav-link { padding: 10px 0; justify-content: center; }
+    #sidebar .nav-icon { width: 20px; text-align: center; flex-shrink: 0; }
+    /* Tooltip khi thu nhỏ */
+    #sidebar.sb-collapsed nav li { position: relative; }
+    #sidebar.sb-collapsed nav li a:hover::after {
+      content: attr(data-title);
+      position: absolute; left: 68px; top: 50%; transform: translateY(-50%);
+      background: #111827; color: #fff; padding: 5px 10px; border-radius: 6px;
+      font-size: 13px; white-space: nowrap; z-index: 999; pointer-events: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    }
+    /* Badge khi sidebar thu nhỏ */
+    #sidebar.sb-collapsed #admissions-badge {
+      position: absolute; top: 5px; right: 6px;
+      min-width: 14px; height: 14px; font-size: 9px; padding: 0 3px;
+    }
+    #sidebar.sb-collapsed nav li { position: relative; }
+    /* Toggle arrow */
+    #sb-toggle-btn .sb-arrow { transition: transform 0.3s; }
+    #sidebar.sb-collapsed #sb-toggle-btn .sb-arrow { transform: rotate(180deg); }
+    /* Footer khi thu nhỏ */
+    #sidebar.sb-collapsed #sidebar-footer { justify-content: center; }
+    #sidebar.sb-collapsed #sidebar-footer .footer-label { display: none; }
+    #sidebar.sb-collapsed #sidebar-footer .footer-logout { margin-left: 0; }
+    /* Mobile: sidebar là overlay */
+    @media (max-width: 767px) {
+      #sidebar {
+        position: fixed; top: 0; left: 0; height: 100%;
+        transform: translateX(-100%); width: 256px !important; z-index: 50;
+      }
+      #sidebar.sb-mobile-open { transform: translateX(0); }
+      #sb-toggle-btn { display: none; }
+      #mobile-hamburger { display: flex !important; }
+    }
+    #sidebar-backdrop {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 49;
+    }
+    #mobile-hamburger { display: none; }
+    /* Main content min-width để tránh bị đè */
+    #app-main { min-width: 0; }
+
     /* Gradient chữ chuyển màu liên tục */
     @keyframes gradientShift {
       0%   { background-position: 0% 50%; }
@@ -232,31 +286,103 @@
     </div>
   </div>
 
+  <!-- Mobile backdrop -->
+  <div id="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
+
   <div id="app-container" class="flex h-screen overflow-hidden">
-    <aside class="w-64 bg-gray-900 text-white flex flex-col flex-shrink-0">
-      <div class="h-16 flex items-center justify-center border-b border-gray-800">
-        <h1 class="text-xl font-bold">NSG Quản Trị</h1>
+    <aside id="sidebar" class="bg-gray-900 text-white flex flex-col">
+      <!-- Sidebar Header -->
+      <div class="h-16 flex items-center border-b border-gray-800 px-4 gap-2 overflow-hidden">
+        <div class="flex items-center gap-2 flex-1 overflow-hidden">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#dc2626,#991b1b)">
+            <i class="fa-solid fa-shield-halved text-white text-sm"></i>
+          </div>
+          <span class="sidebar-title text-base font-bold whitespace-nowrap">NSG Quản Trị</span>
+        </div>
+        <button id="sb-toggle-btn" onclick="toggleSidebar()" title="Thu/Mở menu"
+          class="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700 transition-colors">
+          <i class="fa-solid fa-angles-left sb-arrow text-sm"></i>
+        </button>
       </div>
-      <nav class="flex-1 overflow-y-auto py-4">
-        <ul>
-          <li><a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" class="block px-6 py-3 hover:bg-gray-800 bg-gray-800 text-white"><i class="fa-solid fa-chart-line mr-3"></i>Thống Kê</a></li>
-          <li><a href="#" onclick="switchTab('zalo-users')" id="nav-zalo-users" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-brands fa-react mr-3"></i>Thành viên Zalo</a></li>
-          <li><a href="#" onclick="switchTab('system-users')" id="nav-system-users" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-user-shield mr-3"></i>Thành viên HT</a></li>
-          <li><a href="#" onclick="switchTab('news')" id="nav-news" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-newspaper mr-3"></i>Tin Tức</a></li>
-          <li><a href="#" onclick="switchTab('majors')" id="nav-majors" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-graduation-cap mr-3"></i>Ngành Học</a></li>
-          <li><a href="#" onclick="switchTab('categories')" id="nav-categories" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-folder-open mr-3"></i>Danh Mục</a></li>
-          <li><a href="#" onclick="switchTab('admissions')" id="nav-admissions" class="block px-6 py-3 hover:bg-gray-800 text-gray-400 flex items-center justify-between"><span><i class="fa-solid fa-user-plus mr-3"></i>Tuyển Sinh</span><span id="admissions-badge" class="hidden bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center"></span></a></li>
-          <li><a href="#" onclick="switchTab('settings')" id="nav-settings" class="block px-6 py-3 hover:bg-gray-800 text-gray-400"><i class="fa-solid fa-cog mr-3"></i>Cấu Hình HT</a></li>
+      <!-- Nav -->
+      <nav class="flex-1 overflow-y-auto py-3">
+        <ul class="space-y-0.5 px-2">
+          <li>
+            <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" data-title="Thống Kê"
+               class="nav-link rounded-lg hover:bg-gray-800 bg-gray-700 text-white">
+              <i class="fa-solid fa-chart-line nav-icon"></i>
+              <span class="nav-label ml-3">Thống Kê</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="switchTab('zalo-users')" id="nav-zalo-users" data-title="Thành viên Zalo"
+               class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
+              <i class="fa-brands fa-react nav-icon"></i>
+              <span class="nav-label ml-3">Thành viên Zalo</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="switchTab('system-users')" id="nav-system-users" data-title="Thành viên HT"
+               class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
+              <i class="fa-solid fa-user-shield nav-icon"></i>
+              <span class="nav-label ml-3">Thành viên HT</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="switchTab('news')" id="nav-news" data-title="Tin Tức"
+               class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
+              <i class="fa-solid fa-newspaper nav-icon"></i>
+              <span class="nav-label ml-3">Tin Tức</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="switchTab('majors')" id="nav-majors" data-title="Ngành Học"
+               class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
+              <i class="fa-solid fa-graduation-cap nav-icon"></i>
+              <span class="nav-label ml-3">Ngành Học</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="switchTab('categories')" id="nav-categories" data-title="Danh Mục"
+               class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
+              <i class="fa-solid fa-folder-open nav-icon"></i>
+              <span class="nav-label ml-3">Danh Mục</span>
+            </a>
+          </li>
+          <li style="position:relative">
+            <a href="#" onclick="switchTab('admissions')" id="nav-admissions" data-title="Tuyển Sinh"
+               class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
+              <i class="fa-solid fa-user-plus nav-icon"></i>
+              <span class="nav-label ml-3 flex-1">Tuyển Sinh</span>
+              <span id="admissions-badge" class="hidden bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center"></span>
+            </a>
+          </li>
+          <li>
+            <a href="#" onclick="switchTab('settings')" id="nav-settings" data-title="Cấu Hình HT"
+               class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
+              <i class="fa-solid fa-cog nav-icon"></i>
+              <span class="nav-label ml-3">Cấu Hình HT</span>
+            </a>
+          </li>
         </ul>
       </nav>
-      <div class="p-4 border-t border-gray-800 text-sm text-gray-500 flex justify-between items-center">
-        <span id="admin-name">Admin</span>
-        <button onclick="logout()" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-sign-out-alt"></i></button>
+      <!-- Footer -->
+      <div id="sidebar-footer" class="p-3 border-t border-gray-800 flex items-center gap-3">
+        <i class="fa-solid fa-circle-user text-xl text-gray-400 flex-shrink-0"></i>
+        <span id="admin-name" class="nav-label footer-label flex-1 text-sm text-gray-300 truncate">Admin</span>
+        <button onclick="logout()" class="footer-logout text-red-400 hover:text-red-300 flex-shrink-0" title="Đăng xuất">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
       </div>
     </aside>
 
-    <main class="flex-1 flex flex-col overflow-hidden">
-      <header class="h-16 bg-white shadow flex items-center px-6">
+    <main id="app-main" class="flex-1 flex flex-col overflow-hidden">
+      <header class="h-16 bg-white shadow flex items-center px-4 gap-3">
+        <!-- Mobile hamburger -->
+        <button id="mobile-hamburger" onclick="openMobileSidebar()"
+          class="items-center justify-center w-9 h-9 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors">
+          <i class="fa-solid fa-bars"></i>
+        </button>
         <h2 id="page-title" class="text-xl font-semibold text-gray-800">Bảng Điều Khiển</h2>
       </header>
       <div class="flex-1 overflow-y-auto p-6">

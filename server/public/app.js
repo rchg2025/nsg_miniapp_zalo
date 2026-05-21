@@ -47,6 +47,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
     document.getElementById('admin-name').textContent = currentUser.display_name || currentUser.username;
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('app-container').style.display = 'flex';
+    initSidebar();
     applyRoleVisibility();
     refreshAdmissionsBadge();
     loadDashboard();
@@ -87,6 +88,48 @@ function logout() {
   document.getElementById('username').value = '';
   document.getElementById('password').value = '';
 }
+
+// ===================== SIDEBAR TOGGLE =====================
+function initSidebar() {
+  if (window.innerWidth < 768) return; // Mobile: luôn dùng overlay
+  const saved = localStorage.getItem('sidebar-state');
+  if (saved === 'collapsed') _setSidebarCollapsed(true);
+}
+
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  if (!sb) return;
+  const isCollapsed = sb.classList.contains('sb-collapsed');
+  _setSidebarCollapsed(!isCollapsed);
+  localStorage.setItem('sidebar-state', isCollapsed ? 'expanded' : 'collapsed');
+}
+
+function _setSidebarCollapsed(collapsed) {
+  const sb = document.getElementById('sidebar');
+  if (!sb) return;
+  if (collapsed) sb.classList.add('sb-collapsed');
+  else sb.classList.remove('sb-collapsed');
+}
+
+function openMobileSidebar() {
+  const sb = document.getElementById('sidebar');
+  const bd = document.getElementById('sidebar-backdrop');
+  if (sb) sb.classList.add('sb-mobile-open');
+  if (bd) bd.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeMobileSidebar() {
+  const sb = document.getElementById('sidebar');
+  const bd = document.getElementById('sidebar-backdrop');
+  if (sb) sb.classList.remove('sb-mobile-open');
+  if (bd) bd.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth >= 768) closeMobileSidebar();
+});
 
 // ===================== FORGOT PASSWORD =====================
 
@@ -358,15 +401,17 @@ function switchTab(tabId) {
   if (ADMIN_ONLY_TABS.includes(tabId) && !isAdmin) return false;
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('[id^="nav-"]').forEach(el => {
-    el.classList.remove('bg-gray-800', 'text-white');
+    el.classList.remove('bg-gray-700', 'bg-gray-800', 'text-white');
     el.classList.add('text-gray-400');
   });
   const tab = document.getElementById(tabId);
   const nav = document.getElementById('nav-' + tabId);
   if (tab) tab.classList.add('active');
-  if (nav) { nav.classList.add('bg-gray-800', 'text-white'); nav.classList.remove('text-gray-400'); }
+  if (nav) { nav.classList.add('bg-gray-700', 'text-white'); nav.classList.remove('text-gray-400'); }
   document.getElementById('page-title').textContent = TAB_TITLES[tabId] || '';
   if (TAB_LOADERS[tabId]) TAB_LOADERS[tabId]();
+  // Đóng sidebar overlay trên mobile sau khi chọn menu
+  if (window.innerWidth < 768) closeMobileSidebar();
   return false;
 }
 
@@ -1300,6 +1345,7 @@ let newsEditor, majorDescEditor, majorCareerEditor;
       document.getElementById('admin-name').textContent = currentUser.display_name || currentUser.username;
       document.getElementById('login-container').style.display = 'none';
       document.getElementById('app-container').style.display = 'flex';
+      initSidebar();
       applyRoleVisibility();
       refreshAdmissionsBadge();
       loadDashboard();
