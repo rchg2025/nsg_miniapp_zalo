@@ -543,20 +543,26 @@ app.post('/api/admissions', async (req, res) => {
     const newAd = rows[0];
 
     // Gửi email cho admin/editor
-    if (process.env.ADMIN_EMAILS) {
-      const adminHtml = `
-        <h3>Có đăng ký xét tuyển mới!</h3>
-        <ul>
-          <li><strong>Họ tên:</strong> ${student_name}</li>
-          <li><strong>SDT:</strong> ${phone}</li>
-          <li><strong>Email:</strong> ${email || 'Không có'}</li>
-          <li><strong>Ngành đăng ký:</strong> ${major_name || major_code}</li>
-          <li><strong>CMND/CCCD:</strong> ${id_card || 'Không có'}</li>
-        </ul>
-        <p>Vui lòng đăng nhập hệ thống Admin để xem và xử lý!</p>
-      `;
-      sendEmail(process.env.ADMIN_EMAILS, 'Thông báo đăng ký xét tuyển mới', adminHtml);
-    }
+    try {
+      const { rows: adminEmailRows } = await db.query(
+        "SELECT config_value FROM settings WHERE config_key='admin_email'"
+      );
+      const adminEmails = (adminEmailRows[0]?.config_value || process.env.ADMIN_EMAILS || '').trim();
+      if (adminEmails) {
+        const adminHtml = `
+          <h3>Có đăng ký xét tuyển mới!</h3>
+          <ul>
+            <li><strong>Họ tên:</strong> ${student_name}</li>
+            <li><strong>SDT:</strong> ${phone}</li>
+            <li><strong>Email:</strong> ${email || 'Không có'}</li>
+            <li><strong>Ngành đăng ký:</strong> ${major_name || major_code}</li>
+            <li><strong>CMND/CCCD:</strong> ${id_card || 'Không có'}</li>
+          </ul>
+          <p>Vui lòng đăng nhập hệ thống Admin để xem và xử lý!</p>
+        `;
+        sendEmail(adminEmails, 'Thông báo đăng ký xét tuyển mới', adminHtml);
+      }
+    } catch (_) {}
 
     // Gửi email xác nhận cho học viên (nếu có email)
     if (email) {
@@ -796,7 +802,8 @@ const SETTINGS_KEY_MAP = {
   google_sa_json: 'google_service_account_json',
   smtp_host: 'smtp_host',
   smtp_user: 'smtp_user',
-  smtp_pass: 'smtp_pass'
+  smtp_pass: 'smtp_pass',
+  admin_email: 'admin_email'
 };
 
 app.get('/api/settings', async (req, res) => {
@@ -837,6 +844,19 @@ app.post('/api/settings', async (req, res) => {
 
 // ================= UPLOAD (Google Drive) =================
 
+// Test gửi email
+app.post('/api/settings/test-email', async (req, res) => {
+  const { to } = req.body;
+  if (!to || !/^[^@]+@[^@]+\.[^@]+$/.test(to)) {
+    return res.status(400).json({ success: false, message: 'Email đích không hợp lệ' });
+  }
+  const html = `<h3>Kiểm tra cấu hình SMTP</h3><p>Đây là email kiểm tra từ hệ thống quản trị NSG.</p><p>Nếu bạn nhận được email này, cấu hình SMTP hoạt động đúng!</p>`;
+  const sent = await sendEmail(to, '[NSG] Kiểm tra cấu hình SMTP', html);
+  if (sent) res.json({ success: true, message: `Đã gửi email kiểm tra tới ${to}` });
+  else res.status(500).json({ success: false, message: 'Gửi thất bại. Kiểm tra lại SMTP Host, User, Password và cài đặt bảo mật của tài khoản email.' });
+});
+
+// Test Google Drive
 app.get('/api/settings/test-drive-connection', async (req, res) => {
   try {
     const { google } = require('googleapis');
