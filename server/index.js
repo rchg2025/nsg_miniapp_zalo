@@ -721,10 +721,10 @@ app.post('/api/system_users/login', async (req, res) => {
 // Bước 1: Gửi OTP đến email
 app.post('/api/system_users/forgot-password', async (req, res) => {
   const { username } = req.body;
-  if (!username) return res.status(400).json({ success: false, message: 'Thiếu tên đăng nhập' });
+  if (!username) return res.status(400).json({ success: false, message: 'Thiếu tên đăng nhập hoặc email' });
   try {
     const result = await db.query(
-      'SELECT id, username, email, display_name FROM system_users WHERE username=$1 AND is_active=true',
+      'SELECT id, username, email, display_name FROM system_users WHERE (username=$1 OR email=$1) AND is_active=true',
       [username]
     );
     if (!result.rows.length) return res.status(404).json({ success: false, message: 'Tài khoản không tồn tại hoặc đã bị vô hiệu hóa' });
@@ -732,9 +732,10 @@ app.post('/api/system_users/forgot-password', async (req, res) => {
     if (!user.email) return res.status(400).json({ success: false, message: 'Tài khoản này chưa được liên kết với email. Vui lòng liên hệ quản trị viên.' });
 
     // Tạo OTP 6 chữ số
+    const targetUsername = user.username;
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expires = Date.now() + 10 * 60 * 1000; // 10 phút
-    otpStore.set(username, { otp, expires });
+    otpStore.set(targetUsername, { otp, expires });
 
     const emailSent = await sendEmail(
       user.email,
@@ -748,7 +749,7 @@ app.post('/api/system_users/forgot-password', async (req, res) => {
 
     // Che bớt email để bảo mật: user@example.com → us***@example.com
     const maskedEmail = user.email.replace(/^(.{2})(.+)(@.+)$/, (_, a, b, c) => a + b.replace(/./g, '*') + c);
-    res.json({ success: true, message: `Mã OTP đã được gửi đến ${maskedEmail}` });
+    res.json({ success: true, message: `Mã OTP đã được gửi đến ${maskedEmail}`, username: targetUsername });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

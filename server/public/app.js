@@ -214,7 +214,7 @@ async function submitForgotStep1() {
       errEl.textContent = data.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
       errEl.classList.remove('hidden');
     } else {
-      _forgotUsername = username;
+      _forgotUsername = data.username || username;
       document.getElementById('forgot-otp-sent-msg').textContent = data.message;
       document.getElementById('forgot-step-1').classList.add('hidden');
       document.getElementById('forgot-step-2').classList.remove('hidden');
