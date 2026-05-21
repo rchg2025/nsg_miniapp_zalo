@@ -84,9 +84,7 @@ const initDB = async () => {
         zalo_id VARCHAR(255),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
-      
-      -- Thêm cột lý do từ chối
-      try { await client.query('ALTER TABLE admissions ADD COLUMN IF NOT EXISTS reject_reason TEXT'); } catch(e) {}
+
       -- 8. Danh mục chuyên mục (Tin tức / Sự kiện)
       CREATE TABLE IF NOT EXISTS categories (
         id SERIAL PRIMARY KEY,
@@ -132,6 +130,7 @@ const initDB = async () => {
     try { await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(50)"); } catch(e) {}
     try { await client.query("ALTER TABLE system_users ADD COLUMN IF NOT EXISTS is_superadmin BOOLEAN DEFAULT FALSE"); } catch(e) {}
     try { await client.query("ALTER TABLE system_users ADD COLUMN IF NOT EXISTS email VARCHAR(255)"); } catch(e) {}
+    try { await client.query('ALTER TABLE admissions ADD COLUMN IF NOT EXISTS reject_reason TEXT'); } catch(e) {}
     try { await client.query("ALTER TABLE admissions ADD COLUMN IF NOT EXISTS major_name VARCHAR(255)"); } catch(e) {}
     try { await client.query("ALTER TABLE admissions ADD COLUMN IF NOT EXISTS id_card VARCHAR(30)"); } catch(e) {}
     try { await client.query("ALTER TABLE admissions ADD COLUMN IF NOT EXISTS address TEXT"); } catch(e) {}
