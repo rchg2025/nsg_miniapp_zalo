@@ -1243,19 +1243,32 @@ async function loadSettings() {
     if (settings.google_sa_json) document.getElementById('set-google-sa-json').value = settings.google_sa_json;
     if (settings.smtp_host) document.getElementById('set-smtp-host').value = settings.smtp_host;
     if (settings.smtp_user) document.getElementById('set-smtp-user').value = settings.smtp_user;
+    // Hiển thị badge "Đã lưu" nếu có password trong DB (không hiển thị giá trị thật)
+    const badge = document.getElementById('smtp-pass-saved');
+    if (badge) {
+      if (settings.smtp_pass) badge.classList.remove('hidden');
+      else badge.classList.add('hidden');
+    }
   } catch (e) { console.warn('Settings load error:', e); }
 }
 
 async function saveSettings() {
+  const passVal = document.getElementById('set-smtp-pass').value;
   const payload = {
     google_folder_id: document.getElementById('set-google-folder-id').value.trim(),
     google_sa_json: document.getElementById('set-google-sa-json').value.trim(),
     smtp_host: document.getElementById('set-smtp-host').value.trim(),
     smtp_user: document.getElementById('set-smtp-user').value.trim(),
-    smtp_pass: document.getElementById('set-smtp-pass').value
+    smtp_pass: passVal  // server sẽ bỏ qua nếu rỗng
   };
   try {
     await fetch(API_BASE + '/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    // Hiển thị badge "Đã lưu" nếu vừa nhập password
+    const badge = document.getElementById('smtp-pass-saved');
+    if (badge && passVal) {
+      badge.classList.remove('hidden');
+      document.getElementById('set-smtp-pass').value = '';
+    }
     alert('Đã lưu cấu hình!');
   } catch (e) { alert('Lỗi lưu cấu hình'); }
 }

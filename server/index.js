@@ -16,21 +16,34 @@ const upload = multer({ dest: os.tmpdir() });
 const app = express();
 const port = process.env.PORT || 3001; // Cổng server sẽ chạy
 
-// NodeMailer
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS
-  }
-});
+// NodeMailer: khởi tạo động từ DB (fallback sang env vars)
 async function sendEmail(to, subject, html) {
   try {
-    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-      console.log('Bỏ qua gửi email vì chưa cấu hình SMTP_USER và SMTP_PASS.');
+    // Đọc config từ DB trước, fallback sang env vars
+    let smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
+    let smtpUser = process.env.SMTP_USER || '';
+    let smtpPass = process.env.SMTP_PASS || '';
+    try {
+      const { rows } = await db.query(
+        "SELECT config_key, config_value FROM settings WHERE config_key IN ('smtp_host','smtp_user','smtp_pass')"
+      );
+      for (const r of rows) {
+        if (r.config_key === 'smtp_host' && r.config_value) smtpHost = r.config_value;
+        if (r.config_key === 'smtp_user' && r.config_value) smtpUser = r.config_value;
+        if (r.config_key === 'smtp_pass' && r.config_value) smtpPass = r.config_value;
+      }
+    } catch (_) {}
+    if (!smtpUser || !smtpPass) {
+      console.log('Bỏ qua gửi email vì chưa cấu hình SMTP.');
       return false;
     }
-    const mailOptions = { from: `"Hệ thống Tuyển sinh" <${process.env.SMTP_USER}>`, to, subject, html };
+    const transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: 587,
+      secure: false,
+      auth: { user: smtpUser, pass: smtpPass }
+    });
+    const mailOptions = { from: `"Hệ thống Tuyển sinh" <${smtpUser}>`, to, subject, html };
     await transporter.sendMail(mailOptions);
     return true;
   } catch (error) {
@@ -807,6 +820,8 @@ app.post('/api/settings', async (req, res) => {
     const entries = Object.entries(req.body || {});
     for (const [frontendKey, value] of entries) {
       if (value === undefined || value === null) continue;
+      // Không ghi đè smtp_pass bằng chuỗi rỗng (field password không được pre-fill)
+      if (frontendKey === 'smtp_pass' && String(value).trim() === '') continue;
       const dbKey = SETTINGS_KEY_MAP[frontendKey] || frontendKey;
       await db.query(
         `INSERT INTO settings (config_key, config_value) VALUES ($1, $2)
