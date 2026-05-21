@@ -853,7 +853,7 @@ app.post('/api/upload', upload.single('file'), async (req, res) => {
 
     fs.unlink(req.file.path, () => {});
     // Direct view URL — works for personal and shared drives
-    const directUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
+    const directUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
     res.json({ url: directUrl, fileId });
   } catch (e) {
     if (req.file) fs.unlink(req.file.path, () => {});

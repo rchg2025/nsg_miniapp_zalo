@@ -695,7 +695,7 @@ function previewNews(id) {
   if (!n) return;
   document.getElementById('news-preview-title').textContent = n.title || '';
   document.getElementById('news-preview-body').innerHTML = `
-    ${(n.image_url || n.image) ? `<img src="${esc(n.image_url || n.image)}" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` : ''}
+    ${(n.image_url || n.image) ? `<img src="${esc(toImgUrl(n.image_url || n.image))}" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` : ''}
     <div class="flex gap-2 mb-3">
       <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${esc(n.category || '')}</span>
       <span class="text-xs text-gray-400">${fmtDate(n.created_at)}</span>
@@ -761,7 +761,7 @@ async function fetchAdminMajors() {
         <td class="p-4 font-mono text-sm">${esc(m.code || '')}</td>
         <td class="p-4 font-medium">
           <div class="flex items-center gap-2">
-            ${m.image_url ? `<img src="${esc(m.image_url)}" class="w-10 h-10 rounded object-cover flex-shrink-0" onerror="this.style.display='none'">` : '<div class="w-10 h-10 bg-blue-100 rounded flex items-center justify-center flex-shrink-0 text-lg">📚</div>'}
+            ${m.image_url ? `<img src="${esc(toImgUrl(m.image_url))}" class="w-10 h-10 rounded object-cover flex-shrink-0" onerror="this.style.display='none'">` : '<div class="w-10 h-10 bg-blue-100 rounded flex items-center justify-center flex-shrink-0 text-lg">📚</div>'}
             <span>${esc(m.name)}</span>
           </div>
         </td>
@@ -793,7 +793,7 @@ function previewMajor(id) {
         <div><span class="font-semibold text-gray-600">Thời gian:</span><br>${esc(m.duration || '')}</div>
         <div><span class="font-semibold text-gray-600">Học phí:</span><br>${esc(m.tuition_fee || '')}</div>
       </div>
-      ${m.image_url ? `<div><img src="${esc(m.image_url)}" class="w-full max-h-40 object-cover rounded" onerror="this.style.display='none'"></div>` : ''}
+      ${m.image_url ? `<div><img src="${esc(toImgUrl(m.image_url))}" class="w-full max-h-40 object-cover rounded" onerror="this.style.display='none'"></div>` : ''}
       ${m.description ? `<div><span class="font-semibold text-gray-600">Mô tả:</span><div class="mt-1 prose prose-sm max-w-none border rounded p-3 bg-gray-50 max-h-40 overflow-y-auto">${m.description}</div></div>` : ''}
       ${m.subjects ? `<div><span class="font-semibold text-gray-600">Môn thi:</span><br>${esc(m.subjects)}</div>` : ''}
       ${m.career_prospects ? `<div><span class="font-semibold text-gray-600">Triển vọng nghề:</span><div class="mt-1 prose prose-sm max-w-none border rounded p-3 bg-gray-50 max-h-32 overflow-y-auto">${m.career_prospects}</div></div>` : ''}
@@ -1243,6 +1243,16 @@ function handleFileSelect(event, inputId, zoneId, dropNameId) {
 function esc(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Chuyển URL Google Drive sang dạng thumbnail hiển thị được trong <img>
+function toImgUrl(url) {
+  if (!url) return '';
+  const m = url.match(/[?&]id=([a-zA-Z0-9_\-]+)/);
+  if (m && url.includes('drive.google.com')) {
+    return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w400`;
+  }
+  return url;
 }
 
 function stripHtml(html) {
