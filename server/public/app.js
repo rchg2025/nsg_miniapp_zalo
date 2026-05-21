@@ -438,9 +438,9 @@ function renderDashAdmissions() {
     pag.innerHTML = `
       <span>Hiển thị ${total ? start + 1 : 0}–${Math.min(start + DASH_ADM_PAGE_SIZE, total)} / ${total} hồ sơ</span>
       <div class="flex gap-2">
-        <button onclick="dashAdmGoPage(${_dashAdmPage - 1})" ${_dashAdmPage <= 1 ? 'disabled' : ''} class="px-3 py-1 rounded border ${_dashAdmPage <= 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-100'">← Trước</button>
+        <button onclick="dashAdmGoPage(${_dashAdmPage - 1})" ${_dashAdmPage <= 1 ? 'disabled' : ''} class="px-3 py-1 rounded border ${_dashAdmPage <= 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-100'}">← Trước</button>
         <span class="px-3 py-1">Trang ${_dashAdmPage} / ${totalPages}</span>
-        <button onclick="dashAdmGoPage(${_dashAdmPage + 1})" ${_dashAdmPage >= totalPages ? 'disabled' : ''} class="px-3 py-1 rounded border ${_dashAdmPage >= totalPages ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-100'"}>Sau →</button>
+        <button onclick="dashAdmGoPage(${_dashAdmPage + 1})" ${_dashAdmPage >= totalPages ? 'disabled' : ''} class="px-3 py-1 rounded border ${_dashAdmPage >= totalPages ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-100'}">Sau →</button>
       </div>`;
   }
 }
