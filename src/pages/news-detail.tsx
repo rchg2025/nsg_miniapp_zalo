@@ -14,12 +14,18 @@ function NewsDetail() {
   useEffect(() => {
     const load = async () => {
       try {
-        const { getNews } = await import('@/utils/api');
-        const list = await getNews();
+        // Dùng /api/news/:id để lấy đầy đủ content (list API không trả content)
+        const { getNewsDetail, getNews } = await import('@/utils/api');
+        const [detail, list] = await Promise.all([getNewsDetail(id!), getNews()]);
         setAllNews(list);
-        const found = list.find((item: any) => String(item.id) === String(id));
-        if (found) {
-          setNewsDetail(found);
+        if (detail) {
+          const { convertGoogleDriveUrl } = await import('@/utils/image-utils');
+          setNewsDetail({
+            ...detail,
+            date: detail.created_at,
+            image: convertGoogleDriveUrl(detail.image_url || ''),
+            imageUrl: convertGoogleDriveUrl(detail.image_url || ''),
+          });
         }
       } catch (e) {
         console.error('Lỗi API:', e);

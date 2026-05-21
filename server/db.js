@@ -3,9 +3,10 @@ require('dotenv').config();
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: { rejectUnauthorized: false },
+  max: 3,                   // Giới hạn connection cho serverless (tránh cạn kiệt PostgreSQL)
+  idleTimeoutMillis: 30000, // Đóng connection nhàn rỗi sau 30s
+  connectionTimeoutMillis: 3000 // Timeout kết nối sau 3s
 });
 
 // Hàm khởi tạo các bảng cơ bản nếu chưa có

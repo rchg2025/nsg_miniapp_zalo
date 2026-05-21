@@ -173,8 +173,11 @@ function getOtpEmailTemplate(displayName, otp) {
 }
 
 // Middleware
-app.use(cors()); // Cho phép Cross-Origin Resource Sharing
-app.use(express.static(path.join(__dirname, 'public'))); // Serve the Admin Frontend UI
+app.use(cors());
+app.use(express.static(path.join(__dirname, 'public'), {
+  maxAge: '1d',       // Cache static assets (CSS/JS/HTML) 1 ngày
+  etag: true
+}));
 app.use(bodyParser.json({
   verify: (req, res, buf, encoding) => {
     // Lưu raw body để xác thực chữ ký của Zalo
@@ -245,16 +248,42 @@ app.post('/zalo-webhook', (req, res) => {
 
 // --- CÁC API CHO ZALO MINI APP (FRONTEND) GỌI TỚI ---
 
+// ================= STATS (Tối ưu dashboard) =================
+app.get('/api/stats', async (req, res) => {
+  try {
+    const { rows } = await db.query(`
+      SELECT
+        (SELECT COUNT(*) FROM users)::int AS users,
+        (SELECT COUNT(*) FROM news)::int AS news,
+        (SELECT COUNT(*) FROM majors)::int AS majors,
+        (SELECT COUNT(*) FROM admissions)::int AS admissions,
+        (SELECT COUNT(*) FROM admissions WHERE status='pending')::int AS pending_admissions
+    `);
+    res.setHeader('Cache-Control', 'private, max-age=60');
+    res.json(rows[0]);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // ================= TIN TỨC (NEWS) =================
-// 1. API Lấy danh sách tin tức
+// Danh sách tin tức (không trả content — giảm payload ~70%)
 app.get('/api/news', async (req, res) => {
   try {
-    const { rows } = await db.query('SELECT * FROM news ORDER BY created_at DESC');
+    const { rows } = await db.query('SELECT id, title, image_url, category, created_at FROM news ORDER BY created_at DESC');
+    res.setHeader('Cache-Control', 'public, max-age=120, stale-while-revalidate=60');
     res.json(rows);
   } catch (error) {
-    console.error("Lỗi lấy danh sách tin tức", error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
+});
+
+// Chi tiết một bài viết (có đủ content)
+app.get('/api/news/:id', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT * FROM news WHERE id=$1', [req.params.id]);
+    if (!rows.length) return res.status(404).json({ error: 'Not found' });
+    res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
+    res.json(rows[0]);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 // Thêm tin tức mới
@@ -301,9 +330,9 @@ app.delete('/api/news/:id', async (req, res) => {
 app.get('/api/majors', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT * FROM majors ORDER BY code ASC');
+    res.setHeader('Cache-Control', 'public, max-age=600, stale-while-revalidate=120');
     res.json(rows);
   } catch (error) {
-    console.error("Lỗi lấy danh sách ngành học", error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -581,8 +610,11 @@ app.get('/', (req, res) => {
 
 // ================= CATEGORIES =================
 app.get('/api/categories', async (req, res) => {
-  try { const { rows } = await db.query('SELECT * FROM categories ORDER BY id ASC'); res.json(rows); }
-  catch (err) { res.status(500).json({ error: err.message }); }
+  try {
+    const { rows } = await db.query('SELECT * FROM categories ORDER BY id ASC');
+    res.setHeader('Cache-Control', 'public, max-age=600, stale-while-revalidate=120');
+    res.json(rows);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.post('/api/categories', async (req, res) => {
   const { name, slug } = req.body;
@@ -596,8 +628,11 @@ app.delete('/api/categories/:id', async (req, res) => {
 
 // ================= TRAINING SYSTEMS =================
 app.get('/api/training_systems', async (req, res) => {
-  try { const { rows } = await db.query('SELECT * FROM training_systems ORDER BY id ASC'); res.json(rows); }
-  catch (err) { res.status(500).json({ error: err.message }); }
+  try {
+    const { rows } = await db.query('SELECT * FROM training_systems ORDER BY id ASC');
+    res.setHeader('Cache-Control', 'public, max-age=600, stale-while-revalidate=120');
+    res.json(rows);
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.post('/api/training_systems', async (req, res) => {
   const { name, description } = req.body;

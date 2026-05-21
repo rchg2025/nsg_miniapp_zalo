@@ -62,6 +62,7 @@ export const getNews = async () => {
     status: 'published'
   }));
 };
+export const getNewsDetail = (id: string | number) => fetchAPI(`/news/${id}`);
 export const addNews = (data: any) => fetchAPI('/news', { method: 'POST', body: JSON.stringify(data) });
 export const updateNews = (id: string, data: any) => fetchAPI(`/news/${id}`, { method: 'PUT', body: JSON.stringify(data) });
 export const deleteNews = (id: string) => fetchAPI(`/news/${id}`, { method: 'DELETE' });

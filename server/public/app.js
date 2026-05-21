@@ -382,20 +382,19 @@ function switchSubTab(subTabId, btn) {
 
 async function loadDashboard() {
   try {
-    const [usersRes, newsRes, majorsRes, admissionsRes] = await Promise.all([
-      fetch(API_BASE + '/users'),
-      fetch(API_BASE + '/news'),
-      fetch(API_BASE + '/majors'),
-      fetch(API_BASE + '/admissions')
+    // 1 query thay vì 4 — giảm 75% số DB connection
+    const [statsRes, admissionsRes, majorsRes] = await Promise.all([
+      fetch(API_BASE + '/stats'),
+      fetch(API_BASE + '/admissions'),
+      fetch(API_BASE + '/majors')
     ]);
-    const [users, news, majors, admissions] = await Promise.all([
-      usersRes.json(), newsRes.json(), majorsRes.json(), admissionsRes.json()
+    const [stats, admissions, majors] = await Promise.all([
+      statsRes.json(), admissionsRes.json(), majorsRes.json()
     ]);
-    document.getElementById('stat-users').textContent = Array.isArray(users) ? users.length : '-';
-    document.getElementById('stat-news').textContent = Array.isArray(news) ? news.length : '-';
-    document.getElementById('stat-majors').textContent = Array.isArray(majors) ? majors.length : '-';
-    document.getElementById('stat-admissions').textContent = Array.isArray(admissions) ? admissions.length : '-';
-    // Cache for dashboard admission list
+    document.getElementById('stat-users').textContent = stats.users ?? '-';
+    document.getElementById('stat-news').textContent = stats.news ?? '-';
+    document.getElementById('stat-majors').textContent = stats.majors ?? '-';
+    document.getElementById('stat-admissions').textContent = stats.admissions ?? '-';
     if (Array.isArray(majors)) _majorsList = majors;
     if (Array.isArray(admissions)) {
       _admissionsList = admissions.map(a => {
@@ -406,7 +405,6 @@ async function loadDashboard() {
         return a;
       });
     }
-    // Populate major filter dropdown
     const majorSel = document.getElementById('dash-adm-major');
     if (majorSel && Array.isArray(majors)) {
       let opts = '<option value="all">Tất cả ngành</option>';
@@ -694,15 +692,23 @@ function previewNews(id) {
   const n = _newsList.find(x => x.id == id);
   if (!n) return;
   document.getElementById('news-preview-title').textContent = n.title || '';
-  document.getElementById('news-preview-body').innerHTML = `
-    ${(n.image_url || n.image) ? `<img src="${esc(toImgUrl(n.image_url || n.image))}" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` : ''}
-    <div class="flex gap-2 mb-3">
-      <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${esc(n.category || '')}</span>
-      <span class="text-xs text-gray-400">${fmtDate(n.created_at)}</span>
-    </div>
-    <div class="prose text-sm text-gray-700 leading-relaxed">${n.content || '<em>Không có nội dung</em>'}</div>
-  `;
+  const body = document.getElementById('news-preview-body');
+  body.innerHTML = '<div class="text-center text-gray-400 py-6">Đang tải nội dung...</div>';
   document.getElementById('news-preview-modal').classList.remove('hidden');
+  // Fetch đầy đủ nội dung từ /api/news/:id (list không có content)
+  fetch(API_BASE + '/news/' + id)
+    .then(r => r.json())
+    .then(full => {
+      body.innerHTML = `
+        ${(full.image_url || full.image) ? `<img src="${esc(toImgUrl(full.image_url || full.image))}" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.style.display='none'">` : ''}
+        <div class="flex gap-2 mb-3">
+          <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs">${esc(full.category || '')}</span>
+          <span class="text-xs text-gray-400">${fmtDate(full.created_at)}</span>
+        </div>
+        <div class="prose text-sm text-gray-700 leading-relaxed">${full.content || '<em>Không có nội dung</em>'}</div>
+      `;
+    })
+    .catch(() => { body.innerHTML = '<div class="text-red-500 text-sm py-4">Lỗi tải nội dung</div>'; });
 }
 
 function openNewsModal(news) {
@@ -713,11 +719,22 @@ function openNewsModal(news) {
   document.getElementById('news-image').value = news.image_url || news.image || '';
   document.getElementById('news-content').value = news.content || '';
   document.getElementById('news-drop-name').textContent = '';
-  // Show modal first so Jodit has visible DOM
   document.getElementById('news-modal').classList.remove('hidden');
-  // Set Jodit value after modal is visible
+  // Lazy init Jodit: chỉ khởi tạo 1 lần, gán giá trị sau khi đã mở
   setTimeout(() => {
-    if (window.newsEditor) window.newsEditor.value = news.content || '';
+    if (typeof Jodit !== 'undefined' && !window.newsEditor) {
+      window.newsEditor = Jodit.make('#news-content', { height: 400 });
+    }
+    if (window.newsEditor) {
+      // Nếu bài có sẵn content, fetch đầy đủ từ API
+      if (news.id && !news.content) {
+        fetch(API_BASE + '/news/' + news.id).then(r => r.json()).then(full => {
+          window.newsEditor.value = full.content || '';
+        }).catch(() => {});
+      } else {
+        window.newsEditor.value = news.content || '';
+      }
+    }
   }, 80);
 }
 
@@ -837,8 +854,13 @@ function openMajorModal(major) {
   document.getElementById('major-drop-name').textContent = '';
   // Hiển thị modal trước để Jodit có DOM visible
   document.getElementById('major-modal').classList.remove('hidden');
-  // Sau đó mới set nội dung Jodit (cần modal visible để render đúng)
   setTimeout(() => {
+    if (typeof Jodit !== 'undefined' && !window.majorDescEditor) {
+      window.majorDescEditor = Jodit.make('#major-description', { height: 300 });
+    }
+    if (typeof Jodit !== 'undefined' && !window.majorCareerEditor) {
+      window.majorCareerEditor = Jodit.make('#major-career', { height: 300 });
+    }
     if (window.majorDescEditor) window.majorDescEditor.value = major.description || '';
     if (window.majorCareerEditor) window.majorCareerEditor.value = major.career_prospects || '';
   }, 80);
@@ -1266,13 +1288,8 @@ function fmtDate(val) {
 }
 
 let newsEditor, majorDescEditor, majorCareerEditor;
-window.addEventListener('load', () => {
-  if(typeof Jodit !== 'undefined') {
-    newsEditor = Jodit.make('#news-content', { height: 400 });
-    majorDescEditor = Jodit.make('#major-description', { height: 300 });
-    majorCareerEditor = Jodit.make('#major-career', { height: 300 });
-  }
-});
+// Jodit được khởi tạo lazy khi mở modal (không block page load)
+// Xem openNewsModal và openMajorModal
 
 // ===================== AUTO RESTORE SESSION =====================
 (function() {
