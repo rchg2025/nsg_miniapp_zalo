@@ -468,14 +468,61 @@ function dashAdmGoPage(page) {
 
 // ===================== ZALO USERS =====================
 
+let _zaloUsers = [];
+let _zaloFiltered = [];
+let _zaloPage = 1;
+const ZALO_PAGE_SIZE = 10;
+
 async function fetchZaloUsers() {
   const tbody = document.getElementById('zalo-users-tbody');
   tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-gray-400 text-center">Đang tải...</td></tr>';
   try {
     const res = await fetch(API_BASE + '/users');
-    const users = await res.json();
-    if (!users.length) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-400">Chưa có thành viên</td></tr>'; return; }
-    tbody.innerHTML = users.map(u => `
+    _zaloUsers = await res.json();
+    if (!Array.isArray(_zaloUsers)) _zaloUsers = [];
+    _zaloPage = 1;
+    filterZaloUsers();
+  } catch (e) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+}
+
+function filterZaloUsers() {
+  const q = (document.getElementById('zalo-search')?.value || '').toLowerCase().trim();
+  const role = document.getElementById('zalo-role-filter')?.value || 'all';
+  _zaloFiltered = _zaloUsers.filter(u => {
+    const matchQ = !q ||
+      (u.name || '').toLowerCase().includes(q) ||
+      (u.zalo_id || '').toLowerCase().includes(q) ||
+      (u.phone || '').includes(q);
+    const matchRole = role === 'all' || (u.role || 'user') === role;
+    return matchQ && matchRole;
+  });
+  _zaloPage = 1;
+  renderZaloUsers();
+}
+
+function resetZaloFilter() {
+  const s = document.getElementById('zalo-search');
+  const r = document.getElementById('zalo-role-filter');
+  if (s) s.value = '';
+  if (r) r.value = 'all';
+  filterZaloUsers();
+}
+
+function renderZaloUsers() {
+  const tbody = document.getElementById('zalo-users-tbody');
+  const total = _zaloFiltered.length;
+  const totalPages = Math.ceil(total / ZALO_PAGE_SIZE) || 1;
+  if (_zaloPage > totalPages) _zaloPage = totalPages;
+  const start = (_zaloPage - 1) * ZALO_PAGE_SIZE;
+  const page = _zaloFiltered.slice(start, start + ZALO_PAGE_SIZE);
+
+  const label = document.getElementById('zalo-count-label');
+  if (label) label.textContent = `Tổng: ${total} thành viên`;
+
+  if (!page.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-center text-gray-400">Không có kết quả</td></tr>';
+  } else {
+    tbody.innerHTML = page.map(u => `
       <tr class="border-b hover:bg-gray-50">
         <td class="p-4"><img src="${u.avatar || 'https://placehold.co/40x40'}" class="w-10 h-10 rounded-full object-cover" onerror="this.src='https://placehold.co/40x40'"></td>
         <td class="p-4 font-medium">${esc(u.name || u.display_name || '')}</td>
@@ -485,7 +532,26 @@ async function fetchZaloUsers() {
         <td class="p-4 text-sm text-gray-500">${fmtDate(u.created_at)}</td>
         <td class="p-4 text-right"><button onclick="openZaloUserModal(${JSON.stringify(u).replace(/"/g,'&quot;')})" class="text-blue-600 hover:underline text-sm mr-2">Sửa</button></td>
       </tr>`).join('');
-  } catch (e) { tbody.innerHTML = '<tr><td colspan="7" class="p-4 text-red-500 text-center">Lỗi tải dữ liệu</td></tr>'; }
+  }
+
+  const pag = document.getElementById('zalo-pagination');
+  if (pag) {
+    if (totalPages <= 1) { pag.innerHTML = ''; return; }
+    pag.innerHTML = `
+      <span>Hiển thị ${total ? start + 1 : 0}–${Math.min(start + ZALO_PAGE_SIZE, total)} / ${total}</span>
+      <div class="flex gap-2">
+        <button onclick="zaloGoPage(${_zaloPage - 1})" ${_zaloPage <= 1 ? 'disabled' : ''} class="px-3 py-1 rounded border ${_zaloPage <= 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-100'}">← Trước</button>
+        <span class="px-3 py-1">Trang ${_zaloPage} / ${totalPages}</span>
+        <button onclick="zaloGoPage(${_zaloPage + 1})" ${_zaloPage >= totalPages ? 'disabled' : ''} class="px-3 py-1 rounded border ${_zaloPage >= totalPages ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-100'}">Sau →</button>
+      </div>`;
+  }
+}
+
+function zaloGoPage(page) {
+  const totalPages = Math.ceil(_zaloFiltered.length / ZALO_PAGE_SIZE) || 1;
+  if (page < 1 || page > totalPages) return;
+  _zaloPage = page;
+  renderZaloUsers();
 }
 
 function openZaloUserModal(user) {

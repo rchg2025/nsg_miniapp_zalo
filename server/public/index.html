@@ -319,6 +319,25 @@
             <h3 class="text-2xl font-bold">Thành Viên Zalo</h3>
             <button onclick="fetchZaloUsers()" class="bg-gray-500 text-white px-4 py-2 rounded shadow hover:bg-gray-600"><i class="fa-solid fa-sync mr-2"></i>Làm mới</button>
           </div>
+          <!-- Bộ lọc -->
+          <div class="bg-white p-4 rounded-lg shadow mb-4 flex flex-wrap gap-3 items-end">
+            <div class="flex-1 min-w-[200px]">
+              <label class="block text-xs font-medium text-gray-500 mb-1">Tìm kiếm</label>
+              <input type="text" id="zalo-search" oninput="filterZaloUsers()" placeholder="🔍 Tên, Zalo ID, SĐT..." class="w-full border rounded px-3 py-2 text-sm">
+            </div>
+            <div class="w-44">
+              <label class="block text-xs font-medium text-gray-500 mb-1">Vai trò</label>
+              <select id="zalo-role-filter" onchange="filterZaloUsers()" class="w-full border rounded px-3 py-2 text-sm bg-white">
+                <option value="all">Tất cả vai trò</option>
+                <option value="user">user</option>
+                <option value="admin">admin</option>
+              </select>
+            </div>
+            <div>
+              <button onclick="resetZaloFilter()" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-sm text-gray-600 border"><i class="fa-solid fa-rotate-left mr-1"></i>Xóa bộ lọc</button>
+            </div>
+            <div class="ml-auto text-sm text-gray-500 self-center" id="zalo-count-label"></div>
+          </div>
           <div class="bg-white rounded-lg shadow overflow-x-auto">
             <table class="w-full text-left">
               <thead class="bg-gray-50 border-b"><tr>
@@ -327,6 +346,7 @@
               <tbody id="zalo-users-tbody"></tbody>
             </table>
           </div>
+          <div id="zalo-pagination" class="flex justify-between items-center mt-3 pt-3 border-t text-sm text-gray-500"></div>
         </div>
 
         <!-- THÀNH VIÊN HỆ THỐNG -->
