@@ -499,15 +499,21 @@ function openZaloUserModal(user) {
 async function saveZaloUser() {
   const id = document.getElementById('edit-user-id').value;
   const payload = {
-    name: document.getElementById('edit-user-name').value,
-    phone: document.getElementById('edit-user-phone').value,
+    name: document.getElementById('edit-user-name').value.trim(),
+    phone: document.getElementById('edit-user-phone').value.trim(),
     role: document.getElementById('edit-user-role').value
   };
+  if (!id) { alert('Không xác định được người dùng'); return; }
   try {
-    await fetch(API_BASE + '/users/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const res = await fetch(API_BASE + '/users/' + id, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      alert('Lỗi: ' + (err.error || res.status));
+      return;
+    }
     document.getElementById('zalo-user-modal').classList.add('hidden');
     fetchZaloUsers();
-  } catch (e) { alert('Lỗi lưu thành viên'); }
+  } catch (e) { alert('Lỗi kết nối khi lưu thành viên'); }
 }
 
 // ===================== SYSTEM USERS =====================

@@ -372,6 +372,19 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
+// Cập nhật thông tin người dùng Zalo từ trang Admin
+app.put('/api/users/:id', async (req, res) => {
+  const { name, phone, role } = req.body;
+  try {
+    const { rows } = await db.query(
+      'UPDATE users SET name=$1, phone=$2, role=$3 WHERE id=$4 RETURNING *',
+      [name, phone || null, role || 'user', req.params.id]
+    );
+    if (!rows.length) return res.status(404).json({ error: 'Không tìm thấy người dùng' });
+    res.json(rows[0]);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // 3. API Đăng ký/Cập nhật thông tin người dùng từ Zalo
 app.post('/api/users', async (req, res) => {
   const { zalo_id, name, avatar } = req.body;
