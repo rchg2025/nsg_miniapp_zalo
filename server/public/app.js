@@ -6,12 +6,28 @@ let _newsList = [];
 
 // ===================== AUTH =====================
 
+function toggleLoginPassword() {
+  const input = document.getElementById('password');
+  const icon = document.getElementById('toggle-pw-icon');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'fa-solid fa-eye-slash';
+  } else {
+    input.type = 'password';
+    icon.className = 'fa-solid fa-eye';
+  }
+}
+
 document.getElementById('login-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value;
   const errEl = document.getElementById('login-error');
+  const errText = document.getElementById('login-error-text');
+  const btn = document.getElementById('login-btn');
   errEl.classList.add('hidden');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Đang đăng nhập...</span>';
   try {
     const res = await fetch(API_BASE + '/system_users/login', {
       method: 'POST',
@@ -20,8 +36,10 @@ document.getElementById('login-form').addEventListener('submit', async function(
     });
     const data = await res.json();
     if (!res.ok || !data.success) {
-      errEl.textContent = data.message || 'Sai tên đăng nhập hoặc mật khẩu';
+      errText.textContent = data.message || 'Tên đăng nhập hoặc mật khẩu không đúng';
       errEl.classList.remove('hidden');
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> <span>Đăng Nhập</span>';
       return;
     }
     currentUser = data.user;
@@ -31,18 +49,10 @@ document.getElementById('login-form').addEventListener('submit', async function(
     document.getElementById('app-container').style.display = 'flex';
     loadDashboard();
   } catch (err) {
-    // Fallback for local testing / no backend yet
-    if (username === 'admin' && password === 'admin123') {
-      currentUser = { username: 'admin', display_name: 'Admin', role: 'admin' };
-      localStorage.setItem('admin_session', JSON.stringify(currentUser));
-      document.getElementById('admin-name').textContent = 'Admin';
-      document.getElementById('login-container').style.display = 'none';
-      document.getElementById('app-container').style.display = 'flex';
-      loadDashboard();
-    } else {
-      errEl.textContent = 'Sai tên đăng nhập hoặc mật khẩu';
-      errEl.classList.remove('hidden');
-    }
+    errText.textContent = 'Không thể kết nối máy chủ. Vui lòng thử lại sau.';
+    errEl.classList.remove('hidden');
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> <span>Đăng Nhập</span>';
   }
 });
 
@@ -54,6 +64,245 @@ function logout() {
   document.getElementById('username').value = '';
   document.getElementById('password').value = '';
 }
+
+// ===================== FORGOT PASSWORD =====================
+
+let _forgotUsername = '';
+let _forgotOtp = '';
+let _resendTimer = null;
+
+function openForgotPassword() {
+  document.getElementById('forgot-modal').classList.remove('hidden');
+  resetForgotModal();
+}
+
+function closeForgotPassword() {
+  document.getElementById('forgot-modal').classList.add('hidden');
+  if (_resendTimer) { clearInterval(_resendTimer); _resendTimer = null; }
+}
+
+function resetForgotModal() {
+  _forgotUsername = '';
+  _forgotOtp = '';
+  // Show step 1
+  ['forgot-step-1','forgot-step-2','forgot-step-3','forgot-step-success'].forEach(id => {
+    document.getElementById(id).classList.add('hidden');
+  });
+  document.getElementById('forgot-step-1').classList.remove('hidden');
+  document.getElementById('forgot-username').value = '';
+  document.getElementById('new-password').value = '';
+  document.getElementById('confirm-password').value = '';
+  document.getElementById('forgot-error-1').classList.add('hidden');
+  document.getElementById('forgot-error-2').classList.add('hidden');
+  document.getElementById('forgot-error-3').classList.add('hidden');
+  // OTP inputs
+  document.querySelectorAll('.otp-digit').forEach(el => el.value = '');
+  setForgotStep(1);
+}
+
+function setForgotStep(step) {
+  const titles = ['', 'Quên Mật Khẩu', 'Xác Nhận OTP', 'Mật Khẩu Mới'];
+  const subs = ['', 'Nhập tên đăng nhập để nhận mã OTP', 'Nhập mã OTP đã được gửi đến email', 'Tạo mật khẩu mới cho tài khoản'];
+  document.getElementById('forgot-modal-title').textContent = titles[step] || 'Quên Mật Khẩu';
+  document.getElementById('forgot-modal-subtitle').textContent = subs[step] || '';
+  for (let i = 1; i <= 3; i++) {
+    const dot = document.getElementById('step-dot-' + i);
+    if (i < step) {
+      dot.style.background = '#16a34a';
+      dot.innerHTML = '<i class="fa-solid fa-check" style="font-size:11px"></i>';
+    } else if (i === step) {
+      dot.style.background = '#dc2626';
+      dot.textContent = i;
+    } else {
+      dot.style.background = '#d1d5db';
+      dot.style.color = '#9ca3af';
+      dot.textContent = i;
+    }
+  }
+}
+
+function forgotGoBack(fromStep) {
+  ['forgot-step-1','forgot-step-2','forgot-step-3'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  const targetStep = fromStep; // going back means showing fromStep (the previous one)
+  document.getElementById('forgot-step-' + fromStep).classList.remove('hidden');
+  setForgotStep(fromStep);
+}
+
+async function submitForgotStep1() {
+  const username = document.getElementById('forgot-username').value.trim();
+  const errEl = document.getElementById('forgot-error-1');
+  const btn = document.getElementById('forgot-btn-1');
+  errEl.classList.add('hidden');
+  if (!username) { errEl.textContent = 'Vui lòng nhập tên đăng nhập'; errEl.classList.remove('hidden'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
+  try {
+    const res = await fetch(API_BASE + '/system_users/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      errEl.textContent = data.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
+      errEl.classList.remove('hidden');
+    } else {
+      _forgotUsername = username;
+      document.getElementById('forgot-otp-sent-msg').textContent = data.message;
+      document.getElementById('forgot-step-1').classList.add('hidden');
+      document.getElementById('forgot-step-2').classList.remove('hidden');
+      setForgotStep(2);
+      // Focus first OTP digit
+      const digits = document.querySelectorAll('.otp-digit');
+      if (digits[0]) digits[0].focus();
+      startResendTimer();
+    }
+  } catch (err) {
+    errEl.textContent = 'Không thể kết nối máy chủ. Vui lòng thử lại.';
+    errEl.classList.remove('hidden');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gửi mã OTP';
+}
+
+async function submitForgotStep2() {
+  const otp = Array.from(document.querySelectorAll('.otp-digit')).map(el => el.value).join('');
+  const errEl = document.getElementById('forgot-error-2');
+  const btn = document.getElementById('forgot-btn-2');
+  errEl.classList.add('hidden');
+  if (otp.length !== 6 || !/^\d{6}$/.test(otp)) {
+    errEl.textContent = 'Vui lòng nhập đủ 6 chữ số OTP';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xác nhận...';
+  try {
+    const res = await fetch(API_BASE + '/system_users/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: _forgotUsername, otp })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      errEl.textContent = data.message || 'Mã OTP không đúng';
+      errEl.classList.remove('hidden');
+    } else {
+      _forgotOtp = otp;
+      if (_resendTimer) { clearInterval(_resendTimer); _resendTimer = null; }
+      document.getElementById('forgot-step-2').classList.add('hidden');
+      document.getElementById('forgot-step-3').classList.remove('hidden');
+      setForgotStep(3);
+      document.getElementById('new-password').focus();
+    }
+  } catch (err) {
+    errEl.textContent = 'Không thể kết nối máy chủ. Vui lòng thử lại.';
+    errEl.classList.remove('hidden');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-check"></i> Xác nhận';
+}
+
+async function submitForgotStep3() {
+  const newPassword = document.getElementById('new-password').value;
+  const confirmPassword = document.getElementById('confirm-password').value;
+  const errEl = document.getElementById('forgot-error-3');
+  const btn = document.getElementById('forgot-btn-3');
+  errEl.classList.add('hidden');
+  if (!newPassword || newPassword.length < 6) {
+    errEl.textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  if (newPassword !== confirmPassword) {
+    errEl.textContent = 'Xác nhận mật khẩu không khớp';
+    errEl.classList.remove('hidden');
+    return;
+  }
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang cập nhật...';
+  try {
+    const res = await fetch(API_BASE + '/system_users/reset-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: _forgotUsername, otp: _forgotOtp, newPassword })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      errEl.textContent = data.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
+      errEl.classList.remove('hidden');
+    } else {
+      document.getElementById('forgot-step-3').classList.add('hidden');
+      document.getElementById('forgot-step-success').classList.remove('hidden');
+    }
+  } catch (err) {
+    errEl.textContent = 'Không thể kết nối máy chủ. Vui lòng thử lại.';
+    errEl.classList.remove('hidden');
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Đặt lại mật khẩu';
+}
+
+async function resendOtp() {
+  if (!_forgotUsername) return;
+  const btn = document.getElementById('resend-btn');
+  btn.disabled = true;
+  try {
+    const res = await fetch(API_BASE + '/system_users/forgot-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: _forgotUsername })
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('forgot-otp-sent-msg').textContent = data.message;
+      document.querySelectorAll('.otp-digit').forEach(el => el.value = '');
+      document.getElementById('forgot-error-2').classList.add('hidden');
+      startResendTimer();
+    }
+  } catch (e) {}
+}
+
+function startResendTimer() {
+  if (_resendTimer) clearInterval(_resendTimer);
+  let secs = 60;
+  const btn = document.getElementById('resend-btn');
+  const timerEl = document.getElementById('resend-timer');
+  btn.disabled = true;
+  timerEl.textContent = ` (${secs}s)`;
+  _resendTimer = setInterval(() => {
+    secs--;
+    timerEl.textContent = ` (${secs}s)`;
+    if (secs <= 0) {
+      clearInterval(_resendTimer);
+      _resendTimer = null;
+      btn.disabled = false;
+      timerEl.textContent = '';
+    }
+  }, 1000);
+}
+
+// OTP input: auto-advance and allow backspace navigation
+document.addEventListener('DOMContentLoaded', function() {
+  const digits = document.querySelectorAll('.otp-digit');
+  digits.forEach((input, idx) => {
+    input.addEventListener('input', () => {
+      input.value = input.value.replace(/\D/g, '').slice(-1);
+      if (input.value && idx < digits.length - 1) digits[idx + 1].focus();
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !input.value && idx > 0) digits[idx - 1].focus();
+      if (e.key === 'Enter') submitForgotStep2();
+    });
+    input.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '').slice(0, 6);
+      pasted.split('').forEach((ch, i) => { if (digits[i]) digits[i].value = ch; });
+      if (digits[Math.min(pasted.length, digits.length - 1)]) digits[Math.min(pasted.length, digits.length - 1)].focus();
+    });
+  });
+});
 
 // ===================== NAVIGATION =====================
 
@@ -277,6 +526,7 @@ function openSysUserModal(user) {
   document.getElementById('sys-user-username').value = user.username || '';
   document.getElementById('sys-user-password').value = '';
   document.getElementById('sys-user-display').value = user.display_name || '';
+  document.getElementById('sys-user-email').value = user.email || '';
   document.getElementById('sys-user-role').value = user.role || 'editor';
   document.getElementById('sys-user-active').value = user.is_active !== false ? 'true' : 'false';
   document.getElementById('sys-user-modal').classList.remove('hidden');
@@ -287,6 +537,7 @@ async function saveSysUser() {
   const payload = {
     username: document.getElementById('sys-user-username').value.trim(),
     display_name: document.getElementById('sys-user-display').value.trim(),
+    email: document.getElementById('sys-user-email').value.trim() || null,
     role: document.getElementById('sys-user-role').value,
     is_active: document.getElementById('sys-user-active').value === 'true'
   };

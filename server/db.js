@@ -131,6 +131,7 @@ const initDB = async () => {
    try { await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'user'"); } catch(e) {}
     try { await client.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(50)"); } catch(e) {}
     try { await client.query("ALTER TABLE system_users ADD COLUMN IF NOT EXISTS is_superadmin BOOLEAN DEFAULT FALSE"); } catch(e) {}
+    try { await client.query("ALTER TABLE system_users ADD COLUMN IF NOT EXISTS email VARCHAR(255)"); } catch(e) {}
     try { await client.query("ALTER TABLE admissions ADD COLUMN IF NOT EXISTS major_name VARCHAR(255)"); } catch(e) {}
     try { await client.query("ALTER TABLE admissions ADD COLUMN IF NOT EXISTS id_card VARCHAR(30)"); } catch(e) {}
     try { await client.query("ALTER TABLE admissions ADD COLUMN IF NOT EXISTS address TEXT"); } catch(e) {}

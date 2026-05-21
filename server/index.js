@@ -39,6 +39,139 @@ async function sendEmail(to, subject, html) {
   }
 }
 
+// OTP store (in-memory): key = username, value = { otp, expires }
+const otpStore = new Map();
+
+function getOtpEmailTemplate(displayName, otp) {
+  return `<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mã OTP - NSG Admin</title>
+</head>
+<body style="margin:0;padding:0;font-family:'Segoe UI',Tahoma,Arial,sans-serif;background-color:#f3f4f6;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f3f4f6;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.12);">
+
+        <!-- HEADER -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#b91c1c 0%,#7f1d1d 100%);padding:0;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td style="padding:36px 40px 28px;text-align:center;">
+                  <table cellpadding="0" cellspacing="0" style="margin:0 auto 18px;">
+                    <tr>
+                      <td style="width:72px;height:72px;background:rgba(255,255,255,0.15);border-radius:50%;text-align:center;vertical-align:middle;">
+                        <span style="font-size:36px;line-height:72px;">🛡️</span>
+                      </td>
+                    </tr>
+                  </table>
+                  <h1 style="margin:0;color:#ffffff;font-size:28px;font-weight:900;letter-spacing:2px;text-transform:uppercase;">TRƯỜNG NSG</h1>
+                  <p style="margin:6px 0 0;color:rgba(255,255,255,0.75);font-size:12px;letter-spacing:4px;text-transform:uppercase;">Hệ Thống Quản Trị</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="background:rgba(0,0,0,0.2);padding:12px 40px;text-align:center;">
+                  <p style="margin:0;color:rgba(255,255,255,0.9);font-size:14px;font-weight:600;">🔐 Yêu cầu đặt lại mật khẩu</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- BODY -->
+        <tr>
+          <td style="padding:36px 40px 28px;">
+            <p style="margin:0 0 8px;font-size:15px;color:#111827;">Xin chào <strong style="color:#b91c1c;">${displayName}</strong>,</p>
+            <p style="margin:0 0 28px;font-size:14px;color:#6b7280;line-height:1.7;">
+              Chúng tôi nhận được yêu cầu <strong>đặt lại mật khẩu</strong> cho tài khoản quản trị của bạn trên hệ thống NSG.<br>
+              Sử dụng mã OTP bên dưới để xác nhận và tiếp tục. Mã chỉ có hiệu lực trong <strong style="color:#b91c1c;">10 phút</strong>.
+            </p>
+
+            <!-- OTP BOX -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+              <tr>
+                <td align="center">
+                  <table cellpadding="0" cellspacing="0" style="background:linear-gradient(135deg,#fef2f2,#fee2e2);border:2px solid #fca5a5;border-radius:14px;overflow:hidden;">
+                    <tr>
+                      <td style="padding:10px 48px 6px;text-align:center;">
+                        <p style="margin:0;font-size:11px;color:#dc2626;font-weight:700;letter-spacing:3px;text-transform:uppercase;">MÃ XÁC NHẬN OTP</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:4px 48px 12px;text-align:center;">
+                        <p style="margin:0;font-size:48px;font-weight:900;color:#991b1b;letter-spacing:14px;font-family:'Courier New',Courier,monospace;">${otp}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:0 48px 14px;text-align:center;">
+                        <p style="margin:0;font-size:12px;color:#6b7280;">⏱ Hiệu lực: <strong>10 phút</strong> kể từ khi gửi</p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <!-- STEPS -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;background:#f9fafb;border-radius:10px;border:1px solid #e5e7eb;">
+              <tr>
+                <td style="padding:16px 20px;">
+                  <p style="margin:0 0 10px;font-size:13px;font-weight:700;color:#374151;">📋 Hướng dẫn sử dụng:</p>
+                  <table cellpadding="0" cellspacing="0">
+                    <tr><td style="padding:3px 0;font-size:13px;color:#6b7280;">1️⃣ &nbsp;Quay lại trang đăng nhập quản trị NSG</td></tr>
+                    <tr><td style="padding:3px 0;font-size:13px;color:#6b7280;">2️⃣ &nbsp;Nhấn <strong>"Quên mật khẩu?"</strong> và nhập tên đăng nhập</td></tr>
+                    <tr><td style="padding:3px 0;font-size:13px;color:#6b7280;">3️⃣ &nbsp;Nhập mã OTP <strong style="color:#b91c1c;">${otp}</strong> vào ô xác nhận</td></tr>
+                    <tr><td style="padding:3px 0;font-size:13px;color:#6b7280;">4️⃣ &nbsp;Tạo mật khẩu mới và hoàn tất</td></tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <!-- WARNING -->
+            <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+              <tr>
+                <td style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:14px 18px;">
+                  <p style="margin:0;font-size:13px;color:#92400e;line-height:1.6;">
+                    ⚠️ <strong>Lưu ý bảo mật quan trọng:</strong> Không chia sẻ mã OTP này với bất kỳ ai kể cả nhân viên NSG.
+                    Đội ngũ quản trị sẽ <strong>không bao giờ</strong> yêu cầu mã OTP qua điện thoại hay chat.
+                  </p>
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin:0;font-size:13px;color:#9ca3af;line-height:1.6;">
+              Nếu bạn <strong>không thực hiện</strong> yêu cầu này, hãy bỏ qua email này. Tài khoản của bạn vẫn an toàn và không có thay đổi nào được thực hiện.
+            </p>
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:24px 40px;">
+            <table width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td>
+                  <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#374151;">Trường Cao đẳng Nghề Sài Gòn — NSG</p>
+                  <p style="margin:0;font-size:12px;color:#9ca3af;">Đây là email tự động. Vui lòng không trả lời email này.</p>
+                </td>
+                <td align="right">
+                  <p style="margin:0;font-size:11px;color:#d1d5db;">admin.nsg.edu.vn</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
 // Middleware
 app.use(cors()); // Cho phép Cross-Origin Resource Sharing
 app.use(express.static(path.join(__dirname, 'public'))); // Serve the Admin Frontend UI
@@ -459,31 +592,31 @@ app.delete('/api/training_systems/:id', async (req, res) => {
 // ================= SYSTEM USERS =================
 function hashPassword(p) { return crypto.createHash('sha256').update(p).digest('hex'); }
 app.get('/api/system_users', async (req, res) => {
-  try { const { rows } = await db.query('SELECT id, username, display_name, role, is_active, created_at FROM system_users WHERE is_superadmin IS NOT TRUE ORDER BY id ASC'); res.json(rows); }
+  try { const { rows } = await db.query('SELECT id, username, display_name, email, role, is_active, created_at FROM system_users WHERE is_superadmin IS NOT TRUE ORDER BY id ASC'); res.json(rows); }
   catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.post('/api/system_users', async (req, res) => {
-  const { username, password, display_name, role, is_active } = req.body;
+  const { username, password, display_name, email, role, is_active } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'username and password required' });
   try {
     const hash = hashPassword(password);
     const { rows } = await db.query(
-      'INSERT INTO system_users (username, password_hash, display_name, role, is_active) VALUES ($1,$2,$3,$4,$5) RETURNING id, username, display_name, role, is_active',
-      [username, hash, display_name || username, role || 'editor', is_active !== false]
+      'INSERT INTO system_users (username, password_hash, display_name, email, role, is_active) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, username, display_name, email, role, is_active',
+      [username, hash, display_name || username, email || null, role || 'editor', is_active !== false]
     );
     res.json(rows[0]);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 app.put('/api/system_users/:id', async (req, res) => {
-  const { username, password, display_name, role, is_active } = req.body;
+  const { username, password, display_name, email, role, is_active } = req.body;
   try {
     if (password) {
       const hash = hashPassword(password);
-      await db.query('UPDATE system_users SET username=$1, password_hash=$2, display_name=$3, role=$4, is_active=$5 WHERE id=$6',
-        [username, hash, display_name, role, is_active, req.params.id]);
+      await db.query('UPDATE system_users SET username=$1, password_hash=$2, display_name=$3, email=$4, role=$5, is_active=$6 WHERE id=$7',
+        [username, hash, display_name, email || null, role, is_active, req.params.id]);
     } else {
-      await db.query('UPDATE system_users SET username=$1, display_name=$2, role=$3, is_active=$4 WHERE id=$5',
-        [username, display_name, role, is_active, req.params.id]);
+      await db.query('UPDATE system_users SET username=$1, display_name=$2, email=$3, role=$4, is_active=$5 WHERE id=$6',
+        [username, display_name, email || null, role, is_active, req.params.id]);
     }
     res.json({ success: true });
   } catch (err) { res.status(500).json({ error: err.message }); }
@@ -495,18 +628,96 @@ app.delete('/api/system_users/:id', async (req, res) => {
 
 app.post('/api/system_users/login', async (req, res) => {
   const { username, password } = req.body;
-  if (!username || !password) return res.status(400).json({ success: false, message: 'Missing credentials' });
+  if (!username || !password) return res.status(400).json({ success: false, message: 'Thiếu tên đăng nhập hoặc mật khẩu' });
   try {
     const hash = hashPassword(password);
     const result = await db.query(
       'SELECT id, username, display_name, role, is_active FROM system_users WHERE username=$1 AND password_hash=$2',
       [username, hash]
     );
-    if (!result.rows.length) return res.status(401).json({ success: false, message: 'Sai ten dang nhap hoac mat khau' });
+    if (!result.rows.length) return res.status(401).json({ success: false, message: 'Tên đăng nhập hoặc mật khẩu không đúng' });
     const user = result.rows[0];
-    if (!user.is_active) return res.status(403).json({ success: false, message: 'Tai khoan bi vo hieu hoa' });
+    if (!user.is_active) return res.status(403).json({ success: false, message: 'Tài khoản đã bị vô hiệu hóa' });
     res.json({ success: true, user });
   } catch (err) { res.status(500).json({ success: false, message: err.message }); }
+});
+
+// ================= QUÊN MẬT KHẨU (OTP) =================
+
+// Bước 1: Gửi OTP đến email
+app.post('/api/system_users/forgot-password', async (req, res) => {
+  const { username } = req.body;
+  if (!username) return res.status(400).json({ success: false, message: 'Thiếu tên đăng nhập' });
+  try {
+    const result = await db.query(
+      'SELECT id, username, email, display_name FROM system_users WHERE username=$1 AND is_active=true',
+      [username]
+    );
+    if (!result.rows.length) return res.status(404).json({ success: false, message: 'Tài khoản không tồn tại hoặc đã bị vô hiệu hóa' });
+    const user = result.rows[0];
+    if (!user.email) return res.status(400).json({ success: false, message: 'Tài khoản này chưa được liên kết với email. Vui lòng liên hệ quản trị viên.' });
+
+    // Tạo OTP 6 chữ số
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = Date.now() + 10 * 60 * 1000; // 10 phút
+    otpStore.set(username, { otp, expires });
+
+    const emailSent = await sendEmail(
+      user.email,
+      'Mã OTP đặt lại mật khẩu - Hệ thống NSG',
+      getOtpEmailTemplate(user.display_name || user.username, otp)
+    );
+
+    if (!emailSent) {
+      return res.status(500).json({ success: false, message: 'Không thể gửi email. Vui lòng kiểm tra cấu hình SMTP hoặc liên hệ quản trị viên.' });
+    }
+
+    // Che bớt email để bảo mật: user@example.com → us***@example.com
+    const maskedEmail = user.email.replace(/^(.{2})(.+)(@.+)$/, (_, a, b, c) => a + b.replace(/./g, '*') + c);
+    res.json({ success: true, message: `Mã OTP đã được gửi đến ${maskedEmail}` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Bước 2: Xác minh OTP
+app.post('/api/system_users/verify-otp', (req, res) => {
+  const { username, otp } = req.body;
+  if (!username || !otp) return res.status(400).json({ success: false, message: 'Thiếu thông tin xác nhận' });
+
+  const stored = otpStore.get(username);
+  if (!stored) return res.status(400).json({ success: false, message: 'Mã OTP không hợp lệ hoặc đã hết hạn' });
+  if (Date.now() > stored.expires) {
+    otpStore.delete(username);
+    return res.status(400).json({ success: false, message: 'Mã OTP đã hết hạn. Vui lòng yêu cầu gửi lại.' });
+  }
+  if (stored.otp !== otp) return res.status(400).json({ success: false, message: 'Mã OTP không đúng. Vui lòng kiểm tra lại.' });
+
+  res.json({ success: true, message: 'Xác thực OTP thành công' });
+});
+
+// Bước 3: Đặt lại mật khẩu
+app.post('/api/system_users/reset-password', async (req, res) => {
+  const { username, otp, newPassword } = req.body;
+  if (!username || !otp || !newPassword) return res.status(400).json({ success: false, message: 'Thiếu thông tin' });
+
+  const stored = otpStore.get(username);
+  if (!stored) return res.status(400).json({ success: false, message: 'Phiên đặt lại mật khẩu không hợp lệ. Vui lòng bắt đầu lại.' });
+  if (Date.now() > stored.expires) {
+    otpStore.delete(username);
+    return res.status(400).json({ success: false, message: 'Mã OTP đã hết hạn. Vui lòng yêu cầu gửi lại.' });
+  }
+  if (stored.otp !== otp) return res.status(400).json({ success: false, message: 'Phiên xác thực không hợp lệ' });
+  if (newPassword.length < 6) return res.status(400).json({ success: false, message: 'Mật khẩu phải có ít nhất 6 ký tự' });
+
+  try {
+    const hash = hashPassword(newPassword);
+    await db.query('UPDATE system_users SET password_hash=$1 WHERE username=$2', [hash, username]);
+    otpStore.delete(username);
+    res.json({ success: true, message: 'Đặt lại mật khẩu thành công' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
 });
 
 // ================= SETTINGS =================
