@@ -1,4 +1,4 @@
-﻿const API_BASE = 'https://nsg-miniapp-zalo-ipia.vercel.app/api';
+const API_BASE = 'https://nsg-miniapp-zalo-ipia.vercel.app/api';
 let currentUser = null;
 let _admissionsList = [];
 let _majorsList = [];
@@ -1083,6 +1083,7 @@ function renderAdmissions(list) {
         <button onclick="viewAdmission(${a.id})" class="text-blue-600 hover:underline text-sm">Chi tiết</button>
         <button onclick="updateAdmissionStatus(${a.id},'approved')" class="text-green-600 hover:underline text-sm">Duyệt</button>
         <button onclick="updateAdmissionStatus(${a.id},'rejected')" class="text-red-600 hover:underline text-sm">Từ chối</button>
+        <button onclick="deleteAdmission(${a.id})" class="text-red-700 hover:underline text-sm font-semibold">Xóa</button>
       </td>
     </tr>`).join('');
 }
@@ -1232,6 +1233,19 @@ window.updateAdmissionStatus = async function(id, status) {
       alert('Lỗi: ' + (data.error || 'Cập nhật thất bại'));
     }
   } catch (e) { alert('Lỗi cập nhật trạng thái'); }
+}
+
+window.deleteAdmission = async function(id) {
+  if (!confirm('Bạn có chắc chắn muốn xóa hồ sơ tuyển sinh này? Hành động này không thể hoàn tác.')) return;
+  try {
+    const res = await fetch(API_BASE + '/admissions/' + id, { method: 'DELETE' });
+    if (res.ok) {
+      fetchAdmissions();
+      refreshAdmissionsBadge();
+    } else {
+      alert('Lỗi: Xóa hồ sơ thất bại');
+    }
+  } catch (e) { alert('Lỗi khi xóa hồ sơ'); }
 }
 
 // ===================== SETTINGS =====================
