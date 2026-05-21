@@ -154,7 +154,7 @@ function getOtpEmailTemplate(displayName, otp) {
             <table width="100%" cellpadding="0" cellspacing="0">
               <tr>
                 <td>
-                  <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#374151;">Trường Cao đẳng Nghề Sài Gòn — NSG</p>
+                  <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#374151;">Trường Cao đẳng Bách khoa Nam Sài Gòn</p>
                   <p style="margin:0;font-size:12px;color:#9ca3af;">Đây là email tự động. Vui lòng không trả lời email này.</p>
                 </td>
                 <td align="right">

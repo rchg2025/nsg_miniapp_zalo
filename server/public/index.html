@@ -82,7 +82,8 @@
           </div>
         </div>
       </div>
-      <p class="text-center text-gray-500 text-xs mt-6">© 2025 Trường Cao đẳng Nghề Sài Gòn — NSG</p>
+      <p class="text-center text-gray-500 text-xs mt-6">© <span id="footer-year"></span> Trường Cao đẳng Bách khoa Nam Sài Gòn</p>
+      <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
     </div>
   </div>
 
