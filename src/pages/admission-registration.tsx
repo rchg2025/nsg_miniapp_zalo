@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button, Icon, Page, Text, Header, Input, DatePicker } from "zmp-ui";
-import { openChat, getUserInfo, followOA, openWebview } from "zmp-sdk/apis";
+import { openChat, followOA, openWebview } from "zmp-sdk/apis";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useUser } from "@/contexts/user-context";
 import { DataManager, Major, AdmissionApplication } from "@/utils/data-manager";
@@ -62,45 +62,28 @@ function AdmissionRegistrationPage() {
       // Major will auto-display once majors list loads (via useEffect)
     }
 
-    // Automatically collect Zalo user data and pre-fill form
-    const loadZaloUserData = async () => {
-      try {
-        const zaloUser = await getUserInfo({ autoRequestPermission: true });
-        if (zaloUser?.userInfo) {
-          setFormData(prev => ({
-            ...prev,
-            fullName: zaloUser.userInfo.name || userInfo?.name || '',
-            phoneNumber: '',
-            email: ''
-          }));
-          
-          // Save Zalo user data for admin analytics
-          const userData = {
-            zaloId: zaloUser.userInfo.id,
-            name: zaloUser.userInfo.name,
-            avatar: zaloUser.userInfo.avatar,
-            accessTime: new Date().toISOString(),
-            pageAccessed: 'admission-registration'
-          };
-          
-          localStorage.setItem(`admission_user_${zaloUser.userInfo.id}`, JSON.stringify(userData));
-          console.log('📋 Admission user data collected:', userData);
-        }
-      } catch (error) {
-        console.log('ℹ️ Using fallback user info:', error);
-        // Fallback to context user info
-        if (userInfo) {
-          setFormData(prev => ({
-            ...prev,
-            fullName: userInfo.name || '',
-            phoneNumber: '',
-            email: ''
-          }));
-        }
-      }
-    };
+    // Không tự động gọi quyền Zalo ở màn đăng ký.
+    // Chỉ dùng dữ liệu đã có trong context (được cấp quyền từ thao tác chủ động ở header).
+    if (userInfo) {
+      setFormData(prev => ({
+        ...prev,
+        fullName: userInfo.name || '',
+        phoneNumber: prev.phoneNumber,
+        email: prev.email
+      }));
 
-    loadZaloUserData();
+      if (userInfo.id && userInfo.id !== 'guest') {
+        const userData = {
+          zaloId: userInfo.id,
+          name: userInfo.name,
+          avatar: userInfo.avatar,
+          accessTime: new Date().toISOString(),
+          pageAccessed: 'admission-registration'
+        };
+        localStorage.setItem(`admission_user_${userInfo.id}`, JSON.stringify(userData));
+        console.log('📋 Admission user data collected from context:', userData);
+      }
+    }
   }, [userInfo, searchParams]);
 
   useEffect(() => {

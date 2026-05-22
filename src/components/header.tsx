@@ -94,52 +94,63 @@ export function Header({
           {title ? (
             <Text.Title className="text-white font-bold flex-1">{title}</Text.Title>
           ) : (
-            <Box
-              className={`flex items-center flex-1 ${!title ? 'cursor-pointer active:opacity-70' : ''}`}
-              onClick={handleAvatarClick}
-            >
-              {/* Avatar */}
-              <Box className="relative mr-3 flex-shrink-0">
-                {isGuest ? (
-                  <Box className="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/40">
-                    <i className="zi-user text-white text-xl"></i>
-                  </Box>
-                ) : (
-                  <Avatar
-                    src={userInfo.avatar}
-                    size={44}
-                    className="border-2 border-white/30"
-                  />
-                )}
-                {isRequesting && (
-                  <Box className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center">
-                    <Text className="text-white text-xs">...</Text>
-                  </Box>
-                )}
+            <>
+              <Box
+                className={`flex items-center flex-1 ${!title ? 'cursor-pointer active:opacity-70' : ''}`}
+                onClick={handleAvatarClick}
+              >
+                {/* Avatar */}
+                <Box className="relative mr-3 flex-shrink-0">
+                  {isGuest ? (
+                    <Box className="w-11 h-11 rounded-full bg-white/20 flex items-center justify-center border-2 border-white/40">
+                      <i className="zi-user text-white text-xl"></i>
+                    </Box>
+                  ) : (
+                    <Avatar
+                      src={userInfo.avatar}
+                      size={44}
+                      className="border-2 border-white/30"
+                    />
+                  )}
+                  {isRequesting && (
+                    <Box className="absolute inset-0 rounded-full bg-black/30 flex items-center justify-center">
+                      <Text className="text-white text-xs">...</Text>
+                    </Box>
+                  )}
+                </Box>
+
+                {/* Info */}
+                <Box className="flex-1 min-w-0">
+                  {isGuest ? (
+                    <>
+                      <Text className="text-white/70 text-xs">Nhấn để đăng nhập</Text>
+                      <Text className="text-white font-bold text-sm">Trường CĐ Bách khoa Nam Sài Gòn</Text>
+                    </>
+                  ) : (
+                    <>
+                      <Text className="text-white/80 text-xs">{getGreeting()},</Text>
+                      <Text className="text-white font-bold text-sm leading-tight truncate">
+                        {userInfo.name}
+                      </Text>
+                      {userInfo.phone ? (
+                        <Text className="text-white/70 text-xs">{userInfo.phone}</Text>
+                      ) : (
+                        <Text className="text-white/60 text-xs">Nhấn để cập nhật thông tin</Text>
+                      )}
+                    </>
+                  )}
+                </Box>
               </Box>
 
-              {/* Info */}
-              <Box className="flex-1 min-w-0">
-                {isGuest ? (
-                  <>
-                    <Text className="text-white/70 text-xs">Nhấn để đăng nhập</Text>
-                    <Text className="text-white font-bold text-sm">Trường CĐ Bách khoa Nam Sài Gòn</Text>
-                  </>
-                ) : (
-                  <>
-                    <Text className="text-white/80 text-xs">{getGreeting()},</Text>
-                    <Text className="text-white font-bold text-sm leading-tight truncate">
-                      {userInfo.name}
-                    </Text>
-                    {userInfo.phone ? (
-                      <Text className="text-white/70 text-xs">{userInfo.phone}</Text>
-                    ) : (
-                      <Text className="text-white/60 text-xs">Nhấn để cập nhật thông tin</Text>
-                    )}
-                  </>
-                )}
-              </Box>
-            </Box>
+              {isGuest && (
+                <Box
+                  onClick={handleAvatarClick}
+                  className="ml-2 rounded-full bg-white text-blue-700 px-3 py-2 text-xs font-semibold cursor-pointer active:scale-95 whitespace-nowrap"
+                >
+                  {isRequesting ? 'Đang xử lý...' : 'Đăng nhập thành viên'}
+                </Box>
+              )}
+            </>
           )}
         </Box>
       </Box>

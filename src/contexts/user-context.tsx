@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { getUserInfo, authorize } from "zmp-sdk/apis";
+import { getUserInfo } from "zmp-sdk/apis";
 import { UserInfo, UserRole, PERMISSIONS, Permission } from "@/types";
 
 interface UserContextType {
@@ -171,12 +171,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const checkUserInfo = async () => {
     try {
-      // Yêu cầu quyền truy cập tên và ảnh đại diện (bắt buộc từ SDK 2.35.0+)
-      try {
-        await authorize({ scopes: ['scope.userInfo'] });
-      } catch (_) {
-        // Người dùng từ chối hoặc lỗi quyền — vẫn tiếp tục, sẽ chỉ nhận được ID
-      }
       const user = await getUserInfo({});
       if (user.userInfo) {
         const role = getUserRole(user.userInfo.id);

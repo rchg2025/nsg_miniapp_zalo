@@ -907,8 +907,12 @@ function openMajorModal(major) {
     if (typeof Jodit !== 'undefined' && !window.majorCareerEditor) {
       window.majorCareerEditor = Jodit.make('#major-career', { height: 300 });
     }
+    if (typeof Jodit !== 'undefined' && !window.majorReqEditor) {
+      window.majorReqEditor = Jodit.make('#major-requirements', { height: 300 });
+    }
     if (window.majorDescEditor) window.majorDescEditor.value = major.description || '';
     if (window.majorCareerEditor) window.majorCareerEditor.value = major.career_prospects || '';
+    if (window.majorReqEditor) window.majorReqEditor.value = major.requirements || '';
   }, 80);
 }
 
@@ -926,7 +930,7 @@ async function saveMajor() {
       subjects: document.getElementById('major-subjects').value.trim(),
       career_prospects: (window.majorCareerEditor ? window.majorCareerEditor.value : document.getElementById('major-career').value).trim(),
       website: document.getElementById('major-website').value.trim(),
-    requirements: document.getElementById('major-requirements').value.trim()
+      requirements: (window.majorReqEditor ? window.majorReqEditor.value : document.getElementById('major-requirements').value).trim()
   };
   if (!payload.name) { alert('Vui lòng nhập tên ngành'); return; }
   if (!payload.code) { alert('Vui lòng nhập mã ngành'); return; }

@@ -17,12 +17,12 @@ export class ZaloUserService {
   /**
    * Lấy thông tin cơ bản của người dùng (tên, ảnh đại diện)
    */
-  static async getUserInfo(): Promise<ZaloUserInfo | null> {
+  static async getUserInfo(options?: { autoRequestPermission?: boolean }): Promise<ZaloUserInfo | null> {
     try {
       console.log('🔍 Getting Zalo user info...');
       
       const response = await getUserInfo({
-        autoRequestPermission: true
+        autoRequestPermission: options?.autoRequestPermission ?? false
       });
 
       // Kiểm tra response có data không
