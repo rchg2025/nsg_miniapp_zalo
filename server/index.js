@@ -192,6 +192,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
   etag: true
 }));
 app.use(bodyParser.json({
+  limit: '50mb',
   verify: (req, res, buf, encoding) => {
     // Lưu raw body để xác thực chữ ký của Zalo
     if (buf && buf.length) {

@@ -922,15 +922,14 @@ async function saveMajor() {
     code: document.getElementById('major-code').value.trim(),
     name: document.getElementById('major-name').value.trim(),
     image: document.getElementById('major-image').value.trim(),
-    
-      description: (window.majorDescEditor ? window.majorDescEditor.value : document.getElementById('major-description').value).trim(),
-      duration: document.getElementById('major-duration').value.trim(),
-      tuition_fee: document.getElementById('major-tuition').value.trim(),
-      education_level: document.getElementById('major-level').value.trim(),
-      subjects: document.getElementById('major-subjects').value.trim(),
-      career_prospects: (window.majorCareerEditor ? window.majorCareerEditor.value : document.getElementById('major-career').value).trim(),
-      website: document.getElementById('major-website').value.trim(),
-      requirements: (window.majorReqEditor ? window.majorReqEditor.value : document.getElementById('major-requirements').value).trim()
+    description: (window.majorDescEditor ? String(window.majorDescEditor.value) : document.getElementById('major-description').value).trim(),
+    duration: document.getElementById('major-duration').value.trim(),
+    tuition_fee: document.getElementById('major-tuition').value.trim(),
+    education_level: document.getElementById('major-level').value.trim(),
+    subjects: document.getElementById('major-subjects').value.trim(),
+    career_prospects: (window.majorCareerEditor ? String(window.majorCareerEditor.value) : document.getElementById('major-career').value).trim(),
+    website: document.getElementById('major-website').value.trim(),
+    requirements: (window.majorReqEditor ? String(window.majorReqEditor.value) : document.getElementById('major-requirements').value).trim()
   };
   if (!payload.name) { alert('Vui lòng nhập tên ngành'); return; }
   if (!payload.code) { alert('Vui lòng nhập mã ngành'); return; }
