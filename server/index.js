@@ -273,7 +273,7 @@ app.get('/api/stats', async (req, res) => {
         (SELECT COUNT(*) FROM admissions)::int AS admissions,
         (SELECT COUNT(*) FROM admissions WHERE status='pending')::int AS pending_admissions
     `);
-    res.setHeader('Cache-Control', 'private, max-age=60');
+    // no cache
     res.json(rows[0]);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -283,7 +283,7 @@ app.get('/api/stats', async (req, res) => {
 app.get('/api/news', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT id, title, image_url, category, created_at FROM news ORDER BY created_at DESC');
-    res.setHeader('Cache-Control', 'public, max-age=120, stale-while-revalidate=60');
+    // no cache
     res.json(rows);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
@@ -295,7 +295,7 @@ app.get('/api/news/:id', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT * FROM news WHERE id=$1', [req.params.id]);
     if (!rows.length) return res.status(404).json({ error: 'Not found' });
-    res.setHeader('Cache-Control', 'public, max-age=300, stale-while-revalidate=60');
+    // no cache
     res.json(rows[0]);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -344,7 +344,7 @@ app.delete('/api/news/:id', async (req, res) => {
 app.get('/api/majors', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT * FROM majors ORDER BY code ASC');
-    res.setHeader('Cache-Control', 'public, max-age=600, stale-while-revalidate=120');
+    // no cache
     res.json(rows);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
@@ -632,7 +632,7 @@ app.get('/', (req, res) => {
 app.get('/api/categories', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT * FROM categories ORDER BY id ASC');
-    res.setHeader('Cache-Control', 'public, max-age=600, stale-while-revalidate=120');
+    // no cache
     res.json(rows);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
@@ -650,7 +650,7 @@ app.delete('/api/categories/:id', async (req, res) => {
 app.get('/api/training_systems', async (req, res) => {
   try {
     const { rows } = await db.query('SELECT * FROM training_systems ORDER BY id ASC');
-    res.setHeader('Cache-Control', 'public, max-age=600, stale-while-revalidate=120');
+    // no cache
     res.json(rows);
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
