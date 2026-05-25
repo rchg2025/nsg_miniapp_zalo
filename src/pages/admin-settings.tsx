@@ -431,6 +431,131 @@ function AdminSettingsPage() {
           </Box>
         </Box>
 
+        {/* API & Widget Settings */}
+        <Box className="bg-white p-4 rounded-lg">
+          <Text.Title className="mb-4">🔗 Tích hợp Website (API & Widget)</Text.Title>
+          <Box className="space-y-4">
+            <Box>
+              <Text className="mb-2 font-medium">1. API Endpoint (JSON)</Text>
+              <Text className="mb-2 text-sm text-gray-500">Sử dụng liên kết này để lấy dữ liệu tin tức dưới định dạng JSON cho ứng dụng hoặc mã nguồn ASP.NET, PHP, v.v.</Text>
+              <Box className="flex items-center gap-2">
+                <Input
+                  readOnly
+                  value="https://nsg-miniapp-zalo-ipia.vercel.app/api/news"
+                  className="flex-1"
+                />
+                <Button 
+                  size="small" 
+                  onClick={() => {
+                    navigator.clipboard.writeText("https://nsg-miniapp-zalo-ipia.vercel.app/api/news");
+                    alert("Đã copy API URL!");
+                  }}
+                >
+                  Copy
+                </Button>
+              </Box>
+            </Box>
+
+            <Box>
+              <Text className="mb-2 font-medium">2. Mã nhúng Widget HTML / JS</Text>
+              <Text className="mb-2 text-sm text-gray-500">Sao chép đoạn mã dưới đây và dán vào bất kỳ vị trí nào trên trang web của bạn để hiển thị danh sách tin tức.</Text>
+              <Box className="relative">
+                <Input.TextArea
+                  readOnly
+                  rows={8}
+                  style={{ fontFamily: 'monospace', fontSize: '13px' }}
+                  value={`<div id="nsg-news-widget"></div>
+<script>
+  fetch('https://nsg-miniapp-zalo-ipia.vercel.app/api/news')
+    .then(response => response.json())
+    .then(data => {
+      const container = document.getElementById('nsg-news-widget');
+      if (data && data.length > 0) {
+        let html = '<div style="font-family: Arial, sans-serif; max-width: 600px;">';
+        data.slice(0, 5).forEach(news => {
+          html += '<div style="display: flex; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #eee;">';
+          if (news.image) {
+             html += '<img src="' + news.image + '" style="width: 100px; height: 75px; object-fit: cover; border-radius: 8px;" />';
+          }
+          html += '<div>';
+          html += '<a href="https://nsg-miniapp-zalo-ipia.vercel.app/?#news/' + news.id + '" target="_blank" style="font-weight: bold; text-decoration: none; color: #1e3a8a; font-size: 15px; display: block; margin-bottom: 4px;">' + news.title + '</a>';
+          let dateStr = news.date || news.created_at || new Date().toISOString();
+          html += '<span style="font-size: 12px; color: #6b7280;">' + new Date(dateStr).toLocaleDateString('vi-VN') + '</span>';
+          html += '</div></div>';
+        });
+        html += '</div>';
+        container.innerHTML = html;
+      } else {
+        container.innerHTML = '<p>Hiện không có tin tức nào mới.</p>';
+      }
+    })
+    .catch(error => console.error('Lỗi tải tin tức NSG:', error));
+</script>`}
+                />
+                <Button 
+                  size="small" 
+                  className="absolute top-2 right-2"
+                  onClick={() => {
+                    const code = `<div id="nsg-news-widget"></div>
+<script>
+  fetch('https://nsg-miniapp-zalo-ipia.vercel.app/api/news')
+    .then(response => response.json())
+    .then(data => {
+      const container = document.getElementById('nsg-news-widget');
+      if (data && data.length > 0) {
+        let html = '<div style="font-family: Arial, sans-serif; max-width: 600px;">';
+        data.slice(0, 5).forEach(news => {
+          html += '<div style="display: flex; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #eee;">';
+          if (news.image) {
+             html += '<img src="' + news.image + '" style="width: 100px; height: 75px; object-fit: cover; border-radius: 8px;" />';
+          }
+          html += '<div>';
+          html += '<a href="https://nsg-miniapp-zalo-ipia.vercel.app/?#news/' + news.id + '" target="_blank" style="font-weight: bold; text-decoration: none; color: #1e3a8a; font-size: 15px; display: block; margin-bottom: 4px;">' + news.title + '</a>';
+          let dateStr = news.date || news.created_at || new Date().toISOString();
+          html += '<span style="font-size: 12px; color: #6b7280;">' + new Date(dateStr).toLocaleDateString('vi-VN') + '</span>';
+          html += '</div></div>';
+        });
+        html += '</div>';
+        container.innerHTML = html;
+      } else {
+        container.innerHTML = '<p>Hiện không có tin tức nào mới.</p>';
+      }
+    })
+    .catch(error => console.error('Lỗi tải tin tức NSG:', error));
+</script>`;
+                    navigator.clipboard.writeText(code);
+                    alert("Đã copy mã nhúng!");
+                  }}
+                >
+                  Copy JSON Widget
+                </Button>
+              </Box>
+            </Box>
+
+            <Box>
+              <Text className="mb-2 font-medium">3. Tích hợp ASP.NET (C# Example)</Text>
+              <Text className="mb-2 text-sm text-gray-500">Mẫu code Backend C# để lấy dữ liệu (HttpClient).</Text>
+              <Box className="relative">
+                <Input.TextArea
+                  readOnly
+                  rows={6}
+                  style={{ fontFamily: 'monospace', fontSize: '13px' }}
+                  value={`using System.Net.Http;
+using System.Threading.Tasks;
+
+public async Task<string> GetNsgNews() {
+    using (HttpClient client = new HttpClient()) {
+        HttpResponseMessage response = await client.GetAsync("https://nsg-miniapp-zalo-ipia.vercel.app/api/news");
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadAsStringAsync();
+    }
+}`}
+                />
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+
         {/* Action Buttons */}
         <Box className="flex gap-3 pt-4">
           <Button
