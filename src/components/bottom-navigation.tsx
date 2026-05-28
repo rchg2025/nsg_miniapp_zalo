@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Box, Button, Icon, Text } from "zmp-ui";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useUser } from "@/contexts/user-context";
@@ -43,7 +43,7 @@ function BottomNavigation() {
     };
   }, []);
 
-  const baseNavItems: BottomNavItem[] = [
+    const baseNavItems: BottomNavItem[] = [
     {
       id: "home",
       label: "Trang chủ",
@@ -52,7 +52,7 @@ function BottomNavigation() {
     },
     {
       id: "news",
-      label: `Tin tức${savedNewsCount > 0 ? ` (${savedNewsCount})` : ''}`,
+      label: "Tin tức",
       icon: "zi-bookmark",
       path: "/news"
     },
@@ -67,12 +67,6 @@ function BottomNavigation() {
       label: "Đăng ký",
       icon: "zi-edit",
       path: "/admission-registration"
-    },
-    {
-      id: "profile",
-      label: "Cá nhân",
-      icon: "zi-user",
-      path: "/profile"
     }
   ];
 
@@ -139,3 +133,4 @@ function BottomNavigation() {
 }
 
 export default BottomNavigation;
+
