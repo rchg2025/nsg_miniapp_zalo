@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Input, Text, Modal, Icon } from "zmp-ui";
+import { Box, Button, Input, Text, Modal, Icon, useSnackbar } from "zmp-ui";
 import { systemUserLogin } from "@/utils/api";
 
 interface AdminLoginProps {
@@ -8,25 +8,13 @@ interface AdminLoginProps {
   onCancel: () => void;
 }
 
-// Hàm xác thực admin - sẽ kết nối với API backend
-const validateAdminCredentials = (username: string, password: string) => {
-  // Trong thực tế, gọi API để xác thực
-  // Tạm thời để một tài khoản admin duy nhất để không lộ thông tin
-  if (username === "admin" && password === "admin@nsg2025") {
-    return { username: "admin", role: "Quản trị viên NSG" };
-  }
-  if (username === "thanhtung" && password === "123456") {
-    return { username: "thanhtung", role: "Thành viên Ban Giám Hiệu" };
-  }
-  return null;
-};
-
 function AdminLogin({ isVisible, onLoginSuccess, onCancel }: AdminLoginProps) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const snackbar = useSnackbar();
 
   const handleManualLogin = async () => {
     if (!username.trim() || !password.trim()) {
@@ -48,6 +36,13 @@ function AdminLogin({ isVisible, onLoginSuccess, onCancel }: AdminLoginProps) {
         localStorage.setItem("admin_username", response.user.username);
         localStorage.setItem("admin_login_method", "manual");
         
+        snackbar.openSnackbar({
+          text: `Đăng nhập thành công! Xin chào ${response.user.display_name || response.user.username}`,
+          type: "success",
+          icon: true,
+          duration: 3000
+        });
+
         onLoginSuccess();
         
         // Reset form
@@ -55,11 +50,24 @@ function AdminLogin({ isVisible, onLoginSuccess, onCancel }: AdminLoginProps) {
         setPassword("");
         setError("");
       } else {
-        setError(response.message || "Tên đăng nhập hoặc mật khẩu không đúng!");
+        const errorMsg = response.message || "Tên đăng nhập hoặc mật khẩu không đúng!";
+        setError(errorMsg);
+        snackbar.openSnackbar({
+          text: errorMsg,
+          type: "error",
+          icon: true,
+          duration: 3000
+        });
       }
     } catch (e: any) {
       console.error("Login err:", e);
       setError("Có lỗi xảy ra, không thể kết nối tới máy chủ.");
+      snackbar.openSnackbar({
+        text: "Lỗi kết nối máy chủ!",
+        type: "error",
+        icon: true,
+        duration: 3000
+      });
     } finally {
       setIsLoading(false);
     }
