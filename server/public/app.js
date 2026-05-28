@@ -438,10 +438,10 @@ async function loadDashboard() {
     const [stats, admissions, majors] = await Promise.all([
       statsRes.json(), admissionsRes.json(), majorsRes.json()
     ]);
-    document.getElementById('stat-users').textContent = stats.users  '-';
-    document.getElementById('stat-news').textContent = stats.news  '-';
-    document.getElementById('stat-majors').textContent = stats.majors  '-';
-    document.getElementById('stat-admissions').textContent = stats.admissions  '-';
+    document.getElementById('stat-users').textContent = stats.users || '-';
+    document.getElementById('stat-news').textContent = stats.news || '-';
+    document.getElementById('stat-majors').textContent = stats.majors || '-';
+    document.getElementById('stat-admissions').textContent = stats.admissions || '-';
     if (Array.isArray(majors)) _majorsList = majors;
     if (Array.isArray(admissions)) {
       _admissionsList = admissions.map(a => {
@@ -1431,21 +1431,21 @@ async function fetchBanners() {
       
       const tr = document.createElement('tr');
       tr.className = 'border-b hover:bg-gray-50';
-      tr.innerHTML = \
+      tr.innerHTML = `
         <td class="p-4">
-          <img src="\" onerror="this.src='https://placehold.co/120x60?text=Error'" class="w-24 h-12 object-cover rounded shadow-sm">
+          <img src="`" onerror="this.src='https://placehold.co/120x60?text=Error'" class="w-24 h-12 object-cover rounded shadow-sm">
         </td>
-        <td class="p-4 font-medium">\</td>
+        <td class="p-4 font-medium">`</td>
         <td class="p-4 text-sm text-gray-500 truncate max-w-[200px]">
-          <a href="\" target="_blank" class="text-blue-500 hover:underline">\</a>
+          <a href="`" target="_blank" class="text-blue-500 hover:underline">`</a>
         </td>
-        <td class="p-4 text-center">\</td>
-        <td class="p-4">\</td>
+        <td class="p-4 text-center">`</td>
+        <td class="p-4">`</td>
         <td class="p-4 text-right">
-          <button onclick="editBanner(\)" class="text-blue-600 hover:text-blue-800 mr-3" title="S?a"><i class="fa fa-edit"></i></button>
-          <button onclick="deleteBanner(\)" class="text-red-600 hover:text-red-800" title="X�a"><i class="fa fa-trash"></i></button>
+          <button onclick="editBanner(`)" class="text-blue-600 hover:text-blue-800 mr-3" title="S?a"><i class="fa fa-edit"></i></button>
+          <button onclick="deleteBanner(`)" class="text-red-600 hover:text-red-800" title="X�a"><i class="fa fa-trash"></i></button>
         </td>
-      \;
+      `;
       tbody.appendChild(tr);
     });
   } catch (err) {

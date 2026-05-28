@@ -104,11 +104,11 @@
 <body class="bg-gray-100 font-sans">
 
   <!-- LOGIN CONTAINER -->
-  <div id="login-container" class="min-h-screen flex items-center justify-center" style="background: linear-gradient(135deg, #1f2937 0%, #111827 50%, #7f1d1d 100%);">
+  <div id="login-container" class="min-h-screen flex items-center justify-center" style="background: linear-gradient(135deg, #1f2937 0%, #111827 50%, #1e3a8a 100%);">
     <div class="w-full max-w-md mx-4">
       <!-- Logo & Title -->
       <div class="text-center mb-8">
-        <img src="https://drive.google.com/thumbnail?id=1uiZ-OsrbEnd2HU87jIU1_TmKgTUF4PyK&sz=w400" alt="NSG Logo" class="w-20 h-20 rounded-full object-cover mx-auto mb-4" style="box-shadow: 0 0 0 4px rgba(220,38,38,0.4);">
+        <img src="https://drive.google.com/thumbnail?id=1uiZ-OsrbEnd2HU87jIU1_TmKgTUF4PyK&sz=w400" alt="NSG Logo" class="w-20 h-20 rounded-full object-cover mx-auto mb-4" style="box-shadow: 0 0 0 4px rgba(37,99,235,0.4);">
         <h1 class="text-2xl font-extrabold tracking-wide animated-gradient-text">QUẢN TRỊ THÔNG TIN<br>ZALO MINI APP</h1>
         <p class="text-gray-400 text-sm mt-1 tracking-widest uppercase">Hệ Thống Quản Trị</p>
       </div>
@@ -116,9 +116,9 @@
       <!-- Login Card -->
       <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
         <!-- Card Header -->
-        <div class="px-8 py-5" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+        <div class="px-8 py-5" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">
           <h2 class="text-lg font-bold text-white">Đăng Nhập Quản Trị</h2>
-          <p class="text-red-200 text-xs mt-1">Vui lòng đăng nhập để tiếp tục</p>
+          <p class="text-blue-200 text-xs mt-1">Vui lòng đăng nhập để tiếp tục</p>
         </div>
         <!-- Card Body -->
         <div class="px-8 py-7">
@@ -132,7 +132,7 @@
               <div class="relative">
                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fa-solid fa-user"></i></span>
                 <input type="text" id="username" placeholder="Nhập tên đăng nhập" autocomplete="username"
-                  class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm" required>
+                  class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
               </div>
             </div>
             <div>
@@ -140,19 +140,19 @@
               <div class="relative">
                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fa-solid fa-lock"></i></span>
                 <input type="password" id="password" placeholder="Nhập mật khẩu" autocomplete="current-password"
-                  class="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm" required>
+                  class="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" required>
                 <button type="button" onclick="toggleLoginPassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                   <i id="toggle-pw-icon" class="fa-solid fa-eye"></i>
                 </button>
               </div>
             </div>
-            <button type="submit" id="login-btn" class="w-full text-white font-bold py-2.5 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 mt-2" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+            <button type="submit" id="login-btn" class="w-full text-white font-bold py-2.5 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 mt-2" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">
               <i class="fa-solid fa-right-to-bracket"></i>
               <span>Đăng Nhập</span>
             </button>
           </form>
           <div class="mt-4 text-center">
-            <button type="button" onclick="openForgotPassword()" class="text-sm text-red-600 hover:text-red-800 font-medium hover:underline transition-colors">
+            <button type="button" onclick="openForgotPassword()" class="text-sm text-blue-600 hover:text-blue-800 font-medium hover:underline transition-colors">
               <i class="fa-solid fa-key mr-1"></i>Quên mật khẩu?
             </button>
           </div>
@@ -167,12 +167,12 @@
   <div id="forgot-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center" style="background: rgba(0,0,0,0.6);">
     <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden">
       <!-- Modal Header -->
-      <div class="px-6 py-4 flex items-center justify-between" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+      <div class="px-6 py-4 flex items-center justify-between" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">
         <div>
           <h3 class="text-white font-bold text-lg" id="forgot-modal-title">Quên Mật Khẩu</h3>
-          <p class="text-red-200 text-xs mt-0.5" id="forgot-modal-subtitle">Nhập tên đăng nhập để nhận mã OTP</p>
+          <p class="text-blue-200 text-xs mt-0.5" id="forgot-modal-subtitle">Nhập tên đăng nhập để nhận mã OTP</p>
         </div>
-        <button onclick="closeForgotPassword()" class="text-white hover:text-red-200 transition-colors">
+        <button onclick="closeForgotPassword()" class="text-white hover:text-blue-200 transition-colors">
           <i class="fa-solid fa-xmark text-xl"></i>
         </button>
       </div>
@@ -180,7 +180,7 @@
       <!-- Step Indicators -->
       <div class="flex items-center justify-center gap-2 py-4 bg-gray-50 border-b">
         <div class="flex items-center gap-2">
-          <div id="step-dot-1" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background:#dc2626">1</div>
+          <div id="step-dot-1" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white" style="background:#2563eb">1</div>
           <span class="text-xs text-gray-500">Tên đăng nhập</span>
         </div>
         <div class="flex-1 h-0.5 bg-gray-200 max-w-8" id="step-line-1-2"></div>
@@ -203,10 +203,10 @@
           <div class="relative mb-4">
             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fa-solid fa-user"></i></span>
             <input type="text" id="forgot-username" placeholder="Tên đăng nhập"
-              class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
+              class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
           </div>
           <button onclick="submitForgotStep1()" id="forgot-btn-1"
-            class="w-full text-white font-bold py-2.5 rounded-lg flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+            class="w-full text-white font-bold py-2.5 rounded-lg flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">
             <i class="fa-solid fa-paper-plane"></i> Gửi mã OTP
           </button>
         </div>
@@ -232,13 +232,13 @@
               <i class="fa-solid fa-arrow-left mr-1"></i> Quay lại
             </button>
             <button onclick="submitForgotStep2()" id="forgot-btn-2"
-              class="flex-1 text-white font-bold py-2.5 rounded-lg flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+              class="flex-1 text-white font-bold py-2.5 rounded-lg flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">
               <i class="fa-solid fa-check"></i> Xác nhận
             </button>
           </div>
           <p class="text-xs text-center text-gray-500 mt-3">
             Không nhận được mã? 
-            <button onclick="resendOtp()" class="text-red-600 hover:underline font-medium" id="resend-btn">Gửi lại</button>
+            <button onclick="resendOtp()" class="text-blue-600 hover:underline font-medium" id="resend-btn">Gửi lại</button>
             <span id="resend-timer" class="text-gray-400"></span>
           </p>
         </div>
@@ -251,12 +251,12 @@
             <div class="relative">
               <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fa-solid fa-lock"></i></span>
               <input type="password" id="new-password" placeholder="Mật khẩu mới (tối thiểu 6 ký tự)"
-                class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
             </div>
             <div class="relative">
               <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><i class="fa-solid fa-lock-open"></i></span>
               <input type="password" id="confirm-password" placeholder="Xác nhận mật khẩu mới"
-                class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 text-sm">
+                class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm">
             </div>
           </div>
           <div class="flex gap-2">
@@ -264,7 +264,7 @@
               <i class="fa-solid fa-arrow-left mr-1"></i> Quay lại
             </button>
             <button onclick="submitForgotStep3()" id="forgot-btn-3"
-              class="flex-1 text-white font-bold py-2.5 rounded-lg flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+              class="flex-1 text-white font-bold py-2.5 rounded-lg flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">
               <i class="fa-solid fa-floppy-disk"></i> Đặt lại mật khẩu
             </button>
           </div>
@@ -277,7 +277,7 @@
           </div>
           <h4 class="text-lg font-bold text-gray-800 mb-2">Đặt lại thành công!</h4>
           <p class="text-sm text-gray-600 mb-6">Mật khẩu của bạn đã được cập nhật. Vui lòng đăng nhập lại với mật khẩu mới.</p>
-          <button onclick="closeForgotPassword()" class="w-full text-white font-bold py-2.5 rounded-lg" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">
+          <button onclick="closeForgotPassword()" class="w-full text-white font-bold py-2.5 rounded-lg" style="background: linear-gradient(135deg, #2563eb, #1d4ed8);">
             <i class="fa-solid fa-right-to-bracket mr-2"></i>Đăng nhập ngay
           </button>
         </div>
@@ -360,7 +360,7 @@
                class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
               <i class="fa-solid fa-user-plus nav-icon"></i>
               <span class="nav-label ml-3 flex-1">Tuyển Sinh</span>
-              <span id="admissions-badge" class="hidden bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center"></span>
+              <span id="admissions-badge" class="hidden bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center"></span>
             </a>
           </li>
           <li>
@@ -992,7 +992,7 @@ public async Task&lt;string&gt; GetNsgNews() {
       <div id="admission-detail-body" class="p-6 space-y-3 text-sm max-h-96 overflow-y-auto"></div>
       <div class="p-4 flex justify-end gap-2 border-t">
         <button id="admission-detail-approve" class="px-4 py-2 bg-green-600 text-white rounded font-bold">Duyệt</button>
-        <button id="admission-detail-reject" class="px-4 py-2 bg-red-500 text-white rounded font-bold">Từ chối</button>
+        <button id="admission-detail-reject" class="px-4 py-2 bg-blue-500 text-white rounded font-bold">Từ chối</button>
         <button onclick="document.getElementById('admission-detail-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 rounded">Đóng</button>
       </div>
     </div>
