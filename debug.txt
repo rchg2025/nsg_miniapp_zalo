@@ -1,0 +1,32 @@
+const baseNavItems: BottomNavItem[] = [
+    {
+      id: "home",
+      label: "Trang chủ",
+      icon: "zi-home",
+      path: "/"
+    },
+    {
+      id: "news",
+      label: `Tin tức${savedNewsCount > 0 ? ` (${savedNewsCount})` : ''}`,
+      icon: "zi-bookmark",
+      path: "/news"
+    },
+    {
+      id: "majors",
+      label: "Ngành đào tạo",
+      icon: "zi-calendar",
+      path: "/majors"
+    },
+    {
+      id: "admission",
+      label: "Đăng ký",
+      icon: "zi-edit",
+      path: "/admission-registration"
+    },
+    {
+      id: "profile",
+      label: "Cá nhân",
+      icon: "zi-user",
+      path: "/profile"
+    }
+  ];
