@@ -34,14 +34,19 @@ import ZaloOATestPage from "@/pages/zalo-oa-test";
 import OAChecker from "@/pages/oa-checker";
 import { Header } from "@/components/header";
 import BottomNavigation from "@/components/bottom-navigation";
-import ZaloLogin from "@/components/zalo-login";
 import { UserProvider } from "@/contexts/user-context";
-import { saveZaloUserLogin } from "@/utils/user-management";
+
+const getSystemTheme = (): AppProps["theme"] => {
+  try {
+    const info = getSystemInfo();
+    const theme = info?.zaloTheme;
+    if (theme === 'dark' || theme === 'light') return theme;
+  } catch (_) {}
+  return 'light';
+};
 
 const Layout = () => {
   const [appTheme, setAppTheme] = useState<AppProps["theme"]>('light');
-  const [isZaloLoggedIn, setIsZaloLoggedIn] = useState(false);
-  const [zaloUserInfo, setZaloUserInfo] = useState(null);
 
   useEffect(() => {
     // Load theme from settings
@@ -49,25 +54,19 @@ const Layout = () => {
     if (savedSettings) {
       try {
         const settings = JSON.parse(savedSettings);
-        let theme: AppProps["theme"] = 'light';
-        
         if (settings.theme === 'dark') {
-          theme = 'dark';
+          setAppTheme('dark');
         } else if (settings.theme === 'auto') {
-          // Use system theme for auto
-          theme = getSystemInfo().zaloTheme as AppProps["theme"];
+          setAppTheme(getSystemTheme());
         } else {
-          theme = 'light';
+          setAppTheme('light');
         }
-        
-        setAppTheme(theme);
       } catch (e) {
         console.error('Error parsing app settings:', e);
-        setAppTheme(getSystemInfo().zaloTheme as AppProps["theme"]);
+        setAppTheme(getSystemTheme());
       }
     } else {
-      // Fallback to system theme
-      setAppTheme(getSystemInfo().zaloTheme as AppProps["theme"]);
+      setAppTheme(getSystemTheme());
     }
 
     // Listen for storage changes to update theme dynamically
@@ -75,17 +74,13 @@ const Layout = () => {
       if (e.key === 'appSettings' && e.newValue) {
         try {
           const settings = JSON.parse(e.newValue);
-          let theme: AppProps["theme"] = 'light';
-          
           if (settings.theme === 'dark') {
-            theme = 'dark';
+            setAppTheme('dark');
           } else if (settings.theme === 'auto') {
-            theme = getSystemInfo().zaloTheme as AppProps["theme"];
+            setAppTheme(getSystemTheme());
           } else {
-            theme = 'light';
+            setAppTheme('light');
           }
-          
-          setAppTheme(theme);
         } catch (e) {
           console.error('Error parsing updated settings:', e);
         }
@@ -95,40 +90,6 @@ const Layout = () => {
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
-
-  // Check Zalo login status on mount
-  useEffect(() => {
-    const checkZaloLogin = () => {
-      const savedUserInfo = localStorage.getItem('zaloUserInfo');
-      const loginStatus = localStorage.getItem('isZaloLoggedIn') === 'true';
-      
-      if (savedUserInfo && loginStatus) {
-        try {
-          const userInfo = JSON.parse(savedUserInfo);
-          setZaloUserInfo(userInfo);
-          setIsZaloLoggedIn(true);
-          console.log('✅ Zalo user logged in:', userInfo);
-        } catch (error) {
-          console.error('Error parsing saved user info:', error);
-          localStorage.removeItem('zaloUserInfo');
-          localStorage.removeItem('isZaloLoggedIn');
-        }
-      }
-    };
-
-    checkZaloLogin();
-  }, []);
-
-  const handleZaloLoginSuccess = (userInfo: any) => {
-    setZaloUserInfo(userInfo);
-    setIsZaloLoggedIn(true);
-    
-    // Save user info to user management system
-    saveZaloUserLogin(userInfo);
-    
-    console.log('🎉 Zalo login successful:', userInfo);
-    console.log('💾 User info saved to admin system');
-  };
 
   return (
     <App theme={appTheme}>
