@@ -97,16 +97,16 @@ const FollowOASection: React.FC = () => {
   return (
     <Box className="mx-4 mb-6">
       <Box className="bg-blue-50 border border-blue-200 rounded-xl p-4 shadow-sm">
-        <Text.Title className="text-gray-800 text-lg mb-4 leading-tight font-medium">
-          Quan tâm OA để nhận các chương trình đặc quyền ưu đãi
+        <Text.Title className="text-gray-800 text-sm mb-4 leading-tight font-medium">
+          Quan tâm OA để nhận thêm nhiều thông tin mới nhất từ nhà trường
         </Text.Title>
         <Box className="flex items-center justify-between">
           <Box className="flex items-center gap-2">
             <Box className="relative">
               <img 
-                src="https://tuvantuyensinh.namsaigon.edu.vn/images/logo.png" 
+                src="https://qr.zalo.me/sl/2/93739f239a61713f2870" 
                 alt="Logo NSG" 
-                className="w-12 h-12 rounded-full border bg-white"
+                className="w-12 h-12 rounded-full border border-gray-200 bg-white object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.src = 'https://namsaigon.edu.vn/wp-content/uploads/2021/04/logo-1.png';
@@ -118,10 +118,10 @@ const FollowOASection: React.FC = () => {
                 </Box>
               </Box>
             </Box>
-            <Text className="font-bold text-gray-800">Trường CĐ Bách khoa Nam Sài Gòn</Text>
+            <Text className="font-bold text-gray-800 text-sm">Trường Cao đẳng Bách khoa Nam Sài Gòn</Text>
           </Box>
           <Button 
-            className="bg-blue-600 text-white rounded-full px-5 py-2 hover:bg-blue-700 whitespace-nowrap"
+            className="bg-blue-600 text-white rounded-full px-4 py-1.5 text-sm hover:bg-blue-700 whitespace-nowrap"
             onClick={async () => {
               try {
                 const { openWebview } = await import("zmp-sdk/apis");
