@@ -146,13 +146,18 @@ function NewsDetail() {
           <Box className="flex flex-wrap items-center text-sm text-gray-500 mb-4 gap-3">
             <Box className="flex items-center gap-1">
               <Icon icon="zi-calendar" className="mr-1" />
-              {newsDetail.date
-                ? (newsDetail.date.includes('T')
-                    ? new Date(newsDetail.date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
-                    : newsDetail.date)
-                : (newsDetail.createdAt
-                    ? new Date(newsDetail.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
-                    : '')}
+                {(() => {
+                  const dateStr = newsDetail.date || newsDetail.createdAt;
+                  if (!dateStr) return '';
+                  const d = new Date(dateStr);
+                  if (isNaN(d.getTime())) return dateStr;
+                  const h = d.getHours().toString().padStart(2, '0');
+                  const m = d.getMinutes().toString().padStart(2, '0');
+                  const DD = d.getDate().toString().padStart(2, '0');
+                  const MM = (d.getMonth() + 1).toString().padStart(2, '0');
+                  const YYYY = d.getFullYear();
+                  return `${h}:${m} - ${DD}/${MM}/${YYYY}`;
+                })()}
             </Box>
             <Box className="flex items-center gap-1">
               <Icon icon="zi-user" className="mr-1" />
@@ -221,7 +226,7 @@ function NewsDetail() {
                       />
                     </Box>
                     <Box className="flex-1 min-w-0">
-                      <Text className="text-sm font-medium text-gray-800 line-clamp-2 mb-1">
+                      <Text className="text-sm font-medium text-gray-800 mb-1">
                         {item.title}
                       </Text>
                       <Text className="text-xs text-gray-400">

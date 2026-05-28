@@ -380,7 +380,8 @@ const TAB_TITLES = {
   majors: 'Quản Lý Ngành Học',
   categories: 'Danh Mục',
   admissions: 'Đăng Ký Tuyển Sinh',
-  settings: 'Cấu Hình Hệ Thống'
+  settings: 'Cấu Hình Hệ Thống',
+  banners: 'Quản Lý Banners'
 };
 
 const TAB_LOADERS = {
@@ -391,7 +392,8 @@ const TAB_LOADERS = {
   majors: fetchAdminMajors,
   categories: () => { fetchCategories(); fetchTraining(); },
   admissions: fetchAdmissions,
-  settings: loadSettings
+  settings: loadSettings,
+  banners: fetchBanners
 };
 
 const ADMIN_ONLY_TABS = ['system-users', 'settings'];
@@ -436,10 +438,10 @@ async function loadDashboard() {
     const [stats, admissions, majors] = await Promise.all([
       statsRes.json(), admissionsRes.json(), majorsRes.json()
     ]);
-    document.getElementById('stat-users').textContent = stats.users ?? '-';
-    document.getElementById('stat-news').textContent = stats.news ?? '-';
-    document.getElementById('stat-majors').textContent = stats.majors ?? '-';
-    document.getElementById('stat-admissions').textContent = stats.admissions ?? '-';
+    document.getElementById('stat-users').textContent = stats.users  '-';
+    document.getElementById('stat-news').textContent = stats.news  '-';
+    document.getElementById('stat-majors').textContent = stats.majors  '-';
+    document.getElementById('stat-admissions').textContent = stats.admissions  '-';
     if (Array.isArray(majors)) _majorsList = majors;
     if (Array.isArray(admissions)) {
       _admissionsList = admissions.map(a => {
@@ -1409,3 +1411,154 @@ let newsEditor, majorDescEditor, majorCareerEditor;
     localStorage.removeItem('admin_session');
   }
 })();
+// ===================== QU?N L� BANNERS =====================
+async function fetchBanners() {
+  try {
+    const res = await fetch(API_BASE + '/banners');
+    const banners = await res.json();
+    const tbody = document.getElementById('banners-tbody');
+    tbody.innerHTML = '';
+    
+    if (banners.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">Chua c� banner n�o</td></tr>';
+      return;
+    }
+
+    banners.forEach((banner) => {
+      const statusBadge = banner.status === 'active' 
+        ? '<span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Ho?t d?ng</span>'
+        : '<span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">T?m ?n</span>';
+      
+      const tr = document.createElement('tr');
+      tr.className = 'border-b hover:bg-gray-50';
+      tr.innerHTML = \
+        <td class="p-4">
+          <img src="\" onerror="this.src='https://placehold.co/120x60?text=Error'" class="w-24 h-12 object-cover rounded shadow-sm">
+        </td>
+        <td class="p-4 font-medium">\</td>
+        <td class="p-4 text-sm text-gray-500 truncate max-w-[200px]">
+          <a href="\" target="_blank" class="text-blue-500 hover:underline">\</a>
+        </td>
+        <td class="p-4 text-center">\</td>
+        <td class="p-4">\</td>
+        <td class="p-4 text-right">
+          <button onclick="editBanner(\)" class="text-blue-600 hover:text-blue-800 mr-3" title="S?a"><i class="fa fa-edit"></i></button>
+          <button onclick="deleteBanner(\)" class="text-red-600 hover:text-red-800" title="X�a"><i class="fa fa-trash"></i></button>
+        </td>
+      \;
+      tbody.appendChild(tr);
+    });
+  } catch (err) {
+    alert('L?i t?i danh s�ch banner');
+  }
+}
+
+function openBannerModal() {
+  document.getElementById('banner-id').value = '';
+  document.getElementById('banner-title').value = '';
+  document.getElementById('banner-description').value = '';
+  document.getElementById('banner-image-url').value = '';
+  document.getElementById('banner-image-preview').src = '';
+  document.getElementById('banner-image-preview').classList.add('hidden');
+  document.getElementById('banner-link-url').value = '';
+  document.getElementById('banner-order').value = '0';
+  document.getElementById('banner-status').value = 'active';
+  document.getElementById('banner-modal-title').textContent = 'Th�m Banner M?i';
+  document.getElementById('banner-modal').classList.remove('hidden');
+}
+
+function closeBannerModal() {
+  document.getElementById('banner-modal').classList.add('hidden');
+}
+
+async function saveBanner() {
+  const id = document.getElementById('banner-id').value;
+  const title = document.getElementById('banner-title').value.trim();
+  const description = document.getElementById('banner-description').value.trim();
+  const image_url = document.getElementById('banner-image-url').value.trim();
+  const link_url = document.getElementById('banner-link-url').value.trim();
+  const display_order = parseInt(document.getElementById('banner-order').value) || 0;
+  const status = document.getElementById('banner-status').value;
+
+  if (!image_url) {
+    alert('Vui l�ng nh?p link h�nh ?nh banner!');
+    return;
+  }
+
+  const payload = { title, description, image_url, link_url, display_order, status };
+
+  try {
+    const url = id ? \\/banners/\\ : API_BASE + '/banners';
+    const method = id ? 'PUT' : 'POST';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    closeBannerModal();
+    fetchBanners();
+  } catch (err) {
+    alert('L?i luu banner: ' + err.message);
+  }
+}
+
+async function editBanner(id) {
+  try {
+    const res = await fetch(API_BASE + '/banners');
+    const banners = await res.json();
+    const banner = banners.find(b => b.id === id);
+    if (!banner) return;
+    
+    document.getElementById('banner-id').value = banner.id;
+    document.getElementById('banner-title').value = banner.title || '';
+    document.getElementById('banner-description').value = banner.description || '';
+    document.getElementById('banner-image-url').value = banner.image_url || '';
+    if (banner.image_url) {
+      document.getElementById('banner-image-preview').src = banner.image_url;
+      document.getElementById('banner-image-preview').classList.remove('hidden');
+    }
+    document.getElementById('banner-link-url').value = banner.link_url || '';
+    document.getElementById('banner-order').value = banner.display_order || 0;
+    document.getElementById('banner-status').value = banner.status || 'active';
+    
+    document.getElementById('banner-modal-title').textContent = 'C?p Nh?t Banner';
+    document.getElementById('banner-modal').classList.remove('hidden');
+  } catch (err) {
+    alert('L?i t?i th�ng tin banner');
+  }
+}
+
+async function deleteBanner(id) {
+  if (!confirm('B?n c� ch?c mu?n x�a banner n�y?')) return;
+  try {
+    const res = await fetch(API_BASE + '/banners/' + id, { method: 'DELETE' });
+    if (res.ok) {
+      fetchBanners();
+    } else {
+      const data = await res.json();
+      alert('Kh�ng th? x�a banner: ' + (data.error || 'L?i kh�ng x�c d?nh'));
+    }
+  } catch (err) {
+    alert('L?i h? th?ng');
+  }
+}
+
+// Add preview event listener
+setTimeout(() => {
+  try {
+    const imgInput = document.getElementById('banner-image-url');
+    if(imgInput) {
+      imgInput.addEventListener('input', function() {
+        const preview = document.getElementById('banner-image-preview');
+        if (this.value) {
+          preview.src = this.value;
+          preview.classList.remove('hidden');
+        } else {
+          preview.classList.add('hidden');
+        }
+      });
+    }
+  } catch(e) {}
+}, 1000);

@@ -16,8 +16,15 @@ interface NewsCardProps {
 
 function NewsCard({ title, summary, image, category, date, isHot, isSaved, onClick, onBookmark }: NewsCardProps) {
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('vi-VN');
+    if (!dateString) return '';
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+    const h = d.getHours().toString().padStart(2, '0');
+    const m = d.getMinutes().toString().padStart(2, '0');
+    const DD = d.getDate().toString().padStart(2, '0');
+    const MM = (d.getMonth() + 1).toString().padStart(2, '0');
+    const YYYY = d.getFullYear();
+    return `${h}:${m} - ${DD}/${MM}/${YYYY}`;
   };
 
   // Hàm tạo ảnh No Image mặc định
@@ -94,7 +101,7 @@ function NewsCard({ title, summary, image, category, date, isHot, isSaved, onCli
       
       {/* Nội dung ở dưới */}
       <Box className="p-4">
-        <Text className="text-base font-semibold text-gray-800 line-clamp-2 mb-3 leading-tight min-h-[3rem]">
+        <Text className="text-base font-semibold text-gray-800 mb-3 leading-tight">
           {title}
         </Text>
         

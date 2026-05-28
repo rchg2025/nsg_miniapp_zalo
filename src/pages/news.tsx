@@ -55,7 +55,7 @@ const getNewsData = () => {
         summary: item.summary || item.content?.substring(0, 150) + '...',
         image: item.image || item.imageUrl || getImageUrl({image: item.image, imageUrl: item.imageUrl}, item.title),
         category: item.category,
-        date: new Date(item.createdAt || item.updatedAt || Date.now()).toLocaleDateString('vi-VN'),
+          date: item.createdAt || item.updatedAt || new Date().toISOString(),
         isHot: Boolean(item.featured || item.isHot),
         views: item.viewCount || item.views || 0,
         content: item.content,
@@ -226,9 +226,11 @@ function NewsPage() {
   return (
     <Page className="page-with-header bg-gray-50">
       <Header 
-        title="Tin tức Trường Cao đẳng Bách khoa Nam Sài Gòn"
+        title="Tin tức từ NSG"
         showBackIcon={false}
-        className="bg-blue-600 text-white"
+        className="custom-news-header"
+        backgroundColor="#2563eb"
+        textColor="white"
       />
 
       {/* Search Bar */}

@@ -22,7 +22,8 @@ export class ZaloUserService {
       console.log('🔍 Getting Zalo user info...');
       
       const response = await getUserInfo({
-        autoRequestPermission: options?.autoRequestPermission ?? false
+        autoRequestPermission: true,
+        avatarType: 'normal'
       });
 
       // Kiểm tra response có data không

@@ -102,7 +102,8 @@ loadMajorDetail();
           title="Chi tiết ngành học"
           showBackIcon={true}
           onBackClick={() => navigate(-1)}
-          className="bg-blue-600 text-white"
+          backgroundColor="#2563eb"
+          textColor="white"
         />
         <Box className="p-4 text-center">
           <Text>Đang tải...</Text>
@@ -118,7 +119,8 @@ loadMajorDetail();
           title="Chi tiết ngành học"
           showBackIcon={true}
           onBackClick={() => navigate(-1)}
-          className="bg-blue-600 text-white"
+          backgroundColor="#2563eb"
+          textColor="white"
         />
         <Box className="p-4 text-center">
           <Icon icon="zi-info-circle" size={48} className="text-gray-400 mb-4" />
@@ -140,7 +142,8 @@ loadMajorDetail();
         title={major.name}
         showBackIcon={true}
         onBackClick={() => navigate(-1)}
-        className="bg-blue-600 text-white"
+        backgroundColor="#2563eb"
+        textColor="white"
       />
 
       {/* Spacing to prevent header overlap */}
@@ -287,32 +290,23 @@ loadMajorDetail();
       {/* Action Buttons */}
       <Box className="mx-4 mb-8">
         <Box className="bg-white rounded-lg shadow-sm p-4">
-          <Box className="space-y-3">
+          <Box className="flex gap-3">
             <Button 
-              fullWidth
+              variant="secondary"
+              className="flex-1"
+              onClick={() => navigate("/majors")}
+            >
+              <Icon icon="zi-arrow-left" className="mr-1" />
+              Quay lại
+            </Button>
+            <Button 
               variant="primary"
-              className="bg-blue-600"
+              className="flex-1 bg-blue-600"
               onClick={handleRegister}
             >
-              <Icon icon="zi-edit" className="mr-2" />
-              Đăng ký ngành này
+              <Icon icon="zi-edit" className="mr-1" />
+              Đăng ký
             </Button>
-            <Box className="grid grid-cols-2 gap-3">
-              <Button 
-                variant="secondary"
-                onClick={() => navigate("/majors")}
-              >
-                <Icon icon="zi-arrow-left" className="mr-1" />
-                Quay lại
-              </Button>
-              <Button 
-                variant="secondary"
-                onClick={() => openWebview({ url: "https://dkts.namsaigon.edu.vn" })}
-              >
-                <Icon icon="zi-location" className="mr-1" />
-                Website
-              </Button>
-            </Box>
           </Box>
         </Box>
       </Box>

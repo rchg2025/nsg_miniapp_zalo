@@ -68,9 +68,26 @@ function AdmissionRegistrationPage() {
       setFormData(prev => ({
         ...prev,
         fullName: userInfo.name || '',
-        phoneNumber: prev.phoneNumber,
+        phoneNumber: prev.phoneNumber || '',
         email: prev.email
       }));
+
+      // Tự động lấy số điện thoại Zalo (nếu đã cấp quyền)
+      const fetchZaloPhone = async () => {
+        try {
+          const { getPhoneNumber } = await import('zmp-sdk/apis');
+          const phoneResult = await (getPhoneNumber as any)({});
+          if (phoneResult?.number) {
+            setFormData(prev => ({
+              ...prev,
+              phoneNumber: phoneResult.number
+            }));
+          }
+        } catch (_) {
+          // Bỏ qua nếu lỗi hoặc chưa có quyền
+        }
+      };
+      fetchZaloPhone();
 
       if (userInfo.id && userInfo.id !== 'guest') {
         const userData = {
@@ -249,7 +266,8 @@ function AdmissionRegistrationPage() {
       <Header 
         title="Đăng ký tuyển sinh" 
         showBackIcon={true}
-        className="bg-blue-600 text-white"
+        backgroundColor="#2563eb"
+        textColor="white"
       />
       
       <Box className="p-4 space-y-6">
@@ -369,9 +387,10 @@ function AdmissionRegistrationPage() {
                   <Text className="text-sm text-blue-600 mb-2">
                     {getEducationLevelText(selectedMajor.educationLevel)} • {selectedMajor.duration}
                   </Text>
-                  <Text className="text-sm text-gray-600 mb-2">
-                    {selectedMajor.description}
-                  </Text>
+                  <div 
+                    className="text-sm text-gray-600 mb-2"
+                    dangerouslySetInnerHTML={{ __html: selectedMajor.description }}
+                  />
                   <Text className="text-sm font-medium text-green-600">
                     Học phí: {formatCurrency(selectedMajor.tuitionFee)}/năm
                   </Text>

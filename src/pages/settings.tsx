@@ -564,7 +564,7 @@ function SettingsPage() {
               onClick={() => navigate('/profile')}
             >
               <Icon icon="zi-user" className="mr-3 text-purple-500" />
-              <Text className="text-purple-600">🏠 Profile Gốc (Chính thức)</Text>
+              <Text className="text-purple-600">� Profile Gốc (Chính thức)</Text>
             </Button>
           </Box>
         </Box>

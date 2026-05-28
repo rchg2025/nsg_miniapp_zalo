@@ -430,20 +430,23 @@ app.put('/api/users/:id', async (req, res) => {
 
 // 3. API Đăng ký/Cập nhật thông tin người dùng từ Zalo
 app.post('/api/users', async (req, res) => {
-  const { zalo_id, name, avatar } = req.body;
+  const { zalo_id, name, avatar, phone } = req.body;
   if (!zalo_id) {
     return res.status(400).json({ error: 'Thiếu zalo_id' });
   }
   
   try {
     const query = `
-      INSERT INTO users (zalo_id, name, avatar) 
-      VALUES ($1, $2, $3) 
+      INSERT INTO users (zalo_id, name, avatar, phone) 
+      VALUES ($1, $2, $3, $4) 
       ON CONFLICT (zalo_id) 
-      DO UPDATE SET name = $2, avatar = $3 
+      DO UPDATE SET 
+        name = COALESCE(NULLIF($2, ''), users.name),
+        avatar = COALESCE(NULLIF($3, ''), users.avatar),
+        phone = COALESCE(NULLIF($4, ''), users.phone)
       RETURNING *;
     `;
-    const { rows } = await db.query(query, [zalo_id, name, avatar]);
+    const { rows } = await db.query(query, [zalo_id, name || '', avatar || '', phone || '']);
     res.json(rows[0]);
   } catch (error) {
     console.error("Lỗi cập nhật người dùng", error);
@@ -543,7 +546,20 @@ app.post('/api/admissions', async (req, res) => {
 
     const newAd = rows[0];
 
-    // Gửi email cho admin/editor
+    // 1. Gửi qua webhook (Zapier, Make, n8n, v.v...)
+    try {
+      const webhookUrl = process.env.WEBHOOK_URL; 
+      if (webhookUrl) {
+        // Có thể dùng fetch tích hợp (Node 18+) hoặc thư viện
+        fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newAd)
+        }).catch(err => console.error("Lỗi gửi webhook:", err.message));
+      }
+    } catch (_) {}
+
+    // 2. Gửi email cho admin/editor
     try {
       const { rows: adminEmailRows } = await db.query(
         "SELECT config_value FROM settings WHERE config_key='admin_email'"
@@ -838,6 +854,58 @@ app.post('/api/settings', async (req, res) => {
         [dbKey, String(value)]
       );
     }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ================= BANNERS =================
+app.get('/api/banners', async (req, res) => {
+  try {
+    const { rows } = await db.query('SELECT * FROM banners ORDER BY display_order ASC, created_at DESC');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/banners', async (req, res) => {
+  const { title, description, image_url, link_url, display_order, status } = req.body;
+  try {
+    const { rows } = await db.query(
+      `INSERT INTO banners (title, description, image_url, link_url, display_order, status) 
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+      [title, description, image_url, link_url, display_order || 0, status || 'active']
+    );
+    res.json(rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/banners/:id', async (req, res) => {
+  const { id } = req.params;
+  const { title, description, image_url, link_url, display_order, status } = req.body;
+  try {
+    const { rows } = await db.query(
+      `UPDATE banners 
+       SET title = $1, description = $2, image_url = $3, link_url = $4, display_order = $5, status = $6, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $7 RETURNING *`,
+      [title, description, image_url, link_url, display_order, status, id]
+    );
+    if (!rows.length) return res.status(404).json({ error: 'Banner not found' });
+    res.json(rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/banners/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { rowCount } = await db.query('DELETE FROM banners WHERE id = $1', [id]);
+    if (rowCount === 0) return res.status(404).json({ error: 'Banner not found' });
     res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });

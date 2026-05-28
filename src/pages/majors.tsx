@@ -81,7 +81,8 @@ function MajorsPage() {
       <Header
         title="Ngành học"
         showBackIcon={true}
-        className="bg-blue-600 text-white"
+        backgroundColor="#2563eb"
+        textColor="white"
       />
 
       <Box className="p-4">
@@ -163,13 +164,6 @@ function MajorsPage() {
                     {formatCurrency(major.tuitionFee)}
                   </Text>
                 </Box>
-
-                {major.website && (
-                  <Box className="flex items-center justify-between">
-                    <Text className="text-sm text-gray-500">Website:</Text>
-                    <Text className="text-sm text-blue-600">Xem chi tiết</Text>
-                  </Box>
-                )}
               </Box>
 
               <Button

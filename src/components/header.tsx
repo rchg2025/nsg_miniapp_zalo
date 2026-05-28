@@ -32,22 +32,20 @@ export function Header({
     if (title || isRequesting) return; // chỉ hoạt động ở trang chủ
     setIsRequesting(true);
     try {
-      // Bước 1: yêu cầu quyền đọc tên và ảnh đại diện (bắt buộc từ SDK 2.35.0+)
-      try {
-        await authorize({ scopes: ['scope.userInfo'] });
-      } catch (_) {
-        // Người dùng từ chối hoặc lỗi quyền — vẫn tiếp tục
-      }
-      // Bước 2: lấy thông tin sau khi đã được cấp quyền
-      const result = await getUserInfo({});
+      // Yêu cầu quyền và lấy thông tin ngay lập tức (dùng API mới)
+      const result = await getUserInfo({ avatarType: 'normal', autoRequestPermission: true });
+      
       if (result?.userInfo) {
         const u = result.userInfo;
-        // Lấy số điện thoại nếu được cấp phép
+        // Lấy số điện thoại nếu được cấp phép (không tự động yêu cầu lại nếu mới xem avatar)
         let phone: string | undefined;
         try {
+          // Lưu ý: Nếu user từ chối, getPhoneNumber có thể trả về token cho app (để backend decrypt),
+          // nhưng ta không hiển thị chuỗi token mã hóa lên giao diện.
           const { getPhoneNumber } = await import('zmp-sdk/apis');
-          const phoneResult = await (getPhoneNumber as any)({ autoRequestPermission: true });
-          phone = phoneResult?.number || phoneResult?.token || undefined;
+          const phoneResult = await (getPhoneNumber as any)({});
+          // CHỈ lấy số điện thoại thực (bỏ token đi vì giao diện không nên hiện token)
+          phone = phoneResult?.number || undefined;
         } catch (_) { /* phone không bắt buộc */ }
 
         const role = userInfo?.role ?? UserRole.STUDENT;

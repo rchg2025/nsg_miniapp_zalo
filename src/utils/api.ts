@@ -124,3 +124,5 @@ export const syncZaloUser = (userData: { zalo_id: string; name: string; avatar: 
 
 
 
+
+export const systemUserLogin = (credentials: any) => fetchAPI('/system_users/login', { method: 'POST', body: JSON.stringify(credentials) });

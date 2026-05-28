@@ -4,7 +4,8 @@ export class UserInfo {
   static async getZaloDisplayName(): Promise<string> {
     try {
       const userInfo = await getUserInfo({
-        autoRequestPermission: false,
+        autoRequestPermission: true,
+        avatarType: 'normal'
       });
       console.log('🔍 Zalo getUserInfo response:', userInfo);
       

@@ -4,6 +4,9 @@ import React, { useEffect, useState } from "react";
 import { Header } from "@/components/header";
 import { getImageUrl, handleImageError } from "@/utils/image-utils";
 
+import { DataManager, Banner } from "@/utils/data-manager";
+import API_CONFIG from '@/utils/api';
+
 // Interfaces
 interface NewsItemType {
   id: string | number;
@@ -36,6 +39,105 @@ interface StatsType {
   announcements: number;
   students: number;
 }
+
+const BannerSlider: React.FC<{ banners: Banner[] }> = ({ banners }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  useEffect(() => {
+    if (banners.length > 1) {
+      const timer = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % banners.length);
+      }, 4000);
+      return () => clearInterval(timer);
+    }
+    return undefined;
+  }, [banners.length]);
+
+  if (banners.length === 0) return null;
+
+  return (
+    <Box className="mb-4">
+      <Box className="relative h-48 bg-gray-200 rounded-2xl overflow-hidden shadow-lg mx-4">
+        {banners.map((banner, index) => (
+          <Box
+            key={banner.id}
+            className={`absolute inset-0 transition-opacity duration-500 ${
+              index === currentSlide ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <img
+              src={banner.imageUrl}
+              alt={banner.title}
+              className="w-full h-full object-cover"
+              onError={(e) => handleImageError(e, banner.title)}
+            />
+          </Box>
+        ))}
+        
+        {/* Dots indicator */}
+        {banners.length > 1 && (
+          <Box className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
+            {banners.map((_, index) => (
+              <Box
+                key={index}
+                className={`h-2 rounded-full transition-all ${
+                  index === currentSlide ? 'w-6 bg-blue-600' : 'w-2 bg-white/70'
+                }`}
+              />
+            ))}
+          </Box>
+        )}
+      </Box>
+    </Box>
+  );
+};
+
+// Component Quan tâm OA
+const FollowOASection: React.FC = () => {
+  return (
+    <Box className="mx-4 mb-6">
+      <Box className="bg-red-50 border border-red-200 rounded-xl p-4 shadow-sm">
+        <Text.Title className="text-gray-800 text-lg mb-4 leading-tight font-medium">
+          Quan tâm OA để nhận các chương trình đặc quyền ưu đãi
+        </Text.Title>
+        <Box className="flex items-center justify-between">
+          <Box className="flex items-center gap-2">
+            <Box className="relative">
+              <img 
+                src="https://tuvantuyensinh.namsaigon.edu.vn/images/logo.png" 
+                alt="Logo NSG" 
+                className="w-12 h-12 rounded-full border bg-white"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://namsaigon.edu.vn/wp-content/uploads/2021/04/logo-1.png';
+                }}
+              />
+              <Box className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
+                <Box className="bg-orange-500 w-3 h-3 rounded-full flex items-center justify-center">
+                  <span className="text-white text-[8px]">✓</span>
+                </Box>
+              </Box>
+            </Box>
+            <Text className="font-bold text-gray-800">Trường CĐ Bách khoa Nam Sài Gòn</Text>
+          </Box>
+          <Button 
+            className="bg-[#9e1c1c] text-white rounded-full px-5 py-2 hover:bg-red-800 whitespace-nowrap"
+            onClick={async () => {
+              try {
+                const { openWebview } = await import("zmp-sdk/apis");
+                await openWebview({ url: "https://zalo.me/namsaigon" });
+              } catch (e) {
+                console.error("Error opening OA:", e);
+              }
+            }}
+          >
+            Quan tâm
+          </Button>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
 
 // Component Slide Sự kiện
 const EventSlider: React.FC<{ events: NewsItemType[]; onEventClick: (event: NewsItemType) => void }> = ({ events, onEventClick }) => {
@@ -72,7 +174,7 @@ const EventSlider: React.FC<{ events: NewsItemType[]; onEventClick: (event: News
             />
             <Box className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             <Box className="absolute bottom-0 left-0 right-0 p-4 text-white">
-              <Text.Title className="text-white text-lg font-bold mb-1 line-clamp-2">
+              <Text.Title className="text-white text-lg font-bold mb-1">
                 {event.title}
               </Text.Title>
               <Text className="text-white/90 text-sm line-clamp-1">
@@ -251,11 +353,20 @@ const NewsCompactSection: React.FC<{
                 />
               </Box>
               <Box className="flex-1 min-w-0">
-                <Text className="font-medium text-sm line-clamp-2 mb-1">
+                <Text className="font-medium text-sm mb-1">
                   {item.title}
                 </Text>
                 <Text className="text-xs text-gray-500">
-                  {item.date}
+                  {item.date ? (() => {
+                    const d = new Date(item.date);
+                    if (isNaN(d.getTime())) return item.date;
+                    const h = d.getHours().toString().padStart(2, '0');
+                    const m = d.getMinutes().toString().padStart(2, '0');
+                    const DD = d.getDate().toString().padStart(2, '0');
+                    const MM = (d.getMonth() + 1).toString().padStart(2, '0');
+                    const YYYY = d.getFullYear();
+                    return `${h}:${m} - ${DD}/${MM}/${YYYY}`;
+                  })() : ''}
                 </Text>
               </Box>
             </Box>
@@ -273,6 +384,7 @@ const NewsCompactSection: React.FC<{
 // Main HomePage Component
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const [banners, setBanners] = useState<Banner[]>([]);
   const [stats, setStats] = useState<StatsType>({
     majors: 0,
     news: 0,
@@ -294,6 +406,16 @@ const HomePage: React.FC = () => {
     // Load dữ liệu
         const loadData = async () => {
       try {
+        const bannersRes = await fetch(`${API_CONFIG.BASE_URL}/banners`);
+        if (bannersRes.ok) {
+          const apiBanners = await bannersRes.json();
+          const activeBanners = apiBanners.filter((b: any) => b.status === "active").sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0));
+          setBanners(activeBanners.map((b: any) => ({...b, imageUrl: b.image_url, order: b.display_order})));
+        } else {
+          const bannersData = DataManager.getBanners();
+          setBanners(bannersData.filter(b => b.status === 'active').sort((a, b) => a.order - b.order));
+        }
+
         const { getNews, getMajors } = await import('@/utils/api');
         const allNews = await getNews();
         
@@ -340,10 +462,13 @@ const HomePage: React.FC = () => {
       <Header />
       
       <Box className="pb-20 pt-2">
-        {/* 1. Slide Sự kiện */}
-        <EventSlider events={newsData.events} onEventClick={handleNewsClick} />
+        {/* 1. Slide Banners admin */}
+        <BannerSlider banners={banners} />
 
-        {/* 2. Chuyên mục nhanh */}
+        {/* 2. Quan tâm OA */}
+        <FollowOASection />
+
+        {/* 3. Chuyên mục nhanh */}
         <QuickMenuSection />
 
         {/* 3. Ngành đào tạo */}
@@ -352,7 +477,7 @@ const HomePage: React.FC = () => {
         {/* 4. Thông báo */}
         <NewsCompactSection
           title="Thông báo"
-          icon="�"
+          icon="📢"
           color="text-red-600"
           news={newsData.announcements}
           onSeeAll={() => navigate('/news?category=announcement')}
@@ -362,7 +487,7 @@ const HomePage: React.FC = () => {
         {/* 5. Tin tức */}
         <NewsCompactSection
           title="Tin tức"
-          icon="�"
+          icon="📰"
           color="text-blue-600"
           news={newsData.news}
           onSeeAll={() => navigate('/news?category=news')}

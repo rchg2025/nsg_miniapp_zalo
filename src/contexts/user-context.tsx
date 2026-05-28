@@ -171,7 +171,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
   const checkUserInfo = async () => {
     try {
-      const user = await getUserInfo({});
+      const user = await getUserInfo({
+        autoRequestPermission: false, // Không tự động hỏi khi mới mở app, để user tự bấm
+        avatarType: 'normal'
+      });
       if (user.userInfo) {
         const role = getUserRole(user.userInfo.id);
         const permissions = getUserPermissions(role);

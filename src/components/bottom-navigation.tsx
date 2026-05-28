@@ -52,7 +52,7 @@ function BottomNavigation() {
     },
     {
       id: "news",
-      label: "Tin tức",
+      label: `Tin tức${savedNewsCount > 0 ? ` (${savedNewsCount})` : ''}`,
       icon: "zi-bookmark",
       path: "/news"
     },
@@ -67,6 +67,12 @@ function BottomNavigation() {
       label: "Đăng ký",
       icon: "zi-edit",
       path: "/admission-registration"
+    },
+    {
+      id: "profile",
+      label: "Cá nhân",
+      icon: "zi-user",
+      path: "/profile"
     }
   ];
 

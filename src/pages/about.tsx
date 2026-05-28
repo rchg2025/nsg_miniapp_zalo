@@ -79,7 +79,8 @@ function AboutPage() {
         title="Về ứng dụng" 
         showBackIcon={true}
         onBackClick={() => navigate(-1)}
-        className="bg-blue-600 text-white"
+        backgroundColor="#2563eb"
+        textColor="white"
       />
       
       <Box className="p-4 space-y-6">

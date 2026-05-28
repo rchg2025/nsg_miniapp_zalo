@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Box, Button, Input, Text, Modal, Icon } from "zmp-ui";
+import { systemUserLogin } from "@/utils/api";
 
 interface AdminLoginProps {
   isVisible: boolean;
@@ -13,6 +14,9 @@ const validateAdminCredentials = (username: string, password: string) => {
   // Tạm thời để một tài khoản admin duy nhất để không lộ thông tin
   if (username === "admin" && password === "admin@nsg2025") {
     return { username: "admin", role: "Quản trị viên NSG" };
+  }
+  if (username === "thanhtung" && password === "123456") {
+    return { username: "thanhtung", role: "Thành viên Ban Giám Hiệu" };
   }
   return null;
 };
@@ -33,31 +37,32 @@ function AdminLogin({ isVisible, onLoginSuccess, onCancel }: AdminLoginProps) {
     setIsLoading(true);
     setError("");
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Xác thực tài khoản admin
-    const validAccount = validateAdminCredentials(username, password);
-    
-    if (validAccount) {
-      // Lưu trạng thái admin login
-      localStorage.setItem("admin_logged_in", "true");
-      localStorage.setItem("admin_login_time", Date.now().toString());
-      localStorage.setItem("admin_role", validAccount.role);
-      localStorage.setItem("admin_username", validAccount.username);
-      localStorage.setItem("admin_login_method", "manual");
+    try {
+      const response = await systemUserLogin({ username, password });
       
-      onLoginSuccess();
-      
-      // Reset form
-      setUsername("");
-      setPassword("");
-      setError("");
-    } else {
-      setError("❌ Tên đăng nhập hoặc mật khẩu không đúng!");
+      if (response && response.success && response.user) {
+        // Lưu trạng thái admin login
+        localStorage.setItem("admin_logged_in", "true");
+        localStorage.setItem("admin_login_time", Date.now().toString());
+        localStorage.setItem("admin_role", response.user.role || "Quản trị viên NSG");
+        localStorage.setItem("admin_username", response.user.username);
+        localStorage.setItem("admin_login_method", "manual");
+        
+        onLoginSuccess();
+        
+        // Reset form
+        setUsername("");
+        setPassword("");
+        setError("");
+      } else {
+        setError(response.message || "Tên đăng nhập hoặc mật khẩu không đúng!");
+      }
+    } catch (e: any) {
+      console.error("Login err:", e);
+      setError("Có lỗi xảy ra, không thể kết nối tới máy chủ.");
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {

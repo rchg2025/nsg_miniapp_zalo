@@ -113,6 +113,19 @@ const initDB = async () => {
         is_superadmin BOOLEAN DEFAULT FALSE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      -- 11. Banners
+      CREATE TABLE IF NOT EXISTS banners (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255),
+        description TEXT,
+        image_url VARCHAR(255) NOT NULL,
+        link_url VARCHAR(255),
+        display_order INTEGER DEFAULT 0,
+        status VARCHAR(50) DEFAULT 'active',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
     `;
     await client.query(createTablesQuery);
     

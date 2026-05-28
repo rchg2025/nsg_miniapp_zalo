@@ -348,6 +348,13 @@
               <span class="nav-label ml-3">Danh Mục</span>
             </a>
           </li>
+          <li>
+            <a href="#" onclick="switchTab('banners')" id="nav-banners" data-title="Banners"
+               class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
+              <i class="fa-solid fa-images nav-icon"></i>
+              <span class="nav-label ml-3">Quản lý Banners</span>
+            </a>
+          </li>
           <li style="position:relative">
             <a href="#" onclick="switchTab('admissions')" id="nav-admissions" data-title="Tuyển Sinh"
                class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
@@ -564,6 +571,33 @@
                 <tbody id="training-tbody"></tbody>
               </table>
             </div>
+          </div>
+        </div>
+
+        <!-- BANNERS -->
+        <div id="banners" class="tab-content">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold">Quản lý Banners</h3>
+            <button onclick="openBannerModal()" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700">
+              <i class="fa fa-plus mr-2"></i>Thêm Banner
+            </button>
+          </div>
+          <div class="bg-white rounded-lg shadow overflow-x-auto">
+            <table class="w-full text-left bg-white">
+              <thead class="bg-gray-50 border-b">
+                <tr>
+                  <th class="p-4 w-24">Hình ảnh</th>
+                  <th class="p-4">Tiêu đề</th>
+                  <th class="p-4">Link URL</th>
+                  <th class="p-4 w-24">Thứ tự</th>
+                  <th class="p-4 w-32">Trạng thái</th>
+                  <th class="p-4 text-right w-32">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="banners-tbody">
+                <!-- Data injected by JS -->
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -796,6 +830,55 @@ public async Task&lt;string&gt; GetNsgNews() {
       <div class="flex justify-end gap-2">
         <button onclick="document.getElementById('major-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 rounded">Hủy</button>
         <button onclick="saveMajor()" class="px-4 py-2 bg-blue-600 text-white rounded font-bold">Lưu lại</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Danh mục chuyên mục -->
+  <div id="banner-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto">
+      <h3 class="text-xl font-bold mb-4" id="banner-modal-title">Thêm Banner Mới</h3>
+      <input type="hidden" id="banner-id">
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Tiêu đề Banner <span class="text-gray-500 font-normal">(không bắt buộc)</span></label>
+        <input type="text" id="banner-title" class="w-full border rounded px-3 py-2" placeholder="Vd: Tuyển sinh năm 2024">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Mô tả ngắn <span class="text-gray-500 font-normal">(không bắt buộc)</span></label>
+        <input type="text" id="banner-description" class="w-full border rounded px-3 py-2" placeholder="Vd: Chào mừng tân sinh viên...">
+      </div>
+      <div class="mb-3">
+        <label class="block text-sm font-medium mb-1">URL Hình ảnh Banner * <span class="text-red-500">(Bắt buộc)</span></label>
+        <div class="flex gap-2">
+            <input type="text" id="banner-image-url" class="flex-1 border rounded px-3 py-2" placeholder="Nhập link ảnh (https://...) hoặc tải lên">
+            <button onclick="document.getElementById('banner-upload-input').click()" class="bg-gray-200 px-3 py-2 rounded hover:bg-gray-300" title="Tải ảnh lên">
+                <i class="fa fa-upload"></i>
+            </button>
+            <input type="file" id="banner-upload-input" class="hidden" accept="image/*" onchange="uploadImageGen(this, 'banner-image-url')">
+        </div>
+        <p class="text-xs text-gray-500 mt-1">Kích thước tham khảo: 1200x600px (Tỷ lệ 2:1)</p>
+        <img id="banner-image-preview" src="" class="mt-2 h-32 object-cover rounded hidden">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium mb-1">Link liên kết <span class="text-gray-500 font-normal">(Khi bấm vào banner sẽ chuyển đến)</span></label>
+        <input type="text" id="banner-link-url" class="w-full border rounded px-3 py-2" placeholder="https://...">
+      </div>
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Thứ tự hiển thị</label>
+          <input type="number" id="banner-order" class="w-full border rounded px-3 py-2" placeholder="0" value="0">
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Trạng thái</label>
+          <select id="banner-status" class="w-full border rounded px-3 py-2">
+            <option value="active">Hoạt động (Hiển thị)</option>
+            <option value="inactive">Tạm ẩn</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 mt-6">
+        <button onclick="closeBannerModal()" class="px-4 py-2 bg-gray-200 rounded">Hủy</button>
+        <button onclick="saveBanner()" class="px-4 py-2 bg-blue-600 text-white rounded font-bold hover:bg-blue-700">Lưu lại</button>
       </div>
     </div>
   </div>
