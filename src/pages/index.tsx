@@ -5,7 +5,7 @@ import { Header } from "@/components/header";
 import { getImageUrl, handleImageError } from "@/utils/image-utils";
 
 import { DataManager, Banner } from "@/utils/data-manager";
-import API_CONFIG from '@/utils/api';
+import { API_BASE_URL } from '@/utils/api';
 
 // Interfaces
 interface NewsItemType {
@@ -406,7 +406,7 @@ const HomePage: React.FC = () => {
     // Load dữ liệu
         const loadData = async () => {
       try {
-        const bannersRes = await fetch(`${API_CONFIG.BASE_URL}/banners`);
+        const bannersRes = await fetch(`${API_BASE_URL}/banners`);
         if (bannersRes.ok) {
           const apiBanners = await bannersRes.json();
           const activeBanners = apiBanners.filter((b: any) => b.status === "active").sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0));
