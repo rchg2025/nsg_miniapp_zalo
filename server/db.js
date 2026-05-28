@@ -156,7 +156,7 @@ const initDB = async () => {
     try {
       await client.query(
         `INSERT INTO system_users (username, password_hash, display_name, role, is_active, is_superadmin)
-         VALUES ('qtv', '1449b25ad847b2772c6cb11fdf6c1087c719d7aec327dc4e980cdce8c384868f', 'Quản Trị Viên', 'superadmin', true, true)
+         VALUES ('qtv', 'bbeed881a9228a5ca705f6eed1b309748cd518856840f5d3c688d60ad9f0d97e', 'Quản Trị Viên', 'superadmin', true, true)
          ON CONFLICT (username) DO NOTHING`
       );
     } catch(e) {}
