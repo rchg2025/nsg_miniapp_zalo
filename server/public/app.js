@@ -1413,14 +1413,14 @@ async function fetchBanners() {
     tbody.innerHTML = '';
     
     if (banners.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">Chua c� banner n�o</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500">Chưa có banner nào</td></tr>';
       return;
     }
 
     banners.forEach((banner) => {
       const statusBadge = banner.status === 'active' 
-        ? '<span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Ho?t d?ng</span>'
-        : '<span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">T?m ?n</span>';
+        ? '<span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">Hoạt động</span>'
+        : '<span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded">Tạm ẩn</span>';
       
       const tr = document.createElement('tr');
       tr.className = 'border-b hover:bg-gray-50';
@@ -1442,7 +1442,7 @@ async function fetchBanners() {
       tbody.appendChild(tr);
     });
   } catch (err) {
-    alert('L?i t?i danh s�ch banner');
+    alert('Lỗi tải danh sách banner');
   }
 }
 
@@ -1456,7 +1456,7 @@ function openBannerModal() {
   document.getElementById('banner-link-url').value = '';
   document.getElementById('banner-order').value = '0';
   document.getElementById('banner-status').value = 'active';
-  document.getElementById('banner-modal-title').textContent = 'Th�m Banner M?i';
+  document.getElementById('banner-modal-title').textContent = 'Thêm Banner Mới';
   document.getElementById('banner-modal').classList.remove('hidden');
 }
 
@@ -1474,7 +1474,7 @@ async function saveBanner() {
   const status = document.getElementById('banner-status').value;
 
   if (!image_url) {
-    alert('Vui l�ng nh?p link h�nh ?nh banner!');
+    alert('Vui lòng nhập link hình ảnh banner!');
     return;
   }
 
@@ -1493,7 +1493,7 @@ async function saveBanner() {
     closeBannerModal();
     fetchBanners();
   } catch (err) {
-    alert('L?i luu banner: ' + err.message);
+    alert('Lỗi lưu banner: ' + err.message);
   }
 }
 
@@ -1516,25 +1516,25 @@ async function editBanner(id) {
     document.getElementById('banner-order').value = banner.display_order || 0;
     document.getElementById('banner-status').value = banner.status || 'active';
     
-    document.getElementById('banner-modal-title').textContent = 'C?p Nh?t Banner';
+    document.getElementById('banner-modal-title').textContent = 'Cập Nhật Banner';
     document.getElementById('banner-modal').classList.remove('hidden');
   } catch (err) {
-    alert('L?i t?i th�ng tin banner');
+    alert('Lỗi tải thông tin banner');
   }
 }
 
 async function deleteBanner(id) {
-  if (!confirm('B?n c� ch?c mu?n x�a banner n�y?')) return;
+  if (!confirm('Bạn có chắc muốn xóa banner này?')) return;
   try {
     const res = await fetch(API_BASE + '/banners/' + id, { method: 'DELETE' });
     if (res.ok) {
       fetchBanners();
     } else {
       const data = await res.json();
-      alert('Kh�ng th? x�a banner: ' + (data.error || 'L?i kh�ng x�c d?nh'));
+      alert('Không thể xóa banner: ' + (data.error || 'Lỗi không xác định'));
     }
   } catch (err) {
-    alert('L?i h? th?ng');
+    alert('Lỗi hệ thống');
   }
 }
 

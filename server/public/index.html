@@ -307,56 +307,56 @@
       <nav class="flex-1 overflow-y-auto py-3">
         <ul class="space-y-0.5 px-2">
           <li>
-            <a href="#" onclick="switchTab('dashboard')" id="nav-dashboard" data-title="Thống Kê"
+            <a href="javascript:void(0)" onclick="switchTab('dashboard')" id="nav-dashboard" data-title="Thống Kê"
                class="nav-link rounded-lg hover:bg-gray-800 bg-gray-700 text-white">
               <i class="fa-solid fa-chart-line nav-icon"></i>
               <span class="nav-label ml-3">Thống Kê</span>
             </a>
           </li>
           <li>
-            <a href="#" onclick="switchTab('zalo-users')" id="nav-zalo-users" data-title="Thành viên Zalo"
+            <a href="javascript:void(0)" onclick="switchTab('zalo-users')" id="nav-zalo-users" data-title="Thành viên Zalo"
                class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
               <i class="fa-brands fa-react nav-icon"></i>
               <span class="nav-label ml-3">Thành viên Zalo</span>
             </a>
           </li>
           <li>
-            <a href="#" onclick="switchTab('system-users')" id="nav-system-users" data-title="Thành viên HT"
+            <a href="javascript:void(0)" onclick="switchTab('system-users')" id="nav-system-users" data-title="Thành viên HT"
                class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
               <i class="fa-solid fa-user-shield nav-icon"></i>
               <span class="nav-label ml-3">Thành viên HT</span>
             </a>
           </li>
           <li>
-            <a href="#" onclick="switchTab('news')" id="nav-news" data-title="Tin Tức"
+            <a href="javascript:void(0)" onclick="switchTab('news')" id="nav-news" data-title="Tin Tức"
                class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
               <i class="fa-solid fa-newspaper nav-icon"></i>
               <span class="nav-label ml-3">Tin Tức</span>
             </a>
           </li>
           <li>
-            <a href="#" onclick="switchTab('majors')" id="nav-majors" data-title="Ngành Học"
+            <a href="javascript:void(0)" onclick="switchTab('majors')" id="nav-majors" data-title="Ngành Học"
                class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
               <i class="fa-solid fa-graduation-cap nav-icon"></i>
               <span class="nav-label ml-3">Ngành Học</span>
             </a>
           </li>
           <li>
-            <a href="#" onclick="switchTab('categories')" id="nav-categories" data-title="Danh Mục"
+            <a href="javascript:void(0)" onclick="switchTab('categories')" id="nav-categories" data-title="Danh Mục"
                class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
               <i class="fa-solid fa-folder-open nav-icon"></i>
               <span class="nav-label ml-3">Danh Mục</span>
             </a>
           </li>
           <li>
-            <a href="#" onclick="switchTab('banners')" id="nav-banners" data-title="Banners"
+            <a href="javascript:void(0)" onclick="switchTab('banners')" id="nav-banners" data-title="Banners"
                class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
               <i class="fa-solid fa-images nav-icon"></i>
               <span class="nav-label ml-3">Quản lý Banners</span>
             </a>
           </li>
           <li style="position:relative">
-            <a href="#" onclick="switchTab('admissions')" id="nav-admissions" data-title="Tuyển Sinh"
+            <a href="javascript:void(0)" onclick="switchTab('admissions')" id="nav-admissions" data-title="Tuyển Sinh"
                class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
               <i class="fa-solid fa-user-plus nav-icon"></i>
               <span class="nav-label ml-3 flex-1">Tuyển Sinh</span>
@@ -364,7 +364,7 @@
             </a>
           </li>
           <li>
-            <a href="#" onclick="switchTab('settings')" id="nav-settings" data-title="Cấu Hình HT"
+            <a href="javascript:void(0)" onclick="switchTab('settings')" id="nav-settings" data-title="Cấu Hình HT"
                class="nav-link rounded-lg hover:bg-gray-800 text-gray-400">
               <i class="fa-solid fa-cog nav-icon"></i>
               <span class="nav-label ml-3">Cấu Hình HT</span>
@@ -854,7 +854,7 @@ public async Task&lt;string&gt; GetNsgNews() {
             <button onclick="document.getElementById('banner-upload-input').click()" class="bg-gray-200 px-3 py-2 rounded hover:bg-gray-300" title="Tải ảnh lên">
                 <i class="fa fa-upload"></i>
             </button>
-            <input type="file" id="banner-upload-input" class="hidden" accept="image/*" onchange="uploadImageGen(this, 'banner-image-url')">
+            <input type="file" id="banner-upload-input" class="hidden" accept="image/*" onchange="uploadFileToDrive(this.files[0], 'banner-image-url', null, 'banner-image-preview')">
         </div>
         <p class="text-xs text-gray-500 mt-1">Kích thước tham khảo: 1200x600px (Tỷ lệ 2:1)</p>
         <img id="banner-image-preview" src="" class="mt-2 h-32 object-cover rounded hidden">
@@ -998,6 +998,6 @@ public async Task&lt;string&gt; GetNsgNews() {
     </div>
   </div>
 
-  <script src="app.js?v=2"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>
