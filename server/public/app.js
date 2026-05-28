@@ -1,4 +1,4 @@
-const API_BASE = 'https://nsg-miniapp-zalo-ipia.vercel.app/api';
+const API_BASE = '/api';
 let currentUser = null;
 let _admissionsList = [];
 let _majorsList = [];
@@ -36,7 +36,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
     });
     const data = await res.json();
     if (!res.ok || !data.success) {
-      errText.textContent = data.message || 'Tên đăng nhập hoặc mật khẩu không đúng';
+      errText.textContent = data.message || data.error || 'Tên đăng nhập hoặc mật khẩu không đúng';
       errEl.classList.remove('hidden');
       btn.disabled = false;
       btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> <span>Đăng Nhập</span>';
@@ -50,7 +50,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
     initSidebar();
     applyRoleVisibility();
     refreshAdmissionsBadge();
-    loadDashboard();
+    handleHashChange();
   } catch (err) {
     errText.textContent = 'Không thể kết nối máy chủ. Vui lòng thử lại sau.';
     errEl.classList.remove('hidden');
@@ -401,19 +401,12 @@ const ADMIN_ONLY_TABS = ['system-users', 'settings'];
 function switchTab(tabId) {
   const isAdmin = currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin');
   if (ADMIN_ONLY_TABS.includes(tabId) && !isAdmin) return false;
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('[id^="nav-"]').forEach(el => {
-    el.classList.remove('bg-gray-700', 'bg-gray-800', 'text-white');
-    el.classList.add('text-gray-400');
-  });
-  const tab = document.getElementById(tabId);
-  const nav = document.getElementById('nav-' + tabId);
-  if (tab) tab.classList.add('active');
-  if (nav) { nav.classList.add('bg-gray-700', 'text-white'); nav.classList.remove('text-gray-400'); }
-  document.getElementById('page-title').textContent = TAB_TITLES[tabId] || '';
-  if (TAB_LOADERS[tabId]) TAB_LOADERS[tabId]();
-  // Đóng sidebar overlay trên mobile sau khi chọn menu
-  if (window.innerWidth < 768) closeMobileSidebar();
+  
+  if (window.location.hash !== '#' + tabId) {
+    window.location.hash = tabId;
+  } else {
+    handleHashChange();
+  }
   return false;
 }
 
@@ -1405,7 +1398,7 @@ let newsEditor, majorDescEditor, majorCareerEditor;
       initSidebar();
       applyRoleVisibility();
       refreshAdmissionsBadge();
-      loadDashboard();
+      handleHashChange();
     }
   } catch(e) {
     localStorage.removeItem('admin_session');
@@ -1432,18 +1425,18 @@ async function fetchBanners() {
       const tr = document.createElement('tr');
       tr.className = 'border-b hover:bg-gray-50';
       tr.innerHTML = `
-        <td class="p-4">
-          <img src="`" onerror="this.src='https://placehold.co/120x60?text=Error'" class="w-24 h-12 object-cover rounded shadow-sm">
+                <td class="p-4">
+          <img src="${banner.imageUrl}" onerror="this.src='https://placehold.co/120x60?text=Error'" class="w-24 h-12 object-cover rounded shadow-sm">
         </td>
-        <td class="p-4 font-medium">`</td>
+        <td class="p-4 font-medium">${banner.title}</td>
         <td class="p-4 text-sm text-gray-500 truncate max-w-[200px]">
-          <a href="`" target="_blank" class="text-blue-500 hover:underline">`</a>
+          <a href="${banner.link}" target="_blank" class="text-blue-500 hover:underline">${banner.link ? banner.link : 'Trống'}</a>
         </td>
-        <td class="p-4 text-center">`</td>
-        <td class="p-4">`</td>
+        <td class="p-4 text-center">${banner.order || 0}</td>
+        <td class="p-4">${statusBadge}</td>
         <td class="p-4 text-right">
-          <button onclick="editBanner(`)" class="text-blue-600 hover:text-blue-800 mr-3" title="S?a"><i class="fa fa-edit"></i></button>
-          <button onclick="deleteBanner(`)" class="text-red-600 hover:text-red-800" title="X�a"><i class="fa fa-trash"></i></button>
+          <button onclick="editBanner('${banner.id}')" class="text-blue-600 hover:text-blue-800 mr-3" title="Sửa"><i class="fa fa-edit"></i></button>
+          <button onclick="deleteBanner('${banner.id}')" class="text-red-600 hover:text-red-800" title="Xóa"><i class="fa fa-trash"></i></button>
         </td>
       `;
       tbody.appendChild(tr);
@@ -1488,7 +1481,7 @@ async function saveBanner() {
   const payload = { title, description, image_url, link_url, display_order, status };
 
   try {
-    const url = id ? \\/banners/\\ : API_BASE + '/banners';
+    const url = id ? `${API_BASE}/banners/${id}` : API_BASE + '/banners';
     const method = id ? 'PUT' : 'POST';
     const res = await fetch(url, {
       method,
@@ -1562,3 +1555,31 @@ setTimeout(() => {
     }
   } catch(e) {}
 }, 1000);
+
+function handleHashChange() {
+  let hash = window.location.hash.replace('#', '');
+  if (!hash || !TAB_LOADERS[hash]) hash = 'dashboard';
+  const tabId = hash;
+  
+  if (ADMIN_ONLY_TABS.includes(tabId) && currentUser && !(currentUser.role === 'admin' || currentUser.role === 'superadmin')) {
+    return false;
+  }
+  
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('[id^=\"nav-\"]').forEach(el => {
+    el.classList.remove('bg-gray-700', 'bg-gray-800', 'text-white');
+    el.classList.add('text-gray-400');
+  });
+  
+  const tab = document.getElementById(tabId);
+  const nav = document.getElementById('nav-' + tabId);
+  if (tab) tab.classList.add('active');
+  if (nav) { nav.classList.add('bg-gray-700', 'text-white'); nav.classList.remove('text-gray-400'); }
+  document.getElementById('page-title').textContent = TAB_TITLES[tabId] || '';
+  if (TAB_LOADERS[tabId]) TAB_LOADERS[tabId]();
+  if (window.innerWidth < 768) closeMobileSidebar();
+}
+
+window.addEventListener('hashchange', () => {
+  if (currentUser) handleHashChange();
+});
