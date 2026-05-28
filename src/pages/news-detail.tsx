@@ -89,7 +89,7 @@ function NewsDetail() {
   const getCategoryInfo = (category: string) => {
     switch (category) {
       case "announcement": 
-        return { label: "Thông báo", color: "bg-red-100 text-red-600" };
+        return { label: "Thông báo", color: "bg-cyan-100 text-cyan-600" };
       case "news": 
         return { label: "Tin tức", color: "bg-blue-100 text-blue-600" };
       case "admission": 
@@ -131,7 +131,7 @@ function NewsDetail() {
               {categoryInfo.label}
             </Box>
             {newsDetail.isHot && (
-              <Box className="bg-red-500 text-white px-2 py-1 rounded text-xs font-medium">
+              <Box className="bg-orange-500 text-white px-2 py-1 rounded text-xs font-medium">
                 🔥 Nổi bật
               </Box>
             )}

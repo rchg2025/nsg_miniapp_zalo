@@ -81,7 +81,7 @@ function NotificationsPage() {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'announcement': return 'text-red-500';
+      case 'announcement': return 'text-cyan-500';
       case 'news': return 'text-blue-500';
       case 'system': return 'text-green-500';
       case 'major': return 'text-purple-500';
@@ -139,7 +139,7 @@ function NotificationsPage() {
             size="small"
             variant={activeTab === 'unread' ? 'primary' : 'secondary'}
             onClick={() => setActiveTab('unread')}
-            className={activeTab === 'unread' ? 'bg-red-600' : ''}
+            className={activeTab === 'unread' ? 'bg-blue-600' : ''}
           >
             Chưa đọc ({unreadCount})
           </Button>
@@ -164,7 +164,7 @@ function NotificationsPage() {
                   notification.isRead 
                     ? 'border-gray-300 opacity-75' 
                     : notification.type === 'announcement' 
-                      ? 'border-red-500' 
+                      ? 'border-cyan-500' 
                       : notification.type === 'news' 
                         ? 'border-blue-500' 
                         : 'border-green-500'
@@ -183,7 +183,7 @@ function NotificationsPage() {
                           {notification.title}
                         </Text>
                         {!notification.isRead && (
-                          <Box className="w-2 h-2 bg-red-500 rounded-full"></Box>
+                            <Box className="w-2 h-2 bg-blue-500 rounded-full"></Box>
                         )}
                       </Box>
                       <Text className={`text-sm mb-2 ${notification.isRead ? 'text-gray-500' : 'text-gray-700'}`}>

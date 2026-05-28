@@ -96,7 +96,7 @@ const BannerSlider: React.FC<{ banners: Banner[] }> = ({ banners }) => {
 const FollowOASection: React.FC = () => {
   return (
     <Box className="mx-4 mb-6">
-      <Box className="bg-red-50 border border-red-200 rounded-xl p-4 shadow-sm">
+      <Box className="bg-blue-50 border border-blue-200 rounded-xl p-4 shadow-sm">
         <Text.Title className="text-gray-800 text-lg mb-4 leading-tight font-medium">
           Quan tâm OA để nhận các chương trình đặc quyền ưu đãi
         </Text.Title>
@@ -113,7 +113,7 @@ const FollowOASection: React.FC = () => {
                 }}
               />
               <Box className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-                <Box className="bg-orange-500 w-3 h-3 rounded-full flex items-center justify-center">
+                <Box className="bg-blue-500 w-3 h-3 rounded-full flex items-center justify-center">
                   <span className="text-white text-[8px]">✓</span>
                 </Box>
               </Box>
@@ -121,7 +121,7 @@ const FollowOASection: React.FC = () => {
             <Text className="font-bold text-gray-800">Trường CĐ Bách khoa Nam Sài Gòn</Text>
           </Box>
           <Button 
-            className="bg-[#9e1c1c] text-white rounded-full px-5 py-2 hover:bg-red-800 whitespace-nowrap"
+            className="bg-blue-600 text-white rounded-full px-5 py-2 hover:bg-blue-700 whitespace-nowrap"
             onClick={async () => {
               try {
                 const { openWebview } = await import("zmp-sdk/apis");
@@ -208,7 +208,7 @@ const QuickMenuSection: React.FC = () => {
   
   const menuItems = [
     { icon: "📝", label: "Tin tức", color: "text-blue-600", bg: "bg-blue-50", route: "/news?category=news", action: null },
-    { icon: "📢", label: "Thông báo", color: "text-red-600", bg: "bg-red-50", route: "/news?category=announcement", action: null },
+    { icon: "📢", label: "Thông báo", color: "text-cyan-600", bg: "bg-cyan-50", route: "/news?category=announcement", action: null },
     { icon: "🎉", label: "Sự kiện", color: "text-purple-600", bg: "bg-purple-50", route: "/news?category=event", action: null },
     { icon: "🎓", label: "Ngành học", color: "text-green-600", bg: "bg-green-50", route: "/majors", action: null },
     { icon: "📋", label: "Đăng ký", color: "text-orange-600", bg: "bg-orange-50", route: "/admission-registration", action: null },
@@ -478,7 +478,7 @@ const HomePage: React.FC = () => {
         <NewsCompactSection
           title="Thông báo"
           icon="📢"
-          color="text-red-600"
+          color="text-blue-600"
           news={newsData.announcements}
           onSeeAll={() => navigate('/news?category=announcement')}
           onNewsClick={handleNewsClick}

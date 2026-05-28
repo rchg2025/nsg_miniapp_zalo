@@ -102,7 +102,7 @@ function BottomNavigation() {
               size="small"
               className={`flex flex-col items-center justify-center min-w-0 flex-1 py-2 px-1 ${
                 isActive 
-                  ? item.id === "admin" ? "text-red-600" : "text-blue-600"
+                  ? "text-blue-600"
                   : "text-gray-500"
               }`}
               onClick={() => handleNavClick(item.path)}
@@ -111,14 +111,14 @@ function BottomNavigation() {
                 icon={item.icon as any} 
                 className={`text-lg mb-1 ${
                   isActive 
-                    ? item.id === "admin" ? "text-red-600" : "text-blue-600"
+                    ? "text-blue-600"
                     : "text-gray-500"
                 }`} 
               />
               <Text 
                 className={`text-xs leading-none ${
                   isActive 
-                    ? item.id === "admin" ? "text-red-600 font-medium" : "text-blue-600 font-medium"
+                    ? "text-blue-600 font-medium"
                     : "text-gray-500"
                 }`}
               >

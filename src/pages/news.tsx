@@ -276,7 +276,7 @@ function NewsPage() {
       {/* Hot News Section */}
       {activeTab === "all" && (
         <Box className="p-4">
-          <Text.Title className="text-red-600 mb-3 flex items-center">
+          <Text.Title className="text-orange-600 mb-3 flex items-center">
             <Icon icon="zi-star-solid" className="mr-2" />
             Tin nổi bật
           </Text.Title>
