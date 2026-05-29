@@ -576,8 +576,19 @@
 
         <!-- BANNERS -->
         <div id="banners" class="tab-content">
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="text-2xl font-bold">Quản lý Banners</h3>
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+              <div class="flex-1 w-full sm:w-auto flex flex-wrap gap-2">
+                <div class="relative flex-1 min-w-[200px]">
+                  <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i>
+                  <input type="text" id="banner-search" oninput="filterBanners()" placeholder="Tìm tiêu đề, link banner..." class="w-full border rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-blue-200 outline-none">
+                </div>
+                <select id="banner-filter-status" onchange="filterBanners()" class="border rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-blue-200 outline-none">
+                  <option value="all">Tất cả trạng thái</option>
+                  <option value="active">Đang hoạt động</option>
+                  <option value="inactive">Đang ẩn</option>
+                </select>
+              </div>
+            <h3 class="text-2xl font-bold mb-4 sm:mb-0">Quản lý Banners</h3>
             <button onclick="openBannerModal()" class="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700">
               <i class="fa fa-plus mr-2"></i>Thêm Banner
             </button>
