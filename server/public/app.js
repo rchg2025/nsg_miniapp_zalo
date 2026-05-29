@@ -1521,7 +1521,7 @@ async function editBanner(id) {
   try {
     const res = await fetch(API_BASE + '/banners');
     const banners = await res.json();
-    const banner = banners.find(b => b.id === id);
+    const banner = banners.find(b => String(b.id) === String(id));
     if (!banner) return;
     
     document.getElementById('banner-id').value = banner.id;

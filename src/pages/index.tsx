@@ -104,7 +104,7 @@ const FollowOASection: React.FC = () => {
           <Box className="flex items-center gap-2">
             <Box className="relative">
               <img 
-                src="https://qr.zalo.me/sl/2/93739f239a61713f2870" 
+                src="https://drive.google.com/thumbnail?id=1uiZ-OsrbEnd2HU87jIU1_TmKgTUF4PyK&sz=w400" 
                 alt="Logo NSG" 
                 className="w-12 h-12 rounded-full border border-gray-200 bg-white object-cover"
                 onError={(e) => {
